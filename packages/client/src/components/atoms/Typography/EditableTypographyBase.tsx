@@ -2,7 +2,6 @@ import React from 'react';
 import { TextField, Box } from '@mui/material';
 import type { TypographyProps, TextFieldProps, BoxProps } from '@mui/material';
 import { TypographyWithMarkdown } from './TypographyWithMarkdown';
-import { useMeasureTextWidth } from './utils';
 import type { Maybe } from '../../../generated/graphql';
 
 type EditableTypographyBaseProps = Pick<
@@ -53,10 +52,6 @@ export const EditableTypographyBase = React.forwardRef<
       typography: variant,
       width: '100%',
     };
-    const typographyWidth = useMeasureTextWidth({
-      text: value ?? valueRender?.(undefined) ?? Array(16).fill('A').toString(),
-      variant,
-    });
 
     return (
       <Box
@@ -66,7 +61,7 @@ export const EditableTypographyBase = React.forwardRef<
         onContextMenu={onContextMenu}
         ref={ref}
         sx={{
-          width: '100%',
+          // width: '100%',
           ...sx,
         }}
       >
@@ -89,7 +84,7 @@ export const EditableTypographyBase = React.forwardRef<
             size="small"
             sx={{
               ...commonStyles,
-              width: `min(${typographyWidth}px + 10px, 100%)`,
+              // width: `min(${typographyWidth}px + 10px, 100%)`,
               ...(textFieldProps?.sx ?? {}),
             }}
             InputProps={{
