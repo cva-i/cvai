@@ -1,6 +1,6 @@
 import type { FC, PropsWithChildren } from 'react';
 import { createContext, useContext } from 'react';
-import type { AuthContextType } from './auth-context';
+import type { AuthContextType } from './use-auth';
 
 interface UserContextInterface {
   user: NonNullable<AuthContextType['user']>;

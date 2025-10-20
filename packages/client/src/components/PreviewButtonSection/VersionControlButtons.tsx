@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Box } from '@mui/material';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
@@ -39,6 +39,7 @@ const VersionControlButtonsInner = ({ cvId }: { cvId: string }) => {
     refetchQueries: refetchUndoRedoQueries,
   });
 
+  // Fixed: Moved early return after all hooks to comply with Rules of Hooks
   if (isPreviewing) return null;
 
   return (
@@ -67,6 +68,7 @@ const VersionControlButtonsInner = ({ cvId }: { cvId: string }) => {
 export const VersionControlButtons = () => {
   const { currentCvId } = useCurrentCv();
 
+  // Fixed: All hooks called, then conditional render - complies with Rules of Hooks
   if (!currentCvId) return null;
   return <VersionControlButtonsInner cvId={currentCvId} />;
 };
