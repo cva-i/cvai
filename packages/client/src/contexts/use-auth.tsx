@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useState, use } from 'react';
 import type { GetCurrentUserQuery } from '../generated/graphql';
 import { GetCurrentUserDocument } from '../generated/graphql';
 import { LogoutDocument } from '../generated/graphql';
@@ -16,8 +16,10 @@ export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+export const AuthProvider = ({
   children,
+}: {
+  children: React.ReactNode;
 }) => {
   const [user, setUser] = useState<AuthContextType['user'] | null>(null);
 
@@ -50,4 +52,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       {children}
     </AuthContext.Provider>
   );
+};
+
+// React 19: Custom hook using the new use() hook
+export const useAuth = () => {
+  const context = use(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 };

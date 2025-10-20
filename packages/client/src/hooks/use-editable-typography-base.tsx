@@ -1,5 +1,6 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useOptimistic, useTransition } from 'react';
 import type { Maybe } from '../generated/graphql';
+import { tryCatch } from '../utils';
 
 type UseEditableTypographyBaseProps = {
   value?: Maybe<string>;
@@ -13,6 +14,8 @@ type UseEditableTypographyBaseReturn = {
   setTempValue: React.Dispatch<React.SetStateAction<string>>;
   handleSave: () => void;
   handleCancel: () => void;
+  isPending: boolean;
+  displayValue: string | null | undefined;
 };
 
 type NonNullableSetStateAction<T> =
@@ -26,6 +29,12 @@ export const useEditableTypographyBase = ({
 }: UseEditableTypographyBaseProps): UseEditableTypographyBaseReturn => {
   const [isEditing, setIsEditing] = useState(false);
   const [tempValue, setTempValue] = useState(value);
+  const [isPending, startTransition] = useTransition();
+
+  const [optimisticValue, setOptimisticValue] = useOptimistic(
+    value,
+    (_, newValue: string) => newValue
+  );
 
   const startEditing = useCallback(() => {
     setIsEditing(true);
@@ -40,12 +49,18 @@ export const useEditableTypographyBase = ({
       setIsEditing(false);
       return;
     }
-    onSave(tempValue)
-      .catch(console.error)
-      .finally(() => {
-        setIsEditing(false);
-      });
-  }, [tempValue, value, onSave]);
+
+    setOptimisticValue(tempValue);
+    setIsEditing(false);
+
+    startTransition(async () => {
+      const [, error] = await tryCatch(onSave(tempValue));
+      if (error) {
+        console.error('Failed to save:', error);
+        // On error, the optimistic value will revert to the real value
+      }
+    });
+  }, [tempValue, value, onSave, setOptimisticValue]);
 
   const handleCancel = useCallback(() => {
     setTempValue(value);
@@ -61,5 +76,7 @@ export const useEditableTypographyBase = ({
     >,
     handleSave,
     handleCancel,
+    isPending,
+    displayValue: optimisticValue,
   };
 };

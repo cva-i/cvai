@@ -1,11 +1,12 @@
-import React, {
+import {
   createContext,
-  useContext,
+  use,
   useState,
   useCallback,
   useMemo,
   useEffect,
 } from 'react';
+import { tryCatchSync } from '../utils';
 
 type CurrentCvContextType = {
   currentCvId: string | null;
@@ -18,17 +19,15 @@ const CurrentCvContext = createContext<CurrentCvContextType | undefined>(
   undefined
 );
 
-export const CurrentCvProvider: React.FC<React.PropsWithChildren> = ({
-  children,
-}) => {
+export const CurrentCvProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentCvId, setCurrentCvIdState] = useState<string | null>(() => {
     if (!!window) {
-      try {
-        return localStorage.getItem(CURRENT_CV_KEY);
-      } catch (error) {
+      const [data, error] = tryCatchSync(() => localStorage.getItem(CURRENT_CV_KEY));
+      if (error) {
         console.error('Failed to load currentCvId from localStorage:', error);
         return null;
       }
+      return data;
     } else {
       return null;
     }
@@ -36,13 +35,15 @@ export const CurrentCvProvider: React.FC<React.PropsWithChildren> = ({
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      try {
+      const [, error] = tryCatchSync(() => {
         if (currentCvId !== null) {
           localStorage.setItem(CURRENT_CV_KEY, currentCvId);
         } else {
           localStorage.removeItem(CURRENT_CV_KEY);
         }
-      } catch (error) {
+      });
+
+      if (error) {
         console.error('Failed to save currentCvId to localStorage:', error);
       }
     }
@@ -71,7 +72,7 @@ export const CurrentCvProvider: React.FC<React.PropsWithChildren> = ({
 };
 
 export const useCurrentCv = (): CurrentCvContextType => {
-  const context = useContext(CurrentCvContext);
+  const context = use(CurrentCvContext);
   if (!context) {
     throw new Error('useCurrentCv must be used within a CurrentCvProvider');
   }

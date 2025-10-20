@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   useEditableTypographyBase,
   useTypographyActionsPortal,
@@ -24,6 +24,7 @@ export const EditableTypography = ({
   ...typographyProps
 }: EditableTypographyProps) => {
   const textRef = useRef<HTMLDivElement>(null);
+  // React 19: Now includes optimistic updates
   const {
     isEditing,
     startEditing,
@@ -31,6 +32,8 @@ export const EditableTypography = ({
     setTempValue,
     handleSave,
     handleCancel,
+    displayValue,
+    isPending,
   } = useEditableTypographyBase({ value, onSave });
 
   useEffect(() => {
@@ -85,13 +88,17 @@ export const EditableTypography = ({
       id={id}
       isEditing={isEditing}
       tempValue={tempValue}
-      value={value}
+      value={displayValue}
       setTempValue={setTempValue}
       handleSave={handleSave}
       handleCancel={handleCancel}
       multiline={multiline}
       variant={typographyProps.variant}
-      textFieldProps={textFieldProps}
+      textFieldProps={{
+        ...textFieldProps,
+        // React 19: Show loading state during save
+        disabled: isPending,
+      }}
       valueRender={valueRender}
     />
   );
