@@ -25,6 +25,18 @@ export const CurrentCvPreview: React.FC = () => {
     });
   }, [fetchCvFunction, currentCvId]);
 
+  // TAS-75: Set document title to current resume name
+  useEffect(() => {
+    if (data?.getCv?.title) {
+      document.title = data.getCv.title;
+    }
+
+    // Cleanup: reset to default title when component unmounts
+    return () => {
+      document.title = 'CV Builder';
+    };
+  }, [data?.getCv?.title]);
+
   if (loading) {
     return <CenteredBox>Loading...</CenteredBox>;
   }
