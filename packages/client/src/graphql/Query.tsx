@@ -8,6 +8,7 @@ import { Box } from '@mui/material';
 import { Navigate } from 'react-router-dom';
 import { LoaderElement } from './common';
 import type { BaseGqlComponentProps } from './common';
+import type { ReactElement } from 'react';
 
 interface ChildrenProps<
   TData,
@@ -23,7 +24,7 @@ export interface QueryProps<
   TVariables extends OperationVariables = OperationVariables,
 > extends Omit<QueryDataOptions<TData, TVariables>, 'children'>,
     BaseGqlComponentProps {
-  children: (result: ChildrenProps<TData, TVariables>) => JSX.Element;
+  children: (result: ChildrenProps<TData, TVariables>) => ReactElement;
 }
 
 const Query = <

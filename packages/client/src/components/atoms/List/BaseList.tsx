@@ -1,4 +1,4 @@
-import React from 'react';
+import { Fragment } from 'react';
 import {
   CircularProgress,
   List,
@@ -38,7 +38,7 @@ export function BaseList<T extends { _id: string }>({
   containerSx,
   listSx,
   pagination,
-}: BaseListProps<T>): JSX.Element {
+}: BaseListProps<T>) {
   const renderContent = () => {
     if (loading) {
       return (
@@ -67,9 +67,9 @@ export function BaseList<T extends { _id: string }>({
     return (
       <List dense sx={{ width: '100%', ...listSx }}>
         {items.map((item, index) => (
-          <React.Fragment key={item._id}>
+          <Fragment key={item._id}>
             {renderItem(item, index)}
-          </React.Fragment>
+          </Fragment>
         ))}
       </List>
     );

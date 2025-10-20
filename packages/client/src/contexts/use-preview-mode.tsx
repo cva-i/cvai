@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from 'react';
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, use, useState, useCallback } from 'react';
 
 interface PreviewModeContextValue {
   isPreviewing: boolean;
@@ -25,7 +25,7 @@ export const PreviewModeProvider = ({ children }: PropsWithChildren) => {
 };
 
 export const usePreviewMode = (): PreviewModeContextValue => {
-  const context = useContext(PreviewModeContext);
+  const context = use(PreviewModeContext);
   if (!context) {
     throw new Error('usePreviewMode must be used within a PreviewModeProvider');
   }
