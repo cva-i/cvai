@@ -25,6 +25,16 @@ export const CurrentCvPreview: React.FC = () => {
     });
   }, [fetchCvFunction, currentCvId]);
 
+  useEffect(() => {
+    if (data?.getCv?.title) {
+      document.title = data.getCv.title;
+    }
+
+    return () => {
+      document.title = 'CV Builder';
+    };
+  }, [data?.getCv?.title]);
+
   if (loading) {
     return <CenteredBox>Loading...</CenteredBox>;
   }
