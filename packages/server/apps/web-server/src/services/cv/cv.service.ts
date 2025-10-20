@@ -206,13 +206,18 @@ export class CvService {
 
     const newEntry = this.createEntryItem({
       entryFieldName,
-      positionIndex: keys(currentVersion.data[entryMapKey]).length,
+      positionIndex: keys(currentVersion.data[entryMapKey] ?? {}).length,
     });
 
     const newData = cloneDeep(currentVersion.data);
-    newData[entryMapKey][newEntry._id] = newEntry as ConvertOrTypeToAndType<
-      typeof newEntry
-    >;
+    // Ensure the entry map exists before adding to it
+    const existingEntries = newData[entryMapKey] ?? {};
+    const updatedEntries = {
+      ...existingEntries,
+      [newEntry._id]: newEntry as ConvertOrTypeToAndType<typeof newEntry>,
+    };
+    // TypeScript cannot narrow the union type from entryMapKey, so we assert the type
+    (newData[entryMapKey] as typeof updatedEntries) = updatedEntries;
 
     const newVersionId = new Types.ObjectId().toString();
     const newVersion: CvVersion = {
