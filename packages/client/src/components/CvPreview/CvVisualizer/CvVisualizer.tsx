@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Box, Divider, Skeleton } from '@mui/material';
 import {
   AboutMe,
@@ -16,12 +16,16 @@ import {
   useUpdateCvNameMutation,
 } from '../../../generated/graphql';
 import { customPalette, shadowStyles } from "../../../theme";
+import { usePreviewMode } from "../../../contexts";
 
 type CvVisualizerProps = {
   cvId: string;
 };
 
 export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
+
+  const {isPreviewing} = usePreviewMode();
+
   // fetch positions of all the sections.
 
   // const {data: cvSections} = useGetCvSectionsPositions
@@ -45,6 +49,11 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
     [cvId, updateNameMutation]
   );
 
+  const paperBackgroundStyles = useMemo(() => isPreviewing ? {} : {
+    backgroundColor: customPalette.background.surface,
+    boxShadow: shadowStyles.section.boxShadow,
+  }, [isPreviewing]);
+
   return (
     <Box
       sx={{
@@ -53,10 +62,10 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
         flexDirection: 'column',
         margin: '0 auto',
         maxWidth: '1400px',
+        minHeight: '1600px',
         padding: '80px 80px',
-        justifyContent: 'center',
-        backgroundColor: customPalette.background.surface,
-        boxShadow: shadowStyles.section.boxShadow
+        justifyContent: 'flex-start',
+        ...paperBackgroundStyles,
       }}
     >
       <GetNameComponent variables={{ cvId }}>
@@ -99,6 +108,5 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
 
       <Skills cvId={cvId} />
     </Box>
-    // </Box>
   );
 };
