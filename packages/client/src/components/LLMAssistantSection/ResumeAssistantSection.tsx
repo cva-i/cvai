@@ -21,30 +21,23 @@ const ResumeAssistantSectionInner = ({
 
   return (
     <Box
-      sx={({}) => ({
+      sx={{
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'space-around',
         width: '100%',
         height: '100%',
-      })}
+      }}
     >
-      <Box display={'flex'} padding={1}>
-        <Typography flex={1} variant="h6" textAlign={'center'}>
-          AI CV review
-        </Typography>
-
+      <Box display="flex" justifyContent="flex-end" marginBottom={2}>
         <Button
+          variant="contained"
           sx={{
-            gap: 2,
-            height: 'fit-content',
-            width: 'fit-content',
-            borderRadius: '10px',
+            borderRadius: '12px',
           }}
           onClick={handleReviewClick}
-          size={'small'}
+          size="small"
         >
-          Run review!
+          Run review
         </Button>
       </Box>
 

@@ -4,6 +4,7 @@ import { grey } from '@mui/material/colors';
 import { Typography } from '@mui/material';
 import type { EditableTypographyProps } from '../../atoms/Typography/types';
 import { CommaSeparatedList } from '../../CommaSeparatedList';
+import { usePreviewMode } from '../../../contexts';
 
 type SkillsForItemizedEntryEditorProps = Pick<
   EditableTypographyProps,
@@ -15,7 +16,12 @@ type SkillsForItemizedEntryEditorProps = Pick<
 export const SkillsForItemizedEntryEditor: React.FC<
   SkillsForItemizedEntryEditorProps
 > = ({ id, isEditing, value, onSave, labelPrefix }) => {
+  const { isPreviewing } = usePreviewMode();
   const items = value ? value.split(',').map((s) => s.trim()) : [];
+
+  if (isPreviewing && items.length === 0) {
+    return null;
+  }
 
   const handleSave = async (newItems: string[]) => {
     await onSave(newItems.join(', '));
@@ -47,6 +53,8 @@ export const SkillsForItemizedEntryEditor: React.FC<
       sx={{ color: grey[600] }}
       textSx={{ color: grey[600] }}
       variant="body2"
+      showWhenEmpty={!isPreviewing}
+      emptyText="(empty)"
     />
   );
 };
