@@ -45,7 +45,7 @@ export const useEditableTypographyBase = ({
   }, [value]);
 
   const handleSave = useCallback(() => {
-    if (!tempValue || tempValue === value) {
+    if (tempValue == null || tempValue === value) {
       setIsEditing(false);
       return;
     }

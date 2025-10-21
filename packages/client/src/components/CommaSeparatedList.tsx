@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import type { SxProps, Theme, TypographyProps } from '@mui/material';
 import { Box } from '@mui/material';
 import { usePreviewMode } from '../contexts';
-import { EditableTypography } from './atoms';
+import { EditableTypography, EmptyLabel } from './atoms';
 
 export interface CommaSeparatedListProps {
   id: string;
@@ -34,6 +34,7 @@ export const CommaSeparatedList = ({
   const { isPreviewing } = usePreviewMode();
 
   const commaSeparatedValue = useMemo(() => items.join(', ') || '', [items]);
+  const isEmpty = items.length === 0;
 
   const shouldShow = useMemo(
     () => showWhenEmpty || !isPreviewing || items.length > 0,
@@ -52,34 +53,41 @@ export const CommaSeparatedList = ({
     [onSave]
   );
 
+  const handleEmptyClick = useCallback(() => {
+    const element = document.getElementById(id);
+    element?.click();
+  }, [id]);
+
   if (!shouldShow) {
     return null;
   }
 
   return (
-    <Box sx={sx} display="flex" alignItems="baseline">
+    <Box sx={sx} display="flex" alignItems="baseline" gap={0.5}>
       {labelPrefix && (
-        <Box component="span" mr={0.5}>
+        <Box component="span">
           {labelPrefix}
         </Box>
       )}
 
-      {/* Render the editable items */}
-      <EditableTypography
-        id={id}
-        variant={variant}
-        isEditing={isEditing}
-        value={commaSeparatedValue}
-        valueRender={emptyText ? (v) => v || emptyText : undefined}
-        multiline
-        onSave={handleSave}
-        sx={textSx}
-        textFieldProps={{
-          sx: {
-            width: '100%',
-          },
-        }}
-      />
+      {isEmpty && emptyText && !isPreviewing ? (
+        <EmptyLabel variant={variant} onClick={handleEmptyClick} />
+      ) : (
+        <EditableTypography
+          id={id}
+          variant={variant}
+          isEditing={isEditing}
+          value={commaSeparatedValue}
+          multiline
+          onSave={handleSave}
+          sx={textSx}
+          textFieldProps={{
+            sx: {
+              width: '100%',
+            },
+          }}
+        />
+      )}
     </Box>
   );
 };
