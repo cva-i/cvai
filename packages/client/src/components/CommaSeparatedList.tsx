@@ -16,6 +16,7 @@ export interface CommaSeparatedListProps {
   textSx?: SxProps<Theme>;
   variant?: TypographyProps['variant'];
   showWhenEmpty?: boolean;
+  emptyText?: string;
 }
 
 export const CommaSeparatedList = ({
@@ -28,10 +29,11 @@ export const CommaSeparatedList = ({
   textSx,
   variant = 'body2',
   showWhenEmpty = false,
+  emptyText,
 }: CommaSeparatedListProps) => {
   const { isPreviewing } = usePreviewMode();
 
-  const commaSeparatedValue = useMemo(() => items.join(', '), [items]);
+  const commaSeparatedValue = useMemo(() => items.join(', ') || '', [items]);
 
   const shouldShow = useMemo(
     () => showWhenEmpty || !isPreviewing || items.length > 0,
@@ -68,6 +70,7 @@ export const CommaSeparatedList = ({
         variant={variant}
         isEditing={isEditing}
         value={commaSeparatedValue}
+        valueRender={emptyText ? (v) => v || emptyText : undefined}
         multiline
         onSave={handleSave}
         sx={textSx}

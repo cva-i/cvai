@@ -1,6 +1,7 @@
 import React from 'react';
 import type { BoxProps, TypographyProps } from '@mui/material';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, IconButton } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { AddEntryButton } from '../../CvVisualizer/CvFields/WorkExperience/AddEntryButton';
 import type { CvEntryItem } from '../../CvVisualizer/types';
 import { PopupMenu, Row } from '../../../atoms';
@@ -65,8 +66,26 @@ export function GenericEntriesSection<TEntry extends CvEntryItem>({
         flexWrap="wrap"
       >
         {entries.map((entry) => renderEntry(entry))}
-        {!entries.length && <Typography>{noEntriesText}</Typography>}
-        {!title && onAdd && (
+        {!entries.length && (
+          <Box display="flex" alignItems="center" gap={1} width="100%">
+            <Typography color="text.secondary">{noEntriesText}</Typography>
+            {!isPreviewing && onAdd && (
+              <IconButton
+                onClick={onAdd}
+                size="small"
+                sx={(theme) => ({
+                  color: theme.palette.primary.dark,
+                  '&:hover': {
+                    backgroundColor: theme.palette.action.hover,
+                  },
+                })}
+              >
+                <AddIcon fontSize="small" />
+              </IconButton>
+            )}
+          </Box>
+        )}
+        {!title && onAdd && entries.length > 0 && (
           <AddEntryButton
             onAddEntry={async () => onAdd()}
             sx={{ alignSelf: 'center' }}

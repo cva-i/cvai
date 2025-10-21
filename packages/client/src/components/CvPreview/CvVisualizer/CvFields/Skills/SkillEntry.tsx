@@ -3,6 +3,7 @@ import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { EditableTypography, Row } from '../../../../atoms';
 import type { CvEntryItemProps } from '../../types';
 import { CommaSeparatedList } from '../../../../CommaSeparatedList';
+import { usePreviewMode } from '../../../../../contexts';
 
 export const SkillEntry = ({
   entry: skill,
@@ -11,6 +12,7 @@ export const SkillEntry = ({
 }: CvEntryItemProps<'skillEntries'>) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { isPreviewing } = usePreviewMode();
 
   const handleUpdateSkills = async (newSkills: string[]) => {
     await updateField({
@@ -19,6 +21,12 @@ export const SkillEntry = ({
       value: newSkills,
     });
   };
+
+  const hasNoSkills = !skill.skills || skill.skills.length === 0;
+
+  if (isPreviewing && hasNoSkills) {
+    return null;
+  }
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -55,20 +63,11 @@ export const SkillEntry = ({
           items={skill.skills || []}
           onSave={handleUpdateSkills}
           variant="h6"
-          showWhenEmpty={isEditing}
+          showWhenEmpty={!isPreviewing}
+          emptyText="(empty)"
           sx={{ width: '100%' }}
         />
       </Row>
-
-      {isEditing && skill.skills.length === 0 && (
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ mt: 1, ml: isMobile ? 0 : 2 }}
-        >
-          Add skills to this category
-        </Typography>
-      )}
     </Box>
   );
 };
