@@ -18,6 +18,9 @@ export default defineConfig({
     react({
       babel: {
         compact: false,
+        plugins: [
+          ['babel-plugin-react-compiler', {}],
+        ],
       },
     }),
   ],
