@@ -60,6 +60,7 @@ const SidebarContainer = styled(Box)<{ isExpanded: boolean }>(
     top: 16,
     width: isExpanded ? EXPANDED_SIDEBAR_WIDTH : COLLAPSED_SIDEBAR_WIDTH,
     height: isExpanded ? '80vh' : '356px',
+    maxHeight: '1200px',
     backgroundColor: '#FFFFFF',
     boxShadow: '-2px 2px 2px 2px rgba(0, 0, 0, 0.25)',
     borderRadius: '16px',
