@@ -10,6 +10,11 @@ import {
   GenerateNewEntryItemObjectType,
   PaginatedCvVersionHistoryObjectType,
   UpdateCvInput,
+  CreateWorkExperienceInput,
+  CreateSkillInput,
+  CreateEducationInput,
+  CreateProjectInput,
+  CreateContactInfoInput,
 } from './dto';
 import { VersioningActionsMetadataObjectType } from './dto/versioning-actions-metadata.object-type';
 
@@ -80,12 +85,36 @@ export class CvResolver {
     @CurrentUser() { client_id: userId }: DecodedUserObjectType,
     @Args('cvId', { type: () => ID }) cvId: string,
     @Args('entryFieldName', { type: () => CvEntryType })
-    entryFieldName: CvEntryType
+    entryFieldName: CvEntryType,
+    @Args('workExperienceData', {
+      type: () => CreateWorkExperienceInput,
+      nullable: true,
+    })
+    workExperienceData?: CreateWorkExperienceInput,
+    @Args('skillData', { type: () => CreateSkillInput, nullable: true })
+    skillData?: CreateSkillInput,
+    @Args('educationData', { type: () => CreateEducationInput, nullable: true })
+    educationData?: CreateEducationInput,
+    @Args('projectData', { type: () => CreateProjectInput, nullable: true })
+    projectData?: CreateProjectInput,
+    @Args('contactInfoData', {
+      type: () => CreateContactInfoInput,
+      nullable: true,
+    })
+    contactInfoData?: CreateContactInfoInput
   ): Promise<GenerateNewEntryItemObjectType> {
+    const entryData =
+      workExperienceData ??
+      skillData ??
+      educationData ??
+      projectData ??
+      contactInfoData;
+
     const entryItem = await this.cvService.generateNewEntryItem({
       entryFieldName,
       cvId,
       userId,
+      entryData,
     });
 
     return {

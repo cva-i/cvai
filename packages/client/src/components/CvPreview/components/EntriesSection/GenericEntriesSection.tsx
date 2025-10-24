@@ -12,7 +12,7 @@ type GenericEntriesSectionProps<TEntry extends CvEntryItem> = {
   loading: boolean;
   entries: TEntry[];
   noEntriesText: string;
-  renderEntry: (entry: TEntry) => React.ReactNode;
+  renderEntry: (entry: TEntry, index: number) => React.ReactNode;
   onAdd?: () => void;
   titleStyles?: TypographyProps['sx'];
   flexDirection?: 'row' | 'column';
@@ -65,7 +65,7 @@ export function GenericEntriesSection<TEntry extends CvEntryItem>({
         gap={gap}
         flexWrap="wrap"
       >
-        {entries.map((entry) => renderEntry(entry))}
+        {entries.map((entry, index) => renderEntry(entry, index))}
         {!entries.length && (
           <Box display="flex" alignItems="center" gap={1} width="100%">
             <Typography color="text.secondary">{noEntriesText}</Typography>

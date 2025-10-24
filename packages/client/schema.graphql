@@ -17,6 +17,46 @@ type ConvertPdfToCvObjectType {
   cv: CvObjectType
 }
 
+input CreateContactInfoInput {
+  link: String
+  linkName: String
+  positionIndex: Int
+}
+
+input CreateEducationInput {
+  degree: String
+  description: String
+  duration: String
+  location: String
+  name: String
+  positionIndex: Int
+  skills: [String!]
+}
+
+input CreateProjectInput {
+  description: String
+  name: String
+  positionIndex: Int
+  skills: [String!]
+}
+
+input CreateSkillInput {
+  category: String
+  positionIndex: Int
+  skills: [String!]
+}
+
+input CreateWorkExperienceInput {
+  description: String
+  duration: String
+  location: String
+  name: String
+  position: String
+  positionIndex: Int
+  skills: [String!]
+  type: String
+}
+
 enum CvEntryType {
   CONTACT_INFO
   EDUCATION
@@ -80,7 +120,7 @@ type Mutation {
   deleteCv(cvId: ID!): Boolean!
   deleteCvEntryItem(cvId: ID!, entryFieldName: CvEntryType!, entryItemId: ID!): Boolean!
   deleteEntryItem(cvId: ID!, entryFieldName: CvEntryType!, entryItemId: ID!): Boolean!
-  generateNewEntryItem(cvId: ID!, entryFieldName: CvEntryType!): GenerateNewEntryItemObjectType!
+  generateNewEntryItem(contactInfoData: CreateContactInfoInput, cvId: ID!, educationData: CreateEducationInput, entryFieldName: CvEntryType!, projectData: CreateProjectInput, skillData: CreateSkillInput, workExperienceData: CreateWorkExperienceInput): GenerateNewEntryItemObjectType!
   logout: Boolean!
   redoCvVersion(cvId: ID!): CvObjectType!
   reviewCv(cvId: ID!): ReviewCvOutput!

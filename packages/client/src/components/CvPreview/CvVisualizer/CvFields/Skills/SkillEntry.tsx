@@ -45,14 +45,14 @@ export const SkillEntry = ({
             onSave={(value) =>
               updateField({ _id: skill._id, fieldName: 'category', value })
             }
-            variant="h6"
+            variant="body1"
             sx={{
               fontWeight: 'bold',
               display: 'inline',
             }}
             isEditing={isEditing}
           />
-          <Typography variant="h6" sx={{ fontWeight: 'bold', mr: 1 }}>
+          <Typography variant="body1" sx={{ fontWeight: 'bold', mr: 1 }}>
             :
           </Typography>
         </Box>
@@ -62,7 +62,7 @@ export const SkillEntry = ({
           isEditing={isEditing}
           items={skill.skills || []}
           onSave={handleUpdateSkills}
-          variant="h6"
+          variant="body1"
           showWhenEmpty={!isPreviewing}
           emptyText="(empty)"
           sx={{ width: '100%' }}

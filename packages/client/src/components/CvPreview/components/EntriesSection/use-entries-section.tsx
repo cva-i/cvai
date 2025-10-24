@@ -103,22 +103,111 @@ export function useCvEntries<T extends CvEntryArrayFieldName>(
     [cvId, entryType, deleteEntryItemMutation]
   );
 
-  const handleAddEntry = useCallback(async () => {
-    const res = await generateNewEntryItemMutation({
-      variables: {
+  const handleAddEntry = useCallback(
+    async (entryData?: { positionIndex?: number; [key: string]: any }) => {
+      const variables: any = {
         cvId,
         entryType,
-      },
-    });
+      };
 
-    const newEntries = res.data?.generateNewEntryItem?.[entryFieldName];
+      if (entryData) {
+        const fieldMap: Record<CvEntryType, string> = {
+          [CvEntryType.WorkExperience]: 'workExperienceData',
+          [CvEntryType.Skill]: 'skillData',
+          [CvEntryType.Education]: 'educationData',
+          [CvEntryType.Project]: 'projectData',
+          [CvEntryType.ContactInfo]: 'contactInfoData',
+        };
 
-    if (!newEntries?.length) {
-      return;
-    }
-    // probably, there should be 'isEditing: true' as well
-    setEntries(sortByPosition([...newEntries]) as typeof entries);
-  }, [cvId, entryType, entryFieldName, generateNewEntryItemMutation]);
+        const fieldName = fieldMap[entryType];
+        if (fieldName) {
+          variables[fieldName] = entryData;
+        }
+      }
+
+      const res = await generateNewEntryItemMutation({
+        variables,
+      });
+
+      const newEntries = res.data?.generateNewEntryItem?.[entryFieldName];
+
+      if (!newEntries?.length) {
+        return;
+      }
+      setEntries(sortByPosition([...newEntries]) as typeof entries);
+    },
+    [cvId, entryType, entryFieldName, generateNewEntryItemMutation]
+  );
+
+  const moveUp = useCallback(
+    async (entryId: string) => {
+      const currentIndex = entries.findIndex((e) => e._id === entryId);
+      if (currentIndex <= 0) return;
+
+      const prevIndex = currentIndex - 1;
+      const currentEntry = entries[currentIndex];
+      const prevEntry = entries[prevIndex];
+
+      const newEntries = entries.map((entry, index) => {
+        if (index === currentIndex) {
+          return { ...entry, positionIndex: prevEntry.positionIndex };
+        }
+        if (index === prevIndex) {
+          return { ...entry, positionIndex: currentEntry.positionIndex };
+        }
+        return entry;
+      });
+      setEntries(sortByPosition(newEntries as CvEntryItem[]) as typeof entries);
+
+      await updateCv({
+        variables: {
+          cvId,
+          data: {
+            [entryFieldName]: [
+              { _id: currentEntry._id, positionIndex: prevEntry.positionIndex },
+              { _id: prevEntry._id, positionIndex: currentEntry.positionIndex },
+            ],
+          },
+        },
+      });
+    },
+    [entries, cvId, entryFieldName, updateCv]
+  );
+
+  const moveDown = useCallback(
+    async (entryId: string) => {
+      const currentIndex = entries.findIndex((e) => e._id === entryId);
+      if (currentIndex === -1 || currentIndex >= entries.length - 1) return;
+
+      const nextIndex = currentIndex + 1;
+      const currentEntry = entries[currentIndex];
+      const nextEntry = entries[nextIndex];
+
+      const newEntries = entries.map((entry, index) => {
+        if (index === currentIndex) {
+          return { ...entry, positionIndex: nextEntry.positionIndex };
+        }
+        if (index === nextIndex) {
+          return { ...entry, positionIndex: currentEntry.positionIndex };
+        }
+        return entry;
+      });
+      setEntries(sortByPosition(newEntries as CvEntryItem[]) as typeof entries);
+
+      await updateCv({
+        variables: {
+          cvId,
+          data: {
+            [entryFieldName]: [
+              { _id: currentEntry._id, positionIndex: nextEntry.positionIndex },
+              { _id: nextEntry._id, positionIndex: currentEntry.positionIndex },
+            ],
+          },
+        },
+      });
+    },
+    [entries, cvId, entryFieldName, updateCv]
+  );
 
   return {
     entries,
@@ -126,5 +215,7 @@ export function useCvEntries<T extends CvEntryArrayFieldName>(
     updateField,
     removeEntry,
     handleAddEntry,
+    moveUp,
+    moveDown,
   };
 }

@@ -30,6 +30,7 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import {
   CreateEntryItemProps,
+  CreateEntryItemInput,
   CvEntryItemManagerProps,
   CvManagerMethodProps,
 } from './types';
@@ -198,25 +199,30 @@ export class CvService {
     entryFieldName,
     cvId,
     userId,
-  }: Omit<CvEntryItemManagerProps, 'entryItemId'>) {
+    entryData,
+  }: Omit<CvEntryItemManagerProps, 'entryItemId'> & {
+    entryData?: CreateEntryItemInput;
+  }) {
     const cv = await this.validateUserOwnership(cvId, userId);
 
     const currentVersion = this.getCurrentVersionFromCv(cv);
     const entryMapKey = cvEntryTypeToCvEntryNameMap[entryFieldName];
 
+    const defaultPositionIndex = keys(currentVersion.data[entryMapKey] ?? {}).length;
+    const positionIndex = entryData?.positionIndex ?? defaultPositionIndex;
+
     const newEntry = this.createEntryItem({
       entryFieldName,
-      positionIndex: keys(currentVersion.data[entryMapKey] ?? {}).length,
+      positionIndex,
+      entryData,
     });
 
     const newData = cloneDeep(currentVersion.data);
-    // Ensure the entry map exists before adding to it
     const existingEntries = newData[entryMapKey] ?? {};
     const updatedEntries = {
       ...existingEntries,
       [newEntry._id]: newEntry as ConvertOrTypeToAndType<typeof newEntry>,
     };
-    // TypeScript cannot narrow the union type from entryMapKey, so we assert the type
     (newData[entryMapKey] as typeof updatedEntries) = updatedEntries;
 
     const newVersionId = new Types.ObjectId().toString();
@@ -300,7 +306,8 @@ export class CvService {
   private createEntryItem({
     entryFieldName,
     positionIndex,
-  }: CreateEntryItemProps) {
+    entryData,
+  }: CreateEntryItemProps & { entryData?: CreateEntryItemInput }) {
     const _id = new Types.ObjectId().toString();
 
     return match(entryFieldName)
@@ -315,6 +322,7 @@ export class CvService {
           description: 'Description',
           skills: [],
           positionIndex,
+          ...entryData,
         };
         return item;
       })
@@ -325,6 +333,7 @@ export class CvService {
           description: 'A new project description',
           skills: ['Programming', 'Cheating'],
           positionIndex,
+          ...entryData,
         };
         return item;
       })
@@ -334,6 +343,7 @@ export class CvService {
           category: 'Soft Skills',
           skills: ['Adaptability'],
           positionIndex,
+          ...entryData,
         };
         return item;
       })
@@ -343,6 +353,7 @@ export class CvService {
           name: 'New Company',
           position: 'Developer',
           positionIndex,
+          ...entryData,
         };
         return item;
       })
@@ -352,6 +363,7 @@ export class CvService {
           linkName: 'GitHub',
           link: 'github.com/SkuratovichA',
           positionIndex,
+          ...entryData,
         };
         return item;
       })

@@ -44,6 +44,46 @@ export type ConvertPdfToCvObjectType = {
   cv?: Maybe<CvObjectType>;
 };
 
+export type CreateContactInfoInput = {
+  link?: InputMaybe<Scalars['String']['input']>;
+  linkName?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type CreateEducationInput = {
+  degree?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  duration?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Int']['input']>;
+  skills?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type CreateProjectInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Int']['input']>;
+  skills?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type CreateSkillInput = {
+  category?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Int']['input']>;
+  skills?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type CreateWorkExperienceInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  duration?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Int']['input']>;
+  skills?: InputMaybe<Array<Scalars['String']['input']>>;
+  type?: InputMaybe<Scalars['String']['input']>;
+};
+
 export enum CvEntryType {
   ContactInfo = 'CONTACT_INFO',
   Education = 'EDUCATION',
@@ -153,8 +193,13 @@ export type MutationDeleteEntryItemArgs = {
 
 
 export type MutationGenerateNewEntryItemArgs = {
+  contactInfoData?: InputMaybe<CreateContactInfoInput>;
   cvId: Scalars['ID']['input'];
+  educationData?: InputMaybe<CreateEducationInput>;
   entryFieldName: CvEntryType;
+  projectData?: InputMaybe<CreateProjectInput>;
+  skillData?: InputMaybe<CreateSkillInput>;
+  workExperienceData?: InputMaybe<CreateWorkExperienceInput>;
 };
 
 
@@ -382,6 +427,11 @@ export type UpdateCvMutation = { __typename?: 'Mutation', updateCv: { __typename
 export type GenerateNewEntryItemMutationVariables = Exact<{
   cvId: Scalars['ID']['input'];
   entryType: CvEntryType;
+  workExperienceData?: InputMaybe<CreateWorkExperienceInput>;
+  skillData?: InputMaybe<CreateSkillInput>;
+  educationData?: InputMaybe<CreateEducationInput>;
+  projectData?: InputMaybe<CreateProjectInput>;
+  contactInfoData?: InputMaybe<CreateContactInfoInput>;
 }>;
 
 
@@ -689,8 +739,16 @@ export type UpdateCvMutationHookResult = ReturnType<typeof useUpdateCvMutation>;
 export type UpdateCvMutationResult = Apollo.MutationResult<UpdateCvMutation>;
 export type UpdateCvMutationOptions = Apollo.BaseMutationOptions<UpdateCvMutation, UpdateCvMutationVariables>;
 export const GenerateNewEntryItemDocument = gql`
-    mutation GenerateNewEntryItem($cvId: ID!, $entryType: CvEntryType!) {
-  generateNewEntryItem(cvId: $cvId, entryFieldName: $entryType) {
+    mutation GenerateNewEntryItem($cvId: ID!, $entryType: CvEntryType!, $workExperienceData: CreateWorkExperienceInput, $skillData: CreateSkillInput, $educationData: CreateEducationInput, $projectData: CreateProjectInput, $contactInfoData: CreateContactInfoInput) {
+  generateNewEntryItem(
+    cvId: $cvId
+    entryFieldName: $entryType
+    workExperienceData: $workExperienceData
+    skillData: $skillData
+    educationData: $educationData
+    projectData: $projectData
+    contactInfoData: $contactInfoData
+  ) {
     contactInfoEntries {
       ...ContactInfoFragment
     }
@@ -736,6 +794,11 @@ export type GenerateNewEntryItemComponentProps = Omit<ApolloReactComponents.Muta
  *   variables: {
  *      cvId: // value for 'cvId'
  *      entryType: // value for 'entryType'
+ *      workExperienceData: // value for 'workExperienceData'
+ *      skillData: // value for 'skillData'
+ *      educationData: // value for 'educationData'
+ *      projectData: // value for 'projectData'
+ *      contactInfoData: // value for 'contactInfoData'
  *   },
  * });
  */

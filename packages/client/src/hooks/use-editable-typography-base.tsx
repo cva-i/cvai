@@ -12,7 +12,7 @@ type UseEditableTypographyBaseReturn = {
   startEditing: () => void;
   tempValue?: Maybe<string>;
   setTempValue: React.Dispatch<React.SetStateAction<string>>;
-  handleSave: () => void;
+  handleSave: (valueToSave?: string) => void;
   handleCancel: () => void;
   isPending: boolean;
   displayValue: string | null | undefined;
@@ -44,20 +44,22 @@ export const useEditableTypographyBase = ({
     setTempValue(value);
   }, [value]);
 
-  const handleSave = useCallback(() => {
-    if (tempValue == null || tempValue === value) {
+  const handleSave = useCallback((valueToSave?: string) => {
+    const newValue = valueToSave ?? tempValue;
+
+    if (newValue == null || newValue === value) {
       setIsEditing(false);
       return;
     }
 
-    setOptimisticValue(tempValue);
+    setTempValue(newValue);
+    setOptimisticValue(newValue);
     setIsEditing(false);
 
     startTransition(async () => {
-      const [, error] = await tryCatch(onSave(tempValue));
+      const [, error] = await tryCatch(onSave(newValue));
       if (error) {
         console.error('Failed to save:', error);
-        // On error, the optimistic value will revert to the real value
       }
     });
   }, [tempValue, value, onSave, setOptimisticValue]);

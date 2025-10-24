@@ -16,7 +16,7 @@ export const WorkExperience = ({ cvId }: CvEntryComponentProps) => {
   const useGetEntriesQueryResult = useGetCvQuery({
     variables: { cvId },
   });
-  const { entries, loading, updateField, removeEntry, handleAddEntry } =
+  const { entries, loading, updateField, removeEntry, handleAddEntry, moveUp, moveDown } =
     useCvEntries({
       cvId,
       useGetEntriesQueryResult,
@@ -30,9 +30,13 @@ export const WorkExperience = ({ cvId }: CvEntryComponentProps) => {
       loading={loading}
       entries={entries}
       noEntriesText="No work experience entries."
-      renderEntry={(entry) => (
+      renderEntry={(entry, index) => (
         <WithRemoveEntryButton
           removeEntry={() => removeEntry(entry._id)}
+          onAddEntry={handleAddEntry}
+          onMoveUp={index > 0 ? () => moveUp(entry._id) : undefined}
+          onMoveDown={index < entries.length - 1 ? () => moveDown(entry._id) : undefined}
+          currentEntry={entry}
           key={entry._id}
         >
           <WorkExperienceEntry
