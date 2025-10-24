@@ -53,29 +53,42 @@ export const EditableTypographyBase = ({
   const contentEditableRef = useRef<HTMLDivElement>(null);
   const saveTimeoutRef = useRef<number | undefined>(undefined);
   const previouslyEditingRef = useRef(false);
-  const { isEntryActive } = useEntryEdit();
+  const { isEntryActive, deactivate } = useEntryEdit();
 
-  useEffect(function syncContentEditable() {
-    if (useContentEditable && contentEditableRef.current) {
-      const displayValue = valueRender?.(value) ?? value ?? '';
-      const currentContent = contentEditableRef.current.textContent ?? '';
+  useEffect(
+    function syncContentEditable() {
+      if (useContentEditable && contentEditableRef.current) {
+        const displayValue = valueRender?.(value) ?? value ?? '';
+        const currentContent = contentEditableRef.current.textContent ?? '';
 
-      if (currentContent !== displayValue && (!isEditing || document.activeElement !== contentEditableRef.current)) {
-        contentEditableRef.current.textContent = displayValue;
+        if (
+          currentContent !== displayValue &&
+          (!isEditing || document.activeElement !== contentEditableRef.current)
+        ) {
+          contentEditableRef.current.textContent = displayValue;
+        }
       }
-    }
-  }, [value, isEditing, useContentEditable, valueRender]);
+    },
+    [value, isEditing, useContentEditable, valueRender]
+  );
 
-  useEffect(function saveOnEntryBlur() {
-    if (previouslyEditingRef.current && !isEntryActive && contentEditableRef.current) {
-      const currentContent = contentEditableRef.current.textContent ?? '';
-      const originalValue = valueRender?.(value) ?? value ?? '';
-      if (currentContent !== originalValue) {
-        handleSave(currentContent);
+  useEffect(
+    function saveOnEntryBlur() {
+      if (
+        previouslyEditingRef.current &&
+        !isEntryActive &&
+        contentEditableRef.current
+      ) {
+        const currentContent = contentEditableRef.current.textContent ?? '';
+        const originalValue = valueRender?.(value) ?? value ?? '';
+        if (currentContent !== originalValue) {
+          handleSave(currentContent);
+        }
       }
-    }
-    previouslyEditingRef.current = isEntryActive;
-  }, [isEntryActive, value, valueRender, handleSave]);
+      previouslyEditingRef.current = isEntryActive;
+    },
+    [isEntryActive, value, valueRender, handleSave]
+  );
 
   useEffect(() => {
     return () => {
@@ -119,30 +132,44 @@ export const EditableTypographyBase = ({
     }
   }, [value, valueRender, handleSave]);
 
-  const handleContentEditableKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter' && !multiline) {
-      e.preventDefault();
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
+  const handleContentEditableKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'Enter' && !multiline) {
+        e.preventDefault();
+        if (saveTimeoutRef.current) {
+          clearTimeout(saveTimeoutRef.current);
+        }
+        if (contentEditableRef.current) {
+          const currentContent = contentEditableRef.current.textContent ?? '';
+          handleSave(currentContent);
+          contentEditableRef.current.blur();
+        }
+      } else if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        if (saveTimeoutRef.current) {
+          clearTimeout(saveTimeoutRef.current);
+        }
+        if (contentEditableRef.current) {
+          const currentContent = contentEditableRef.current.textContent ?? '';
+          handleSave(currentContent);
+          contentEditableRef.current.blur();
+        }
+        deactivate?.();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        if (saveTimeoutRef.current) {
+          clearTimeout(saveTimeoutRef.current);
+        }
+        handleCancel();
+        if (contentEditableRef.current) {
+          const displayValue = valueRender?.(value) ?? value ?? '';
+          contentEditableRef.current.textContent = displayValue;
+          contentEditableRef.current.blur();
+        }
       }
-      if (contentEditableRef.current) {
-        const currentContent = contentEditableRef.current.textContent ?? '';
-        handleSave(currentContent);
-        contentEditableRef.current.blur();
-      }
-    } else if (e.key === 'Escape') {
-      e.preventDefault();
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current);
-      }
-      handleCancel();
-      if (contentEditableRef.current) {
-        const displayValue = valueRender?.(value) ?? value ?? '';
-        contentEditableRef.current.textContent = displayValue;
-        contentEditableRef.current.blur();
-      }
-    }
-  }, [multiline, value, valueRender, handleSave, handleCancel]);
+    },
+    [multiline, value, valueRender, handleSave, handleCancel, deactivate]
+  );
 
   return (
     <Box

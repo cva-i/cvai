@@ -2,6 +2,7 @@ import { createContext, useContext } from 'react';
 
 interface EntryEditContextType {
   isEntryActive: boolean;
+  deactivate?: () => void;
 }
 
 export const EntryEditContext = createContext<EntryEditContextType>({

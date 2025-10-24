@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { AddEntryButton } from '../../CvVisualizer/CvFields/WorkExperience/AddEntryButton';
 import type { CvEntryItem } from '../../CvVisualizer/types';
 import { PopupMenu, Row } from '../../../atoms';
-import { usePreviewMode } from "../../../../contexts";
+import { usePreviewMode } from '../../../../contexts';
 
 type GenericEntriesSectionProps<TEntry extends CvEntryItem> = {
   title?: string;
@@ -17,7 +17,6 @@ type GenericEntriesSectionProps<TEntry extends CvEntryItem> = {
   titleStyles?: TypographyProps['sx'];
   flexDirection?: 'row' | 'column';
   sx?: BoxProps['sx'];
-  gap?: BoxProps['gap'];
 };
 
 export function GenericEntriesSection<TEntry extends CvEntryItem>({
@@ -30,7 +29,6 @@ export function GenericEntriesSection<TEntry extends CvEntryItem>({
   titleStyles,
   flexDirection = 'column',
   sx,
-  gap = 2,
 }: GenericEntriesSectionProps<TEntry>) {
   const { isPreviewing } = usePreviewMode();
 
@@ -59,12 +57,7 @@ export function GenericEntriesSection<TEntry extends CvEntryItem>({
         </Row>
       )}
 
-      <Box
-        display="flex"
-        flexDirection={flexDirection}
-        gap={gap}
-        flexWrap="wrap"
-      >
+      <Box display="flex" flexDirection={flexDirection} flexWrap="wrap">
         {entries.map((entry, index) => renderEntry(entry, index))}
         {!entries.length && (
           <Box display="flex" alignItems="center" gap={1} width="100%">

@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import type { BoxProps } from '@mui/material';
-import { Box, Backdrop, IconButton } from '@mui/material';
-import { usePreviewMode, EntryEditContext } from '../../../contexts';
+import { Box, IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { WithEditableSection } from './WithEditableSection';
 
 type WithRemoveEntryButtonProps = React.PropsWithChildren<{
   removeEntry: () => {};
@@ -27,60 +27,12 @@ export const WithRemoveEntryButton = ({
   height,
   ...props
 }: WithRemoveEntryButtonProps) => {
-  const { isPreviewing } = usePreviewMode();
-  const [isHovered, setIsHovered] = useState(false);
-  const [showMenu, setShowMenu] = useState(false);
-
-  const contextValue = useMemo(
-    () => ({ isEntryActive: showMenu }),
-    [showMenu]
-  );
-
-  if (isPreviewing) {
-    return <Box>{children}</Box>;
-  }
-
   return (
-    <EntryEditContext.Provider value={contextValue}>
-      <Backdrop
-        open={showMenu}
-        sx={{
-          backgroundColor: 'rgba(0, 0, 0, 0.3)',
-          zIndex: (theme) => theme.zIndex.modal,
-        }}
-        onClick={() => setShowMenu(false)}
-      />
-      <Box
-        display={'flex'}
-        justifyContent={'start'}
-        flexDirection={flexDirection}
-        height={height}
-        alignItems={'flex-start'}
-        position="relative"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={(e) => {
-          const target = e.target as HTMLElement;
-          if (target.isContentEditable || target.closest('[contenteditable="true"]')) {
-            return;
-          }
-          if (isHovered && !showMenu) {
-            setShowMenu(true);
-          }
-        }}
-        sx={{
-          border: isHovered ? '2px solid' : '2px solid transparent',
-          borderColor: isHovered ? 'primary.main' : 'transparent',
-          borderRadius: (theme) => theme.shape.borderRadius,
-          transition: 'border-color 0.2s',
-          zIndex: showMenu ? (theme) => theme.zIndex.modal + 1 : 'auto',
-          backgroundColor: showMenu ? 'background.paper' : 'transparent',
-          padding: 1,
-          cursor: isHovered && !showMenu ? 'pointer' : 'default',
-        }}
-        {...props}
-      >
-        {showMenu && (
+    <WithEditableSection
+      flexDirection={flexDirection}
+      height={height}
+      renderActions={(isActive) =>
+        isActive ? (
           <Box
             position="absolute"
             top={-40}
@@ -130,7 +82,9 @@ export const WithRemoveEntryButton = ({
               onClick={(e) => {
                 e.stopPropagation();
                 if (currentEntry) {
-                  onAddEntry?.({ positionIndex: currentEntry.positionIndex + 1 });
+                  onAddEntry?.({
+                    positionIndex: currentEntry.positionIndex + 1,
+                  });
                 } else {
                   onAddEntry?.();
                 }
@@ -141,9 +95,11 @@ export const WithRemoveEntryButton = ({
               <AddIcon fontSize="small" />
             </IconButton>
           </Box>
-        )}
-        {children}
-      </Box>
-    </EntryEditContext.Provider>
+        ) : null
+      }
+      {...props}
+    >
+      {children}
+    </WithEditableSection>
   );
 };
