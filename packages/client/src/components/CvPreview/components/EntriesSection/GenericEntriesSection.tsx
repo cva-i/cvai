@@ -1,10 +1,9 @@
 import React from 'react';
 import type { BoxProps, TypographyProps } from '@mui/material';
-import { Box, Typography, IconButton } from '@mui/material';
+import { Box, IconButton, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { AddEntryButton } from '../../CvVisualizer/CvFields/WorkExperience/AddEntryButton';
 import type { CvEntryItem } from '../../CvVisualizer/types';
-import { PopupMenu, Row } from '../../../atoms';
 import { usePreviewMode } from '../../../../contexts';
 
 type GenericEntriesSectionProps<TEntry extends CvEntryItem> = {
@@ -39,22 +38,9 @@ export function GenericEntriesSection<TEntry extends CvEntryItem>({
   return (
     <Box sx={sx}>
       {title && (
-        <Row justifyContent="space-between" alignItems="center">
-          <Typography variant="h4" gutterBottom sx={titleStyles}>
-            {title}
-          </Typography>
-          {!isPreviewing && (
-            <PopupMenu
-              id={`${title}-popup`}
-              options={[
-                {
-                  label: 'Add Entry',
-                  action: () => onAdd?.(),
-                },
-              ]}
-            />
-          )}
-        </Row>
+        <Typography variant="h4" gutterBottom sx={titleStyles}>
+          {title}
+        </Typography>
       )}
 
       <Box display="flex" flexDirection={flexDirection} flexWrap="wrap">
