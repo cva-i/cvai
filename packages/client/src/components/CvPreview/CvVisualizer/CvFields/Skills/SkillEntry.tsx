@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { EditableTypography, Row } from '../../../../atoms';
 import type { CvEntryItemProps } from '../../types';
 import { CommaSeparatedList } from '../../../../CommaSeparatedList';
@@ -10,8 +10,6 @@ export const SkillEntry = ({
   updateField,
   isEditing,
 }: CvEntryItemProps<'skillEntries'>) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { isPreviewing } = usePreviewMode();
 
   const handleUpdateSkills = async (newSkills: string[]) => {

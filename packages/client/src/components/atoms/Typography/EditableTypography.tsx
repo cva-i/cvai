@@ -1,10 +1,8 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   useEditableTypographyBase,
-  useTypographyActionsPortal,
 } from '../../../hooks';
 import { EditableTypographyBase } from './EditableTypographyBase';
-import { grey } from '@mui/material/colors';
 import type { EditableTypographyProps } from './types';
 import { useEntryEdit } from '../../../contexts';
 

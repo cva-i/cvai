@@ -13,7 +13,10 @@ import {
   useAuth,
 } from '../contexts';
 import { CvCreationDialog } from './CreateCvFlow';
-import { COLLAPSED_SIDEBAR_WIDTH, EXPANDED_SIDEBAR_WIDTH } from "./Sidebar/FloatingSidebar";
+import {
+  COLLAPSED_SIDEBAR_WIDTH,
+  EXPANDED_SIDEBAR_WIDTH,
+} from './Sidebar/FloatingSidebar';
 
 export const LoginButton = () => {
   const handleLogin = useCallback(() => {
@@ -75,7 +78,9 @@ const AppContainer = styled(Box)({
 const MainContent = styled(Box)<{ isSidebarExpanded: boolean }>(
   ({ isSidebarExpanded }) => ({
     flex: 1,
-    marginLeft: isSidebarExpanded ? EXPANDED_SIDEBAR_WIDTH + 24 : COLLAPSED_SIDEBAR_WIDTH + 24,
+    marginLeft: isSidebarExpanded
+      ? EXPANDED_SIDEBAR_WIDTH + 24
+      : COLLAPSED_SIDEBAR_WIDTH + 24,
     transition: 'margin 0.3s ease',
     overflow: 'auto',
   })

@@ -16,13 +16,20 @@ export const WorkExperience = ({ cvId }: CvEntryComponentProps) => {
   const useGetEntriesQueryResult = useGetCvQuery({
     variables: { cvId },
   });
-  const { entries, loading, updateField, removeEntry, handleAddEntry, moveUp, moveDown } =
-    useCvEntries({
-      cvId,
-      useGetEntriesQueryResult,
-      entryFieldName: 'workExperienceEntries',
-      refetchQueries: [refetchGetWorkExperienceEntriesQuery({ cvId })],
-    });
+  const {
+    entries,
+    loading,
+    updateField,
+    removeEntry,
+    handleAddEntry,
+    moveUp,
+    moveDown,
+  } = useCvEntries({
+    cvId,
+    useGetEntriesQueryResult,
+    entryFieldName: 'workExperienceEntries',
+    refetchQueries: [refetchGetWorkExperienceEntriesQuery({ cvId })],
+  });
 
   return (
     <GenericEntriesSection<WorkExperienceGraphqlType>
@@ -35,7 +42,9 @@ export const WorkExperience = ({ cvId }: CvEntryComponentProps) => {
           removeEntry={() => removeEntry(entry._id)}
           onAddEntry={handleAddEntry}
           onMoveUp={index > 0 ? () => moveUp(entry._id) : undefined}
-          onMoveDown={index < entries.length - 1 ? () => moveDown(entry._id) : undefined}
+          onMoveDown={
+            index < entries.length - 1 ? () => moveDown(entry._id) : undefined
+          }
           currentEntry={entry}
           key={entry._id}
         >

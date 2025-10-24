@@ -19,10 +19,16 @@ const CurrentCvContext = createContext<CurrentCvContextType | undefined>(
   undefined
 );
 
-export const CurrentCvProvider = ({ children }: { children: React.ReactNode }) => {
+export const CurrentCvProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [currentCvId, setCurrentCvIdState] = useState<string | null>(() => {
     if (!!window) {
-      const [data, error] = tryCatchSync(() => localStorage.getItem(CURRENT_CV_KEY));
+      const [data, error] = tryCatchSync(() =>
+        localStorage.getItem(CURRENT_CV_KEY)
+      );
       if (error) {
         console.error('Failed to load currentCvId from localStorage:', error);
         return null;

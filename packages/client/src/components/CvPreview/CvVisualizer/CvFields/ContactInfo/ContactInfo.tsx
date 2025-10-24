@@ -16,13 +16,20 @@ export const ContactInfo = ({ cvId }: CvEntryComponentProps) => {
   const useGetEntriesQueryResult = useGetCvQuery({
     variables: { cvId },
   });
-  const { entries, loading, updateField, removeEntry, handleAddEntry, moveUp, moveDown } =
-    useCvEntries({
-      cvId,
-      useGetEntriesQueryResult,
-      entryFieldName: 'contactInfoEntries',
-      refetchQueries: [refetchGetContactInfoEntriesQuery({ cvId })],
-    });
+  const {
+    entries,
+    loading,
+    updateField,
+    removeEntry,
+    handleAddEntry,
+    moveUp,
+    moveDown,
+  } = useCvEntries({
+    cvId,
+    useGetEntriesQueryResult,
+    entryFieldName: 'contactInfoEntries',
+    refetchQueries: [refetchGetContactInfoEntriesQuery({ cvId })],
+  });
 
   return (
     <GenericEntriesSection<ContactInfoGraphqlType>
@@ -35,7 +42,11 @@ export const ContactInfo = ({ cvId }: CvEntryComponentProps) => {
           removeEntry={() => removeEntry(contactInfo._id)}
           onAddEntry={handleAddEntry}
           onMoveUp={index > 0 ? () => moveUp(contactInfo._id) : undefined}
-          onMoveDown={index < entries.length - 1 ? () => moveDown(contactInfo._id) : undefined}
+          onMoveDown={
+            index < entries.length - 1
+              ? () => moveDown(contactInfo._id)
+              : undefined
+          }
           currentEntry={contactInfo}
           key={contactInfo._id}
         >

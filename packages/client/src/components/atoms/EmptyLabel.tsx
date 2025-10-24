@@ -7,7 +7,11 @@ type EmptyLabelProps = {
   onClick?: () => void;
 };
 
-export const EmptyLabel = ({ variant = 'body2', sx, onClick }: EmptyLabelProps) => {
+export const EmptyLabel = ({
+  variant = 'body2',
+  sx,
+  onClick,
+}: EmptyLabelProps) => {
   return (
     <Typography
       variant={variant}
