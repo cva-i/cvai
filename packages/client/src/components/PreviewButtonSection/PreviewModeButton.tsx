@@ -1,12 +1,9 @@
 import Preview from '@mui/icons-material/Preview';
 import { usePreviewMode } from '../../contexts';
-import { usePreviewEffects } from '../../hooks';
-import { IconButton } from '../atoms/IconButton';
+import { IconButton } from '../atoms';
 
 export const PreviewModeButton = ({}) => {
   const { togglePreviewMode, isPreviewing } = usePreviewMode();
-
-  usePreviewEffects();
 
   if (isPreviewing) {
     return null;

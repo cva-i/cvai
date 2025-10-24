@@ -92,6 +92,45 @@ export const theme = createTheme({
       secondary: customPalette.secondary.contrastText,
     },
   },
+  typography: {
+    fontSize: 14,
+    h1: {
+      fontSize: '1.75rem',
+      fontWeight: 600,
+    },
+    h2: {
+      fontSize: '1.5rem',
+      fontWeight: 600,
+    },
+    h3: {
+      fontSize: '1.25rem',
+      fontWeight: 600,
+    },
+    h4: {
+      fontSize: '1rem',
+      fontWeight: 600,
+    },
+    h5: {
+      fontSize: '0.875rem',
+      fontWeight: 600,
+    },
+    h6: {
+      fontSize: '0.75rem',
+      fontWeight: 600,
+    },
+    body1: {
+      fontSize: '0.875rem',
+    },
+    body2: {
+      fontSize: '0.75rem',
+    },
+    subtitle1: {
+      fontSize: '0.875rem',
+    },
+    subtitle2: {
+      fontSize: '0.75rem',
+    },
+  },
   components: {
     MuiIconButton: {
       styleOverrides: {
