@@ -16,7 +16,7 @@ export const Projects = ({ cvId }: CvEntryComponentProps) => {
   const useGetEntriesQueryResult = useGetCvQuery({
     variables: { cvId },
   });
-  const { entries, loading, updateField, removeEntry, handleAddEntry } =
+  const { entries, loading, updateField, removeEntry, handleAddEntry, moveUp, moveDown } =
     useCvEntries({
       cvId,
       useGetEntriesQueryResult,
@@ -30,9 +30,13 @@ export const Projects = ({ cvId }: CvEntryComponentProps) => {
       loading={loading}
       entries={entries}
       noEntriesText="No project entries."
-      renderEntry={(project) => (
+      renderEntry={(project, index) => (
         <WithRemoveEntryButton
           removeEntry={() => removeEntry(project._id)}
+          onAddEntry={handleAddEntry}
+          onMoveUp={index > 0 ? () => moveUp(project._id) : undefined}
+          onMoveDown={index < entries.length - 1 ? () => moveDown(project._id) : undefined}
+          currentEntry={project}
           key={project._id}
         >
           <ProjectEntry

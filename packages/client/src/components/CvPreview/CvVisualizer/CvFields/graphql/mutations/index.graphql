@@ -7,10 +7,20 @@ mutation UpdateCv($cvId: ID!, $data: UpdateCvInput!) {
 mutation GenerateNewEntryItem(
   $cvId: ID!
   $entryType: CvEntryType!
+  $workExperienceData: CreateWorkExperienceInput
+  $skillData: CreateSkillInput
+  $educationData: CreateEducationInput
+  $projectData: CreateProjectInput
+  $contactInfoData: CreateContactInfoInput
 ) {
   generateNewEntryItem(
     cvId: $cvId
     entryFieldName: $entryType
+    workExperienceData: $workExperienceData
+    skillData: $skillData
+    educationData: $educationData
+    projectData: $projectData
+    contactInfoData: $contactInfoData
   ) {
     contactInfoEntries {
       ...ContactInfoFragment

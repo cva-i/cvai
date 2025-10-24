@@ -16,7 +16,7 @@ export const Skills: React.FC<CvEntryComponentProps> = ({ cvId }) => {
   const useGetEntriesQueryResult = useGetCvQuery({
     variables: { cvId },
   });
-  const { entries, loading, updateField, removeEntry, handleAddEntry } =
+  const { entries, loading, updateField, removeEntry, handleAddEntry, moveUp, moveDown } =
     useCvEntries({
       cvId,
       useGetEntriesQueryResult,
@@ -31,9 +31,13 @@ export const Skills: React.FC<CvEntryComponentProps> = ({ cvId }) => {
       loading={loading}
       entries={entries}
       noEntriesText="No skills available."
-      renderEntry={(skill) => (
+      renderEntry={(skill, index) => (
         <WithRemoveEntryButton
           removeEntry={() => removeEntry(skill._id)}
+          onAddEntry={handleAddEntry}
+          onMoveUp={index > 0 ? () => moveUp(skill._id) : undefined}
+          onMoveDown={index < entries.length - 1 ? () => moveDown(skill._id) : undefined}
+          currentEntry={skill}
           key={skill._id}
         >
           <SkillEntry
