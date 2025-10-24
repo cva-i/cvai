@@ -17,13 +17,20 @@ export const Education: React.FC<CvEntryComponentProps> = ({ cvId }) => {
     variables: { cvId },
   });
 
-  const { entries, loading, updateField, removeEntry, handleAddEntry, moveUp, moveDown } =
-    useCvEntries({
-      cvId,
-      useGetEntriesQueryResult,
-      entryFieldName: 'educationEntries',
-      refetchQueries: [refetchGetEducationEntriesQuery({ cvId })],
-    });
+  const {
+    entries,
+    loading,
+    updateField,
+    removeEntry,
+    handleAddEntry,
+    moveUp,
+    moveDown,
+  } = useCvEntries({
+    cvId,
+    useGetEntriesQueryResult,
+    entryFieldName: 'educationEntries',
+    refetchQueries: [refetchGetEducationEntriesQuery({ cvId })],
+  });
 
   return (
     <GenericEntriesSection<EducationGraphqlType>
@@ -36,15 +43,13 @@ export const Education: React.FC<CvEntryComponentProps> = ({ cvId }) => {
           removeEntry={() => removeEntry(entry._id)}
           onAddEntry={handleAddEntry}
           onMoveUp={index > 0 ? () => moveUp(entry._id) : undefined}
-          onMoveDown={index < entries.length - 1 ? () => moveDown(entry._id) : undefined}
+          onMoveDown={
+            index < entries.length - 1 ? () => moveDown(entry._id) : undefined
+          }
           currentEntry={entry}
           key={entry._id}
         >
-          <EducationEntry
-            cvId={cvId}
-            entry={entry}
-            updateField={updateField}
-          />
+          <EducationEntry cvId={cvId} entry={entry} updateField={updateField} />
         </WithRemoveEntryButton>
       )}
       onAdd={handleAddEntry}

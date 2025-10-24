@@ -15,16 +15,15 @@ import {
   refetchGetNameQuery,
   useUpdateCvNameMutation,
 } from '../../../generated/graphql';
-import { customPalette, shadowStyles } from "../../../theme";
-import { usePreviewMode } from "../../../contexts";
+import { customPalette, shadowStyles } from '../../../theme';
+import { usePreviewMode } from '../../../contexts';
 
 type CvVisualizerProps = {
   cvId: string;
 };
 
 export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
-
-  const {isPreviewing} = usePreviewMode();
+  const { isPreviewing } = usePreviewMode();
 
   // fetch positions of all the sections.
 
@@ -78,17 +77,23 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
     };
   }, [isPreviewing]);
 
-  const wrapperStyles = useMemo(() => isPreviewing ? {
-    display: 'flex',
-    justifyContent: 'center' as const,
-    alignItems: 'flex-start' as const,
-    width: '100vw',
-    minHeight: '100vh',
-    position: 'fixed' as const,
-    left: 0,
-    top: 0,
-    paddingLeft: '65px',
-  } : {}, [isPreviewing]);
+  const wrapperStyles = useMemo(
+    () =>
+      isPreviewing
+        ? {
+            display: 'flex',
+            justifyContent: 'center' as const,
+            alignItems: 'flex-start' as const,
+            width: '100vw',
+            minHeight: '100vh',
+            position: 'fixed' as const,
+            left: 0,
+            top: 0,
+            paddingLeft: '65px',
+          }
+        : {},
+    [isPreviewing]
+  );
 
   const content = (
     <Box sx={contentBoxStyles}>
@@ -134,9 +139,5 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
     </Box>
   );
 
-  return isPreviewing ? (
-    <Box sx={wrapperStyles}>
-      {content}
-    </Box>
-  ) : content;
+  return isPreviewing ? <Box sx={wrapperStyles}>{content}</Box> : content;
 };

@@ -58,11 +58,7 @@ export const CommaSeparatedList = ({
 
   return (
     <Box sx={sx} display="flex" alignItems="baseline" gap={0.5}>
-      {labelPrefix && (
-        <Box component="span">
-          {labelPrefix}
-        </Box>
-      )}
+      {labelPrefix && <Box component="span">{labelPrefix}</Box>}
 
       <EditableTypography
         id={id}
@@ -71,7 +67,7 @@ export const CommaSeparatedList = ({
         value={commaSeparatedValue}
         multiline
         onSave={handleSave}
-        valueRender={(v) => (v ?? emptyText) ?? '(empty)'}
+        valueRender={(v) => v ?? emptyText ?? '(empty)'}
         sx={textSx}
         textFieldProps={{
           sx: {

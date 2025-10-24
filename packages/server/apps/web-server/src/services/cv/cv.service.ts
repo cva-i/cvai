@@ -208,7 +208,9 @@ export class CvService {
     const currentVersion = this.getCurrentVersionFromCv(cv);
     const entryMapKey = cvEntryTypeToCvEntryNameMap[entryFieldName];
 
-    const defaultPositionIndex = keys(currentVersion.data[entryMapKey] ?? {}).length;
+    const defaultPositionIndex = keys(
+      currentVersion.data[entryMapKey] ?? {}
+    ).length;
     const positionIndex = entryData?.positionIndex ?? defaultPositionIndex;
 
     const newEntry = this.createEntryItem({

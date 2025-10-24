@@ -25,7 +25,7 @@ export const ResumeList = () => {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
   const items = useMemo(
-    () => (cvQueryLoading ? [] : cvQueryData?.getCvs ?? []),
+    () => (cvQueryLoading ? [] : (cvQueryData?.getCvs ?? [])),
     [cvQueryData, cvQueryLoading]
   );
 

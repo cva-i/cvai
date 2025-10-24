@@ -150,9 +150,7 @@ const ItemContainer = styled(Box)<{ isSelected: boolean }>(
     justifyContent: 'space-between',
     padding: theme.spacing(1.5, 1),
     cursor: 'pointer',
-    backgroundColor: isSelected
-      ? theme.palette.action.selected
-      : 'transparent',
+    backgroundColor: isSelected ? theme.palette.action.selected : 'transparent',
     borderRadius: '12px',
     '&:hover': {
       backgroundColor: isSelected
