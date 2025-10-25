@@ -1,12 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useEditableTypographyBase } from '../../../hooks';
 import { EditableTypographyBase } from './EditableTypographyBase';
+import { EditableTypographyWithSuggestions } from './EditableTypographyWithSuggestions';
 import type { EditableTypographyProps } from './types';
 import { useEntryEdit } from '../../../contexts';
+import { useSuggestions } from '../../../contexts/use-suggestions/SuggestionsProvider';
 
-// TODO: this is a large piece of shit.
-//  the implementation needs to be changed. There's too much ad-hoc things.
-//  color doesn't work and it's buggy and forgive me god I've ever written this component...
 export const EditableTypography = ({
   id,
   value,
@@ -20,8 +19,13 @@ export const EditableTypography = ({
   sx,
   ...typographyProps
 }: EditableTypographyProps) => {
-  const textRef = useRef<HTMLDivElement>(null);
   const { isEntryActive } = useEntryEdit();
+  const {
+    suggestionBlocks,
+    activeSuggestionId,
+    hoveredBlockId,
+    setActiveSuggestionId,
+  } = useSuggestions();
 
   // React 19: Now includes optimistic updates
   const {
@@ -41,16 +45,43 @@ export const EditableTypography = ({
 
   const shouldBeEditing = isEditing || isEntryActive;
 
+  // Check if this block has suggestions
+  const blockSuggestions = suggestionBlocks.find(
+    (block: any) => block.blockId === id
+  );
+  const hasSuggestions =
+    blockSuggestions && blockSuggestions.suggestions.length > 0;
+
+  // If we have suggestions, use the suggestions-aware component
+  if (hasSuggestions) {
+    return (
+      <EditableTypographyWithSuggestions
+        id={id}
+        value={displayValue}
+        onSave={async (newValue: string) => {
+          await handleSave(newValue);
+        }}
+        onAiEdit={onAiEdit}
+        multiline={multiline}
+        isEditing={shouldBeEditing}
+        component={component}
+        textFieldProps={{ ...textFieldProps, disabled: isPending }}
+        valueRender={valueRender}
+        sx={sx}
+        suggestionBlocks={suggestionBlocks}
+        activeSuggestionId={activeSuggestionId}
+        hoveredBlockId={hoveredBlockId}
+        setActiveSuggestionId={setActiveSuggestionId}
+        {...typographyProps}
+      />
+    );
+  }
+
+  // Default behavior for blocks without suggestions
   return (
     <EditableTypographyBase
-      ref={textRef}
-      sx={{ alignContent: 'center', ...sx }}
-      typographyProps={{
-        ...typographyProps,
-        sx: {
-          width: 'fit-content',
-        },
-      }}
+      sx={sx}
+      typographyProps={typographyProps}
       id={id}
       isEditing={shouldBeEditing}
       tempValue={tempValue}
@@ -60,10 +91,7 @@ export const EditableTypography = ({
       handleCancel={handleCancel}
       multiline={multiline}
       variant={typographyProps.variant}
-      textFieldProps={{
-        ...textFieldProps,
-        disabled: isPending,
-      }}
+      textFieldProps={{ ...textFieldProps, disabled: isPending }}
       valueRender={valueRender}
       useContentEditable={true}
     />
