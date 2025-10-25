@@ -80,6 +80,14 @@ export class CvResolver {
     return this.cvService.deleteCv({ cvId, userId });
   }
 
+  @Mutation(() => CvObjectType)
+  async duplicateCv(
+    @CurrentUser() { client_id: userId }: DecodedUserObjectType,
+    @Args('cvId', { type: () => ID }) cvId: string
+  ): Promise<CvObjectType> {
+    return this.cvService.duplicateCv({ cvId, userId });
+  }
+
   @Mutation(() => GenerateNewEntryItemObjectType)
   async generateNewEntryItem(
     @CurrentUser() { client_id: userId }: DecodedUserObjectType,
