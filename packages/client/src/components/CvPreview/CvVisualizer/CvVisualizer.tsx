@@ -15,16 +15,15 @@ import {
   refetchGetNameQuery,
   useUpdateCvNameMutation,
 } from '../../../generated/graphql';
-import { customPalette, shadowStyles } from "../../../theme";
-import { usePreviewMode } from "../../../contexts";
+import { customPalette, shadowStyles } from '../../../theme';
+import { usePreviewMode } from '../../../contexts';
 
 type CvVisualizerProps = {
   cvId: string;
 };
 
 export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
-
-  const {isPreviewing} = usePreviewMode();
+  const { isPreviewing } = usePreviewMode();
 
   // fetch positions of all the sections.
 
@@ -49,25 +48,55 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
     [cvId, updateNameMutation]
   );
 
-  const paperBackgroundStyles = useMemo(() => isPreviewing ? {} : {
-    backgroundColor: customPalette.background.surface,
-    boxShadow: shadowStyles.section.boxShadow,
+  const contentBoxStyles = useMemo(() => {
+    const baseStyles = {
+      gap: '12px',
+      display: 'flex',
+      flexDirection: 'column' as const,
+      justifyContent: 'flex-start' as const,
+    };
+
+    if (isPreviewing) {
+      return {
+        ...baseStyles,
+        width: '100%',
+        maxWidth: '1200px',
+        padding: '40px 60px',
+        fontSize: '1.15em',
+      };
+    }
+
+    return {
+      ...baseStyles,
+      margin: '0 auto',
+      width: '210mm',
+      minHeight: '297mm',
+      padding: '20mm 15mm',
+      backgroundColor: customPalette.background.surface,
+      boxShadow: shadowStyles.section.boxShadow,
+    };
   }, [isPreviewing]);
 
-  return (
-    <Box
-      sx={{
-        gap: '20px',
-        display: 'flex',
-        flexDirection: 'column',
-        margin: '0 auto',
-        maxWidth: '1400px',
-        minHeight: '1600px',
-        padding: '80px 80px',
-        justifyContent: 'flex-start',
-        ...paperBackgroundStyles,
-      }}
-    >
+  const wrapperStyles = useMemo(
+    () =>
+      isPreviewing
+        ? {
+            display: 'flex',
+            justifyContent: 'center' as const,
+            alignItems: 'flex-start' as const,
+            width: '100vw',
+            minHeight: '100vh',
+            position: 'fixed' as const,
+            left: 0,
+            top: 0,
+            paddingLeft: '65px',
+          }
+        : {},
+    [isPreviewing]
+  );
+
+  const content = (
+    <Box sx={contentBoxStyles}>
       <GetNameComponent variables={{ cvId }}>
         {({ data }) => {
           const name = data?.getCv.name;
@@ -109,4 +138,6 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
       <Skills cvId={cvId} />
     </Box>
   );
+
+  return isPreviewing ? <Box sx={wrapperStyles}>{content}</Box> : content;
 };

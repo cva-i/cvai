@@ -8,3 +8,10 @@ mutation CreateCv($templateId: ID!) {
 mutation DeleteCv($cvId: ID!) {
   deleteCv(cvId: $cvId)
 }
+
+mutation DuplicateCv($cvId: ID!) {
+  duplicateCv(cvId: $cvId) {
+    _id
+    title
+  }
+}

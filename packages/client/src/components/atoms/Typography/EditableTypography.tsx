@@ -1,11 +1,8 @@
-import { useCallback, useEffect, useRef } from 'react';
-import {
-  useEditableTypographyBase,
-  useTypographyActionsPortal,
-} from '../../../hooks';
+import { useEffect, useRef } from 'react';
+import { useEditableTypographyBase } from '../../../hooks';
 import { EditableTypographyBase } from './EditableTypographyBase';
-import { grey } from '@mui/material/colors';
 import type { EditableTypographyProps } from './types';
+import { useEntryEdit } from '../../../contexts';
 
 // TODO: this is a large piece of shit.
 //  the implementation needs to be changed. There's too much ad-hoc things.
@@ -24,6 +21,8 @@ export const EditableTypography = ({
   ...typographyProps
 }: EditableTypographyProps) => {
   const textRef = useRef<HTMLDivElement>(null);
+  const { isEntryActive } = useEntryEdit();
+
   // React 19: Now includes optimistic updates
   const {
     isEditing,
@@ -40,53 +39,20 @@ export const EditableTypography = ({
     if (defaultIsEditing) startEditing();
   }, [defaultIsEditing, startEditing]);
 
-  const { triggerPortal, isPortalVisible } = useTypographyActionsPortal({
-    onEdit: startEditing,
-  });
-
-  const handleContextMenu = useCallback(
-    (e: React.MouseEvent) => {
-      // Don't show popup if editing
-      if (isEditing) return;
-      e.preventDefault();
-      const coords = {
-        x: e.clientX + window.scrollX,
-        y: e.clientY + window.scrollY,
-      };
-      triggerPortal(true, coords);
-    },
-    [isEditing, triggerPortal]
-  );
-
-  const onMouseDown = useCallback(
-    (event: React.MouseEvent) => {
-      // if it's right mouse key, don't do anything.
-      // if it's left mouse key click, hide
-      if (event.button !== 0) {
-        // Only proceed if it's the left mouse button (button 0)
-        return;
-      }
-      triggerPortal(false);
-    },
-    [triggerPortal]
-  );
+  const shouldBeEditing = isEditing || isEntryActive;
 
   return (
     <EditableTypographyBase
       ref={textRef}
       sx={{ alignContent: 'center', ...sx }}
-      onMouseDown={onMouseDown}
-      onContextMenu={handleContextMenu}
       typographyProps={{
         ...typographyProps,
         sx: {
-          border: `1px inset dashed ${isPortalVisible ? grey[300] : 'transparent'}`,
-          borderRadius: '10px',
           width: 'fit-content',
         },
       }}
       id={id}
-      isEditing={isEditing}
+      isEditing={shouldBeEditing}
       tempValue={tempValue}
       value={displayValue}
       setTempValue={setTempValue}
@@ -96,10 +62,10 @@ export const EditableTypography = ({
       variant={typographyProps.variant}
       textFieldProps={{
         ...textFieldProps,
-        // React 19: Show loading state during save
         disabled: isPending,
       }}
       valueRender={valueRender}
+      useContentEditable={true}
     />
   );
 };

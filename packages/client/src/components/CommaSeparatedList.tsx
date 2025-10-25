@@ -1,9 +1,7 @@
 import type { ReactNode } from 'react';
-import { useCallback } from 'react';
-import React, { useMemo } from 'react';
+import React, { useCallback } from 'react';
 import type { SxProps, Theme, TypographyProps } from '@mui/material';
 import { Box } from '@mui/material';
-import { usePreviewMode } from '../contexts';
 import { EditableTypography } from './atoms';
 
 export interface CommaSeparatedListProps {
@@ -15,7 +13,7 @@ export interface CommaSeparatedListProps {
   sx?: SxProps<Theme>;
   textSx?: SxProps<Theme>;
   variant?: TypographyProps['variant'];
-  showWhenEmpty?: boolean;
+  emptyText?: string;
 }
 
 export const CommaSeparatedList = ({
@@ -27,16 +25,9 @@ export const CommaSeparatedList = ({
   sx,
   textSx,
   variant = 'body2',
-  showWhenEmpty = false,
+  emptyText,
 }: CommaSeparatedListProps) => {
-  const { isPreviewing } = usePreviewMode();
-
-  const commaSeparatedValue = useMemo(() => items.join(', '), [items]);
-
-  const shouldShow = useMemo(
-    () => showWhenEmpty || !isPreviewing || items.length > 0,
-    [showWhenEmpty, isPreviewing, items]
-  );
+  const typographyValue = items?.length ? items.join(', ') : undefined;
 
   const handleSave = useCallback(
     (value: string) => {
@@ -50,26 +41,17 @@ export const CommaSeparatedList = ({
     [onSave]
   );
 
-  if (!shouldShow) {
-    return null;
-  }
-
   return (
-    <Box sx={sx} display="flex" alignItems="baseline">
-      {labelPrefix && (
-        <Box component="span" mr={0.5}>
-          {labelPrefix}
-        </Box>
-      )}
-
-      {/* Render the editable items */}
+    <Box sx={sx} display="flex" alignItems="baseline" gap={0.5}>
+      {labelPrefix && <Box component="span">{labelPrefix}</Box>}
       <EditableTypography
         id={id}
         variant={variant}
         isEditing={isEditing}
-        value={commaSeparatedValue}
+        value={typographyValue}
         multiline
         onSave={handleSave}
+        valueRender={(v) => v ?? emptyText ?? ''}
         sx={textSx}
         textFieldProps={{
           sx: {

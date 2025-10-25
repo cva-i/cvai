@@ -16,13 +16,20 @@ export const ContactInfo = ({ cvId }: CvEntryComponentProps) => {
   const useGetEntriesQueryResult = useGetCvQuery({
     variables: { cvId },
   });
-  const { entries, loading, updateField, removeEntry, handleAddEntry } =
-    useCvEntries({
-      cvId,
-      useGetEntriesQueryResult,
-      entryFieldName: 'contactInfoEntries',
-      refetchQueries: [refetchGetContactInfoEntriesQuery({ cvId })],
-    });
+  const {
+    entries,
+    loading,
+    updateField,
+    removeEntry,
+    handleAddEntry,
+    moveUp,
+    moveDown,
+  } = useCvEntries({
+    cvId,
+    useGetEntriesQueryResult,
+    entryFieldName: 'contactInfoEntries',
+    refetchQueries: [refetchGetContactInfoEntriesQuery({ cvId })],
+  });
 
   return (
     <GenericEntriesSection<ContactInfoGraphqlType>
@@ -30,9 +37,17 @@ export const ContactInfo = ({ cvId }: CvEntryComponentProps) => {
       loading={loading}
       entries={entries}
       noEntriesText="No contact info entries available."
-      renderEntry={(contactInfo) => (
+      renderEntry={(contactInfo, index) => (
         <WithRemoveEntryButton
           removeEntry={() => removeEntry(contactInfo._id)}
+          onAddEntry={handleAddEntry}
+          onMoveUp={index > 0 ? () => moveUp(contactInfo._id) : undefined}
+          onMoveDown={
+            index < entries.length - 1
+              ? () => moveDown(contactInfo._id)
+              : undefined
+          }
+          currentEntry={contactInfo}
           key={contactInfo._id}
         >
           <ContactInfoEntry
@@ -42,7 +57,7 @@ export const ContactInfo = ({ cvId }: CvEntryComponentProps) => {
           />
         </WithRemoveEntryButton>
       )}
-      onAdd={handleAddEntry}
+      onAdd={() => handleAddEntry()}
       sx={{
         display: 'flex',
         justifyContent: 'space-around',

@@ -58,12 +58,11 @@ export const compareAboutMe = (
 
   if (fields.length === 0) return null;
 
-  const action: ItemAction =
-    !leftAbout?.fieldName
-      ? 'added'
-      : !rightAbout?.fieldName
-        ? 'removed'
-        : 'modified';
+  const action: ItemAction = !leftAbout?.fieldName
+    ? 'added'
+    : !rightAbout?.fieldName
+      ? 'removed'
+      : 'modified';
 
   return {
     section: 'About Me',
@@ -76,7 +75,6 @@ export const compareAboutMe = (
     ],
   };
 };
-
 
 export const compareWorkExperience = (left: CvData, right: CvData) =>
   compareEntries(

@@ -1,16 +1,16 @@
 import React from 'react';
-import { Box, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { EditableTypography, Row } from '../../../../atoms';
+import { Box } from '@mui/material';
+import { EditableTypography } from '../../../../atoms';
 import type { CvEntryItemProps } from '../../types';
 import { CommaSeparatedList } from '../../../../CommaSeparatedList';
+import { usePreviewMode } from '../../../../../contexts';
 
 export const SkillEntry = ({
   entry: skill,
   updateField,
   isEditing,
 }: CvEntryItemProps<'skillEntries'>) => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { isPreviewing } = usePreviewMode();
 
   const handleUpdateSkills = async (newSkills: string[]) => {
     await updateField({
@@ -20,55 +20,33 @@ export const SkillEntry = ({
     });
   };
 
+  const hasNoSkills = !skill.skills || skill.skills.length === 0;
+
+  if (isPreviewing && hasNoSkills) {
+    return null;
+  }
+
   return (
     <Box sx={{ width: '100%' }}>
-      <Row>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'baseline',
-            whiteSpace: 'nowrap',
-            minWidth: 'fit-content',
-          }}
-        >
-          <EditableTypography
-            id={`skill-category-${skill._id}`}
-            value={skill.category}
-            onSave={(value) =>
-              updateField({ _id: skill._id, fieldName: 'category', value })
-            }
-            variant="h6"
-            sx={{
-              fontWeight: 'bold',
-              display: 'inline',
-            }}
-            isEditing={isEditing}
-          />
-          <Typography variant="h6" sx={{ fontWeight: 'bold', mr: 1 }}>
-            :
-          </Typography>
-        </Box>
+      <EditableTypography
+        id={`skill-category-${skill._id}`}
+        value={skill.category}
+        onSave={(value) =>
+          updateField({ _id: skill._id, fieldName: 'category', value })
+        }
+        variant="h5"
+        isEditing={isEditing}
+      />
 
-        <CommaSeparatedList
-          id={`skill-items-${skill._id}`}
-          isEditing={isEditing}
-          items={skill.skills || []}
-          onSave={handleUpdateSkills}
-          variant="h6"
-          showWhenEmpty={isEditing}
-          sx={{ width: '100%' }}
-        />
-      </Row>
-
-      {isEditing && skill.skills.length === 0 && (
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ mt: 1, ml: isMobile ? 0 : 2 }}
-        >
-          Add skills to this category
-        </Typography>
-      )}
+      <CommaSeparatedList
+        id={`skill-items-${skill._id}`}
+        isEditing={isEditing}
+        items={skill.skills || []}
+        onSave={handleUpdateSkills}
+        variant="body1"
+        emptyText="(empty)"
+        sx={{ width: '100%' }}
+      />
     </Box>
   );
 };

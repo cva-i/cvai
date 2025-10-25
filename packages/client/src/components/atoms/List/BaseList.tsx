@@ -67,9 +67,7 @@ export function BaseList<T extends { _id: string }>({
     return (
       <List dense sx={{ width: '100%', ...listSx }}>
         {items.map((item, index) => (
-          <Fragment key={item._id}>
-            {renderItem(item, index)}
-          </Fragment>
+          <Fragment key={item._id}>{renderItem(item, index)}</Fragment>
         ))}
       </List>
     );

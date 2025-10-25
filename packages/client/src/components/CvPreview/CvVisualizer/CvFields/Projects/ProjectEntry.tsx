@@ -44,7 +44,7 @@ export const ProjectEntry = ({
       <SkillsForItemizedEntryEditor
         id={`project-skills-${project._id}`}
         isEditing={isEditing}
-        value={project.skills?.length ? project.skills?.join(', ') : undefined}
+        entries={project.skills ?? []}
         onSave={async (value) =>
           updateField({
             _id: project._id,

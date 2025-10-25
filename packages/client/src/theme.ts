@@ -3,10 +3,15 @@ import { grey } from '@mui/material/colors';
 
 export const customPalette = {
   primary: {
-    light: '#d6d6dc',
-    main: '#757575',
-    dark: '#7d7d81',
-    contrastText: '#17171a',
+    main: '#7373C4',
+    dark: '#4B4B9C',
+    light: '#C4C4F4',
+    contrastText: '#000',
+  },
+  text: {
+    primary: '#000000',
+    secondary: '#555555',
+    disabled: '#9E9E9E',
   },
   secondary: {
     light: alpha('#d7d7d7', 0.2),
@@ -14,18 +19,12 @@ export const customPalette = {
     dark: '#17171a',
     contrastText: '#000',
   },
-  error: {
-    light: '#c47686',
-    main: '#a15e6d',
-    dark: '#7e4754',
-    contrastText: '#5b2f3b',
-  },
   background: {
-    default: '#FAFBFF',
-    paper: '#FAFBFF',
-    surface: '#FFFFFF',
+    default: '#FFFFFF', // color/background/default
+    paper: '#FFFFFF',
+    surface: '#F9F9F9',
   },
-};
+} as const;
 
 export const shadowStyles = {
   section: {
@@ -33,12 +32,12 @@ export const shadowStyles = {
   },
 } as const;
 
-const radius = {
+export const radius = {
   small: '12px',
   medium: '16px',
   large: '24px',
   full: '9999px',
-};
+} as const;
 
 const outlinedInputStyles = {
   '& .MuiOutlinedInput-root': {
@@ -91,6 +90,45 @@ export const theme = createTheme({
     text: {
       primary: customPalette.primary.contrastText,
       secondary: customPalette.secondary.contrastText,
+    },
+  },
+  typography: {
+    fontSize: 14,
+    h1: {
+      fontSize: '1.75rem',
+      fontWeight: 600,
+    },
+    h2: {
+      fontSize: '1.5rem',
+      fontWeight: 600,
+    },
+    h3: {
+      fontSize: '1.25rem',
+      fontWeight: 600,
+    },
+    h4: {
+      fontSize: '1rem',
+      fontWeight: 600,
+    },
+    h5: {
+      fontSize: '0.875rem',
+      fontWeight: 600,
+    },
+    h6: {
+      fontSize: '0.75rem',
+      fontWeight: 600,
+    },
+    body1: {
+      fontSize: '0.875rem',
+    },
+    body2: {
+      fontSize: '0.75rem',
+    },
+    subtitle1: {
+      fontSize: '0.875rem',
+    },
+    subtitle2: {
+      fontSize: '0.75rem',
     },
   },
   components: {

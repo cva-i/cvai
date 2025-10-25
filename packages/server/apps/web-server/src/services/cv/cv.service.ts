@@ -30,6 +30,7 @@ import cloneDeep from 'lodash/cloneDeep';
 
 import {
   CreateEntryItemProps,
+  CreateEntryItemInput,
   CvEntryItemManagerProps,
   CvManagerMethodProps,
 } from './types';
@@ -198,25 +199,32 @@ export class CvService {
     entryFieldName,
     cvId,
     userId,
-  }: Omit<CvEntryItemManagerProps, 'entryItemId'>) {
+    entryData,
+  }: Omit<CvEntryItemManagerProps, 'entryItemId'> & {
+    entryData?: CreateEntryItemInput;
+  }) {
     const cv = await this.validateUserOwnership(cvId, userId);
 
     const currentVersion = this.getCurrentVersionFromCv(cv);
     const entryMapKey = cvEntryTypeToCvEntryNameMap[entryFieldName];
 
+    const defaultPositionIndex = keys(
+      currentVersion.data[entryMapKey] ?? {}
+    ).length;
+    const positionIndex = entryData?.positionIndex ?? defaultPositionIndex;
+
     const newEntry = this.createEntryItem({
       entryFieldName,
-      positionIndex: keys(currentVersion.data[entryMapKey] ?? {}).length,
+      positionIndex,
+      entryData,
     });
 
     const newData = cloneDeep(currentVersion.data);
-    // Ensure the entry map exists before adding to it
     const existingEntries = newData[entryMapKey] ?? {};
     const updatedEntries = {
       ...existingEntries,
       [newEntry._id]: newEntry as ConvertOrTypeToAndType<typeof newEntry>,
     };
-    // TypeScript cannot narrow the union type from entryMapKey, so we assert the type
     (newData[entryMapKey] as typeof updatedEntries) = updatedEntries;
 
     const newVersionId = new Types.ObjectId().toString();
@@ -300,7 +308,8 @@ export class CvService {
   private createEntryItem({
     entryFieldName,
     positionIndex,
-  }: CreateEntryItemProps) {
+    entryData,
+  }: CreateEntryItemProps & { entryData?: CreateEntryItemInput }) {
     const _id = new Types.ObjectId().toString();
 
     return match(entryFieldName)
@@ -308,13 +317,13 @@ export class CvService {
       .with(CvEntryType.EDUCATION, () => {
         const item: Education = {
           _id,
-          name: 'Brno University of Technology',
+          name: 'Masachusetts institute of Technology',
           degree: 'Bc',
           duration: '2020',
-          location: 'Prague',
-          description: 'Description',
+          location: 'Masachusetts',
           skills: [],
           positionIndex,
+          ...entryData,
         };
         return item;
       })
@@ -325,6 +334,7 @@ export class CvService {
           description: 'A new project description',
           skills: ['Programming', 'Cheating'],
           positionIndex,
+          ...entryData,
         };
         return item;
       })
@@ -332,8 +342,9 @@ export class CvService {
         const item: Skill = {
           _id,
           category: 'Soft Skills',
-          skills: ['Adaptability'],
+          skills: ['Example soft skill'],
           positionIndex,
+          ...entryData,
         };
         return item;
       })
@@ -343,15 +354,17 @@ export class CvService {
           name: 'New Company',
           position: 'Developer',
           positionIndex,
+          ...entryData,
         };
         return item;
       })
       .with(CvEntryType.CONTACT_INFO, () => {
         const item: ContactInfo = {
           _id,
-          linkName: 'GitHub',
-          link: 'github.com/SkuratovichA',
+          linkName: 'Contact Entry',
+          link: 'example.com/newContactEntry',
           positionIndex,
+          ...entryData,
         };
         return item;
       })
@@ -497,6 +510,22 @@ export class CvService {
     const templateVersion = this.getCurrentVersionFromCv(templateCv);
 
     return this.createNewCvWithVersion(userId, templateVersion.data);
+  }
+
+  async duplicateCv({
+    userId,
+    cvId,
+  }: {
+    userId: string;
+    cvId: string;
+  }): Promise<CvObjectType> {
+    const cv = await this.validateUserOwnership(cvId, userId);
+    const currentVersion = this.getCurrentVersionFromCv(cv);
+
+    const duplicatedData = cloneDeep(currentVersion.data);
+    duplicatedData.title = `[copy] ${duplicatedData.title}`;
+
+    return this.createNewCvWithVersion(userId, duplicatedData);
   }
 
   async createCvFromVersion({

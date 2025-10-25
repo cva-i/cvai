@@ -84,7 +84,7 @@ export const EducationEntry = ({
       <SkillsForItemizedEntryEditor
         id={`education-skills-${ed._id}`}
         isEditing={isEditing}
-        value={ed.skills?.length ? ed.skills?.join(', ') : undefined}
+        entries={ed.skills ?? []}
         onSave={async (value) =>
           updateField({
             _id: ed._id,

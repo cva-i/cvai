@@ -44,6 +44,46 @@ export type ConvertPdfToCvObjectType = {
   cv?: Maybe<CvObjectType>;
 };
 
+export type CreateContactInfoInput = {
+  link?: InputMaybe<Scalars['String']['input']>;
+  linkName?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type CreateEducationInput = {
+  degree?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  duration?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Int']['input']>;
+  skills?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type CreateProjectInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Int']['input']>;
+  skills?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type CreateSkillInput = {
+  category?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Int']['input']>;
+  skills?: InputMaybe<Array<Scalars['String']['input']>>;
+};
+
+export type CreateWorkExperienceInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  duration?: InputMaybe<Scalars['String']['input']>;
+  location?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+  position?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Int']['input']>;
+  skills?: InputMaybe<Array<Scalars['String']['input']>>;
+  type?: InputMaybe<Scalars['String']['input']>;
+};
+
 export enum CvEntryType {
   ContactInfo = 'CONTACT_INFO',
   Education = 'EDUCATION',
@@ -107,6 +147,7 @@ export type Mutation = {
   deleteCv: Scalars['Boolean']['output'];
   deleteCvEntryItem: Scalars['Boolean']['output'];
   deleteEntryItem: Scalars['Boolean']['output'];
+  duplicateCv: CvObjectType;
   generateNewEntryItem: GenerateNewEntryItemObjectType;
   logout: Scalars['Boolean']['output'];
   redoCvVersion: CvObjectType;
@@ -152,9 +193,19 @@ export type MutationDeleteEntryItemArgs = {
 };
 
 
-export type MutationGenerateNewEntryItemArgs = {
+export type MutationDuplicateCvArgs = {
   cvId: Scalars['ID']['input'];
+};
+
+
+export type MutationGenerateNewEntryItemArgs = {
+  contactInfoData?: InputMaybe<CreateContactInfoInput>;
+  cvId: Scalars['ID']['input'];
+  educationData?: InputMaybe<CreateEducationInput>;
   entryFieldName: CvEntryType;
+  projectData?: InputMaybe<CreateProjectInput>;
+  skillData?: InputMaybe<CreateSkillInput>;
+  workExperienceData?: InputMaybe<CreateWorkExperienceInput>;
 };
 
 
@@ -382,6 +433,11 @@ export type UpdateCvMutation = { __typename?: 'Mutation', updateCv: { __typename
 export type GenerateNewEntryItemMutationVariables = Exact<{
   cvId: Scalars['ID']['input'];
   entryType: CvEntryType;
+  workExperienceData?: InputMaybe<CreateWorkExperienceInput>;
+  skillData?: InputMaybe<CreateSkillInput>;
+  educationData?: InputMaybe<CreateEducationInput>;
+  projectData?: InputMaybe<CreateProjectInput>;
+  contactInfoData?: InputMaybe<CreateContactInfoInput>;
 }>;
 
 
@@ -539,6 +595,13 @@ export type DeleteCvMutationVariables = Exact<{
 
 export type DeleteCvMutation = { __typename?: 'Mutation', deleteCv: boolean };
 
+export type DuplicateCvMutationVariables = Exact<{
+  cvId: Scalars['ID']['input'];
+}>;
+
+
+export type DuplicateCvMutation = { __typename?: 'Mutation', duplicateCv: { __typename?: 'CvObjectType', _id: string, title: string } };
+
 export type GetCvsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -689,8 +752,16 @@ export type UpdateCvMutationHookResult = ReturnType<typeof useUpdateCvMutation>;
 export type UpdateCvMutationResult = Apollo.MutationResult<UpdateCvMutation>;
 export type UpdateCvMutationOptions = Apollo.BaseMutationOptions<UpdateCvMutation, UpdateCvMutationVariables>;
 export const GenerateNewEntryItemDocument = gql`
-    mutation GenerateNewEntryItem($cvId: ID!, $entryType: CvEntryType!) {
-  generateNewEntryItem(cvId: $cvId, entryFieldName: $entryType) {
+    mutation GenerateNewEntryItem($cvId: ID!, $entryType: CvEntryType!, $workExperienceData: CreateWorkExperienceInput, $skillData: CreateSkillInput, $educationData: CreateEducationInput, $projectData: CreateProjectInput, $contactInfoData: CreateContactInfoInput) {
+  generateNewEntryItem(
+    cvId: $cvId
+    entryFieldName: $entryType
+    workExperienceData: $workExperienceData
+    skillData: $skillData
+    educationData: $educationData
+    projectData: $projectData
+    contactInfoData: $contactInfoData
+  ) {
     contactInfoEntries {
       ...ContactInfoFragment
     }
@@ -736,6 +807,11 @@ export type GenerateNewEntryItemComponentProps = Omit<ApolloReactComponents.Muta
  *   variables: {
  *      cvId: // value for 'cvId'
  *      entryType: // value for 'entryType'
+ *      workExperienceData: // value for 'workExperienceData'
+ *      skillData: // value for 'skillData'
+ *      educationData: // value for 'educationData'
+ *      projectData: // value for 'projectData'
+ *      contactInfoData: // value for 'contactInfoData'
  *   },
  * });
  */
@@ -1714,6 +1790,46 @@ export function useDeleteCvMutation(baseOptions?: Apollo.MutationHookOptions<Del
 export type DeleteCvMutationHookResult = ReturnType<typeof useDeleteCvMutation>;
 export type DeleteCvMutationResult = Apollo.MutationResult<DeleteCvMutation>;
 export type DeleteCvMutationOptions = Apollo.BaseMutationOptions<DeleteCvMutation, DeleteCvMutationVariables>;
+export const DuplicateCvDocument = gql`
+    mutation DuplicateCv($cvId: ID!) {
+  duplicateCv(cvId: $cvId) {
+    _id
+    title
+  }
+}
+    `;
+export type DuplicateCvMutationFn = Apollo.MutationFunction<DuplicateCvMutation, DuplicateCvMutationVariables>;
+export type DuplicateCvComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<DuplicateCvMutation, DuplicateCvMutationVariables>, 'mutation'>;
+
+    export const DuplicateCvComponent = (props: DuplicateCvComponentProps) => (
+      <ApolloReactComponents.Mutation<DuplicateCvMutation, DuplicateCvMutationVariables> mutation={DuplicateCvDocument} {...props} />
+    );
+    
+
+/**
+ * __useDuplicateCvMutation__
+ *
+ * To run a mutation, you first call `useDuplicateCvMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDuplicateCvMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [duplicateCvMutation, { data, loading, error }] = useDuplicateCvMutation({
+ *   variables: {
+ *      cvId: // value for 'cvId'
+ *   },
+ * });
+ */
+export function useDuplicateCvMutation(baseOptions?: Apollo.MutationHookOptions<DuplicateCvMutation, DuplicateCvMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DuplicateCvMutation, DuplicateCvMutationVariables>(DuplicateCvDocument, options);
+      }
+export type DuplicateCvMutationHookResult = ReturnType<typeof useDuplicateCvMutation>;
+export type DuplicateCvMutationResult = Apollo.MutationResult<DuplicateCvMutation>;
+export type DuplicateCvMutationOptions = Apollo.BaseMutationOptions<DuplicateCvMutation, DuplicateCvMutationVariables>;
 export const GetCvsDocument = gql`
     query GetCvs {
   getCvs {
