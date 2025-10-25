@@ -1,7 +1,7 @@
-import React, { useCallback } from 'react';
-import { Box, Button } from '@mui/material';
+import { useCallback, useState } from 'react';
+import { Box, Button, styled } from '@mui/material';
 import { environment } from '../environment';
-import { WithActionsMenu } from './WithActionsMenu';
+import { FloatingSidebar } from './Sidebar';
 import { CurrentCvPreview } from './CvPreview';
 import { CenteredBox } from './atoms';
 import {
@@ -13,8 +13,12 @@ import {
   useAuth,
 } from '../contexts';
 import { CvCreationDialog } from './CreateCvFlow';
+import {
+  COLLAPSED_SIDEBAR_WIDTH,
+  EXPANDED_SIDEBAR_WIDTH,
+} from './Sidebar/FloatingSidebar';
 
-export const LoginButton: React.FC = () => {
+export const LoginButton = () => {
   const handleLogin = useCallback(() => {
     const backendGoogleOAuthUrl = `${environment.apiUrl}/auth/google`;
     window.location.href = backendGoogleOAuthUrl;
@@ -29,6 +33,7 @@ export const LoginButton: React.FC = () => {
 
 export const IndexPage = () => {
   const { user, logout } = useAuth();
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
 
   if (!user) {
     return (
@@ -44,11 +49,15 @@ export const IndexPage = () => {
         <DialogProvider>
           <CvCreationFlowProvider>
             <PreviewModeProvider>
-              <Box sx={{ display: 'flex' }}>
-                <WithActionsMenu>
+              <AppContainer>
+                <FloatingSidebar
+                  isExpanded={isSidebarExpanded}
+                  onToggle={setIsSidebarExpanded}
+                />
+                <MainContent isSidebarExpanded={isSidebarExpanded}>
                   <CurrentCvPreview />
-                </WithActionsMenu>
-              </Box>
+                </MainContent>
+              </AppContainer>
             </PreviewModeProvider>
 
             <CvCreationDialog />
@@ -58,3 +67,21 @@ export const IndexPage = () => {
     </CurrentUserProvider>
   );
 };
+
+const AppContainer = styled(Box)({
+  display: 'flex',
+  width: '100vw',
+  height: '100vh',
+  overflow: 'hidden',
+});
+
+const MainContent = styled(Box)<{ isSidebarExpanded: boolean }>(
+  ({ isSidebarExpanded }) => ({
+    flex: 1,
+    marginLeft: isSidebarExpanded
+      ? EXPANDED_SIDEBAR_WIDTH + 24
+      : COLLAPSED_SIDEBAR_WIDTH + 24,
+    transition: 'margin 0.3s ease',
+    overflow: 'auto',
+  })
+);

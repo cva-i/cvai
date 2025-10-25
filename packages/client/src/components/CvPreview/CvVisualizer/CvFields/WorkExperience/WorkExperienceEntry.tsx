@@ -99,7 +99,7 @@ export const WorkExperienceEntry = ({
       <SkillsForItemizedEntryEditor
         id={`we-skills-${we._id}`}
         isEditing={isEditing}
-        value={we.skills?.length ? we.skills?.join(', ') : undefined}
+        entries={we.skills ?? []}
         onSave={async (value) =>
           updateField({
             _id: we._id,

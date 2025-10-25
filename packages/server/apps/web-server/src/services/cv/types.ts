@@ -1,4 +1,11 @@
-import type { CvEntryType } from './dto';
+import type {
+  CvEntryType,
+  CreateWorkExperienceInput,
+  CreateSkillInput,
+  CreateEducationInput,
+  CreateProjectInput,
+  CreateContactInfoInput,
+} from './dto';
 
 export type CvManagerMethodProps = {
   cvId: string;
@@ -16,3 +23,10 @@ export type CreateEntryItemProps = {
   entryFieldName: CvEntryType;
   positionIndex: number;
 };
+
+export type CreateEntryItemInput =
+  | CreateWorkExperienceInput
+  | CreateSkillInput
+  | CreateEducationInput
+  | CreateProjectInput
+  | CreateContactInfoInput;

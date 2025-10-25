@@ -1,14 +1,19 @@
 import React, { useEffect } from 'react';
 import { Box, styled, Typography } from '@mui/material';
-import { useCurrentCv } from '../../contexts';
+import { useCurrentCv, usePreviewMode } from '../../contexts';
 import { CvVisualizer } from './CvVisualizer';
 import { CenteredBox } from '../atoms';
 import { useCheckCvLazyQuery } from '../../generated/graphql';
 import { PreviewModeButton } from '../PreviewButtonSection';
 import { VersionControlButtons } from '../PreviewButtonSection/VersionControlButtons';
+import { ClosePreviewButton } from '../PreviewButtonSection/ClosePreviewButton';
+import { usePreviewEffects } from '../../hooks';
 
 export const CurrentCvPreview: React.FC = () => {
   const { currentCvId } = useCurrentCv();
+  const { isPreviewing } = usePreviewMode();
+
+  usePreviewEffects();
 
   const [fetchCvFunction, { loading, error, data }] = useCheckCvLazyQuery();
 
@@ -58,10 +63,13 @@ export const CurrentCvPreview: React.FC = () => {
     >
       <CvVisualizer cvId={data.getCv._id} />
 
-      <ActionButtonsContainer>
-        <VersionControlButtons />
-        <PreviewModeButton />
-      </ActionButtonsContainer>
+      {!isPreviewing && (
+        <ActionButtonsContainer>
+          <VersionControlButtons />
+          <PreviewModeButton />
+        </ActionButtonsContainer>
+      )}
+      <ClosePreviewButton />
     </Box>
   );
 };

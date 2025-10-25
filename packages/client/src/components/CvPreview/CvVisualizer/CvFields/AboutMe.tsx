@@ -6,8 +6,9 @@ import {
   refetchGetCvVersionHistoryQuery,
   useUpdateCvMutation,
 } from '../../../../generated/graphql';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { EditableTypography } from '../../../atoms';
+import { WithEditableSection } from '../../components';
 
 export const AboutMe = ({ cvId }: CvEntryComponentProps) => {
   const [updateAboutMe] = useUpdateCvMutation({
@@ -21,22 +22,6 @@ export const AboutMe = ({ cvId }: CvEntryComponentProps) => {
     ],
   });
 
-  const updateField = async ({
-    fieldName,
-    value,
-  }: UpdateFieldProps<'aboutMe'>) => {
-    await updateAboutMe({
-      variables: {
-        cvId,
-        data: {
-          aboutMe: {
-            [fieldName]: value,
-          },
-        },
-      },
-    });
-  };
-
   return (
     <GetAboutMeComponent variables={{ cvId }}>
       {({ data: { getCv: { aboutMe } = {} } = {}, loading }) => {
@@ -48,8 +33,24 @@ export const AboutMe = ({ cvId }: CvEntryComponentProps) => {
           return <Typography>About me is empty</Typography>;
         }
 
+        const updateField = async ({
+          fieldName,
+          value,
+        }: UpdateFieldProps<'aboutMe'>) => {
+          await updateAboutMe({
+            variables: {
+              cvId,
+              data: {
+                aboutMe: {
+                  [fieldName]: value,
+                },
+              },
+            },
+          });
+        };
+
         return (
-          <Box>
+          <WithEditableSection flexDirection="column">
             <EditableTypography
               id={`about-me-fieldName`}
               value={aboutMe.fieldName}
@@ -75,7 +76,7 @@ export const AboutMe = ({ cvId }: CvEntryComponentProps) => {
               multiline
               variant="body1"
             />
-          </Box>
+          </WithEditableSection>
         );
       }}
     </GetAboutMeComponent>

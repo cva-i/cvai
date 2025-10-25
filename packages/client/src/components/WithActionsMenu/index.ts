@@ -1,1 +1,1 @@
-export * from './WithActionsMenu';
+export * from './MenuHeader';
