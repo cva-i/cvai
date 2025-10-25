@@ -11,8 +11,9 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
 import { useCurrentCv, useCvCreationFlow, useDialog } from '../../contexts';
-import { useUpdateCvMutation } from '../../generated/graphql';
+import { useUpdateCvMutation, useDuplicateCvMutation, refetchGetCvsQuery } from '../../generated/graphql';
 import { RenameDialog } from '../RenameDialog';
 
 type ResumeListItemProps = {
@@ -26,6 +27,9 @@ export const ResumeListItem = ({ id, name, onDelete }: ResumeListItemProps) => {
   const { setTemplateId } = useCvCreationFlow();
   const { open: openDialog } = useDialog();
   const [updateCv] = useUpdateCvMutation();
+  const [duplicateCv] = useDuplicateCvMutation({
+    refetchQueries: [refetchGetCvsQuery()],
+  });
 
   const [isHovered, setIsHovered] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -69,6 +73,16 @@ export const ResumeListItem = ({ id, name, onDelete }: ResumeListItemProps) => {
     setTemplateId(id);
     openDialog();
   }, [handleMenuClose, id, setTemplateId, openDialog]);
+
+  const handleDuplicate = useCallback(async () => {
+    handleMenuClose();
+    const result = await duplicateCv({
+      variables: { cvId: id },
+    });
+    if (result.data?.duplicateCv) {
+      setCurrentCvId(result.data.duplicateCv._id);
+    }
+  }, [handleMenuClose, id, duplicateCv, setCurrentCvId]);
 
   const handleDelete = useCallback(() => {
     handleMenuClose();
@@ -122,6 +136,10 @@ export const ResumeListItem = ({ id, name, onDelete }: ResumeListItemProps) => {
         <MenuItem onClick={handleRename}>
           <EditIcon fontSize="small" sx={{ mr: 1 }} />
           Rename
+        </MenuItem>
+        <MenuItem onClick={handleDuplicate}>
+          <FileCopyIcon fontSize="small" sx={{ mr: 1 }} />
+          Duplicate
         </MenuItem>
         <MenuItem onClick={handleUseAsTemplate}>
           <ContentCopyIcon fontSize="small" sx={{ mr: 1 }} />

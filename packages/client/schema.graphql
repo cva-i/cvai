@@ -120,6 +120,7 @@ type Mutation {
   deleteCv(cvId: ID!): Boolean!
   deleteCvEntryItem(cvId: ID!, entryFieldName: CvEntryType!, entryItemId: ID!): Boolean!
   deleteEntryItem(cvId: ID!, entryFieldName: CvEntryType!, entryItemId: ID!): Boolean!
+  duplicateCv(cvId: ID!): CvObjectType!
   generateNewEntryItem(contactInfoData: CreateContactInfoInput, cvId: ID!, educationData: CreateEducationInput, entryFieldName: CvEntryType!, projectData: CreateProjectInput, skillData: CreateSkillInput, workExperienceData: CreateWorkExperienceInput): GenerateNewEntryItemObjectType!
   logout: Boolean!
   redoCvVersion(cvId: ID!): CvObjectType!
