@@ -55,6 +55,9 @@ export function ClosePreviewButton() {
         top: 24,
         right: 24,
         zIndex: 10000,
+        '@media print': {
+          display: 'none',
+        },
       }}
     >
       <IconButton
