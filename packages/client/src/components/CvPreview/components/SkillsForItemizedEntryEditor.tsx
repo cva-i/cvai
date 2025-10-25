@@ -8,20 +8,21 @@ import { usePreviewMode } from '../../../contexts';
 
 type SkillsForItemizedEntryEditorProps = Pick<
   EditableTypographyProps,
-  'onSave' | 'id' | 'isEditing' | 'value'
+  'onSave' | 'id' | 'isEditing'
 > & {
   labelPrefix?: ReactNode;
+  entries: string[];
 };
 
-export const SkillsForItemizedEntryEditor: React.FC<
-  SkillsForItemizedEntryEditorProps
-> = ({ id, isEditing, value, onSave, labelPrefix }) => {
+export const SkillsForItemizedEntryEditor = ({
+  id,
+  isEditing,
+  entries: _entries,
+  onSave,
+  labelPrefix,
+}: SkillsForItemizedEntryEditorProps) => {
   const { isPreviewing } = usePreviewMode();
-  const items = value ? value.split(',').map((s) => s.trim()) : [];
-
-  if (isPreviewing && items.length === 0) {
-    return null;
-  }
+  const entries = _entries.filter((entry) => !!entry.trim());
 
   const handleSave = async (newItems: string[]) => {
     await onSave(newItems.join(', '));
@@ -43,17 +44,20 @@ export const SkillsForItemizedEntryEditor: React.FC<
   const finalLabelPrefix =
     labelPrefix === undefined ? defaultLabelPrefix : labelPrefix;
 
+  if (isPreviewing && entries.length === 0) {
+    return null;
+  }
+
   return (
     <CommaSeparatedList
       id={id}
       isEditing={isEditing}
-      items={items}
+      items={entries}
       onSave={handleSave}
       labelPrefix={finalLabelPrefix}
       sx={{ color: grey[600] }}
       textSx={{ color: grey[600] }}
       variant="body2"
-      showWhenEmpty={!isPreviewing}
       emptyText="(empty)"
     />
   );

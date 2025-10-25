@@ -61,7 +61,6 @@ export const SkillEntry = ({
           items={skill.skills || []}
           onSave={handleUpdateSkills}
           variant="body1"
-          showWhenEmpty={!isPreviewing}
           emptyText="(empty)"
           sx={{ width: '100%' }}
         />

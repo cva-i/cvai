@@ -2,7 +2,6 @@ import React from 'react';
 import type { BoxProps, TypographyProps } from '@mui/material';
 import { Box, IconButton, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { AddEntryButton } from '../../CvVisualizer/CvFields/WorkExperience/AddEntryButton';
 import type { CvEntryItem } from '../../CvVisualizer/types';
 import { usePreviewMode } from '../../../../contexts';
 
@@ -63,12 +62,6 @@ export function GenericEntriesSection<TEntry extends CvEntryItem>({
               </IconButton>
             )}
           </Box>
-        )}
-        {!title && onAdd && entries.length > 0 && (
-          <AddEntryButton
-            onAddEntry={async () => onAdd()}
-            sx={{ alignSelf: 'center' }}
-          />
         )}
       </Box>
     </Box>
