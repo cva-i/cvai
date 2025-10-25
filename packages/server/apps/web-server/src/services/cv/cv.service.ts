@@ -317,11 +317,10 @@ export class CvService {
       .with(CvEntryType.EDUCATION, () => {
         const item: Education = {
           _id,
-          name: 'Brno University of Technology',
+          name: 'Masachusetts institute of Technology',
           degree: 'Bc',
           duration: '2020',
-          location: 'Prague',
-          description: 'Description',
+          location: 'Masachusetts',
           skills: [],
           positionIndex,
           ...entryData,
@@ -343,7 +342,7 @@ export class CvService {
         const item: Skill = {
           _id,
           category: 'Soft Skills',
-          skills: ['Adaptability'],
+          skills: ['Example soft skill'],
           positionIndex,
           ...entryData,
         };
@@ -362,8 +361,8 @@ export class CvService {
       .with(CvEntryType.CONTACT_INFO, () => {
         const item: ContactInfo = {
           _id,
-          linkName: 'GitHub',
-          link: 'github.com/SkuratovichA',
+          linkName: 'Contact Entry',
+          link: 'example.com/newContactEntry',
           positionIndex,
           ...entryData,
         };
@@ -511,6 +510,22 @@ export class CvService {
     const templateVersion = this.getCurrentVersionFromCv(templateCv);
 
     return this.createNewCvWithVersion(userId, templateVersion.data);
+  }
+
+  async duplicateCv({
+    userId,
+    cvId,
+  }: {
+    userId: string;
+    cvId: string;
+  }): Promise<CvObjectType> {
+    const cv = await this.validateUserOwnership(cvId, userId);
+    const currentVersion = this.getCurrentVersionFromCv(cv);
+
+    const duplicatedData = cloneDeep(currentVersion.data);
+    duplicatedData.title = `[copy] ${duplicatedData.title}`;
+
+    return this.createNewCvWithVersion(userId, duplicatedData);
   }
 
   async createCvFromVersion({
