@@ -57,7 +57,7 @@ export const ContactInfo = ({ cvId }: CvEntryComponentProps) => {
           />
         </WithRemoveEntryButton>
       )}
-      onAdd={handleAddEntry}
+      onAdd={() => handleAddEntry()}
       sx={{
         display: 'flex',
         justifyContent: 'space-around',

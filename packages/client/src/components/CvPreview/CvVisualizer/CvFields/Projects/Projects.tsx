@@ -51,7 +51,7 @@ export const Projects = ({ cvId }: CvEntryComponentProps) => {
           <ProjectEntry cvId={cvId} entry={project} updateField={updateField} />
         </WithRemoveEntryButton>
       )}
-      onAdd={handleAddEntry}
+      onAdd={() => handleAddEntry()}
     />
   );
 };

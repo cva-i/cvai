@@ -55,7 +55,7 @@ export const WorkExperience = ({ cvId }: CvEntryComponentProps) => {
           />
         </WithRemoveEntryButton>
       )}
-      onAdd={handleAddEntry}
+      onAdd={() => handleAddEntry()}
     />
   );
 };
