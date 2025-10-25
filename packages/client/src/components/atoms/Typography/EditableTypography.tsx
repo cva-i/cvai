@@ -1,7 +1,5 @@
 import { useEffect, useRef } from 'react';
-import {
-  useEditableTypographyBase,
-} from '../../../hooks';
+import { useEditableTypographyBase } from '../../../hooks';
 import { EditableTypographyBase } from './EditableTypographyBase';
 import type { EditableTypographyProps } from './types';
 import { useEntryEdit } from '../../../contexts';

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { EditableTypography, Row } from '../../../../atoms';
+import { Box } from '@mui/material';
+import { EditableTypography } from '../../../../atoms';
 import type { CvEntryItemProps } from '../../types';
 import { CommaSeparatedList } from '../../../../CommaSeparatedList';
 import { usePreviewMode } from '../../../../../contexts';
@@ -28,43 +28,25 @@ export const SkillEntry = ({
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Row>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'baseline',
-            whiteSpace: 'nowrap',
-            minWidth: 'fit-content',
-          }}
-        >
-          <EditableTypography
-            id={`skill-category-${skill._id}`}
-            value={skill.category}
-            onSave={(value) =>
-              updateField({ _id: skill._id, fieldName: 'category', value })
-            }
-            variant="body1"
-            sx={{
-              fontWeight: 'bold',
-              display: 'inline',
-            }}
-            isEditing={isEditing}
-          />
-          <Typography variant="body1" sx={{ fontWeight: 'bold', mr: 1 }}>
-            :
-          </Typography>
-        </Box>
+      <EditableTypography
+        id={`skill-category-${skill._id}`}
+        value={skill.category}
+        onSave={(value) =>
+          updateField({ _id: skill._id, fieldName: 'category', value })
+        }
+        variant="h5"
+        isEditing={isEditing}
+      />
 
-        <CommaSeparatedList
-          id={`skill-items-${skill._id}`}
-          isEditing={isEditing}
-          items={skill.skills || []}
-          onSave={handleUpdateSkills}
-          variant="body1"
-          emptyText="(empty)"
-          sx={{ width: '100%' }}
-        />
-      </Row>
+      <CommaSeparatedList
+        id={`skill-items-${skill._id}`}
+        isEditing={isEditing}
+        items={skill.skills || []}
+        onSave={handleUpdateSkills}
+        variant="body1"
+        emptyText="(empty)"
+        sx={{ width: '100%' }}
+      />
     </Box>
   );
 };

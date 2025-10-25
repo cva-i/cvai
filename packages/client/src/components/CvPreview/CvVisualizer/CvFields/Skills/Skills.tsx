@@ -33,7 +33,6 @@ export const Skills: React.FC<CvEntryComponentProps> = ({ cvId }) => {
 
   return (
     <GenericEntriesSection<SkillGraphqlType>
-      title="Skills"
       loading={loading}
       entries={entries}
       noEntriesText="No skills available."
@@ -51,7 +50,7 @@ export const Skills: React.FC<CvEntryComponentProps> = ({ cvId }) => {
           <SkillEntry cvId={cvId} entry={skill} updateField={updateField} />
         </WithRemoveEntryButton>
       )}
-      onAdd={handleAddEntry}
+      onAdd={() => handleAddEntry()}
     />
   );
 };

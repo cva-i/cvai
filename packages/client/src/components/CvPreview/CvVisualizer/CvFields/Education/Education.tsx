@@ -52,7 +52,7 @@ export const Education: React.FC<CvEntryComponentProps> = ({ cvId }) => {
           <EducationEntry cvId={cvId} entry={entry} updateField={updateField} />
         </WithRemoveEntryButton>
       )}
-      onAdd={handleAddEntry}
+      onAdd={() => handleAddEntry()}
     />
   );
 };
