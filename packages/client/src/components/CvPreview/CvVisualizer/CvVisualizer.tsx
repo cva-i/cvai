@@ -15,16 +15,14 @@ import {
   refetchGetNameQuery,
   useUpdateCvNameMutation,
 } from '../../../generated/graphql';
-import { customPalette, shadowStyles } from "../../../theme";
-import { usePreviewMode } from "../../../contexts";
+import { customPalette, shadowStyles } from '../../../theme';
+import { usePreviewMode } from '../../../contexts';
+import { SuggestionsPanel } from '../SuggestionsPanel';
 
-type CvVisualizerProps = {
-  cvId: string;
-};
+type CvVisualizerProps = { cvId: string };
 
 export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
-
-  const {isPreviewing} = usePreviewMode();
+  const { isPreviewing } = usePreviewMode();
 
   // fetch positions of all the sections.
 
@@ -39,74 +37,89 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
 
   const handleUpdateName = useCallback(
     async (name: string) => {
-      await updateNameMutation({
-        variables: {
-          cvId,
-          name,
-        },
-      });
+      await updateNameMutation({ variables: { cvId, name } });
     },
     [cvId, updateNameMutation]
   );
 
-  const paperBackgroundStyles = useMemo(() => isPreviewing ? {} : {
-    backgroundColor: customPalette.background.surface,
-    boxShadow: shadowStyles.section.boxShadow,
-  }, [isPreviewing]);
+  const paperBackgroundStyles = useMemo(
+    () =>
+      isPreviewing
+        ? {}
+        : {
+            backgroundColor: customPalette.background.surface,
+            boxShadow: shadowStyles.section.boxShadow,
+          },
+    [isPreviewing]
+  );
 
   return (
     <Box
       sx={{
-        gap: '20px',
         display: 'flex',
-        flexDirection: 'column',
+        gap: '24px',
         margin: '0 auto',
-        maxWidth: '1400px',
-        minHeight: '1600px',
-        padding: '80px 80px',
-        justifyContent: 'flex-start',
-        ...paperBackgroundStyles,
+        maxWidth: '1800px',
+        padding: '20px',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
       }}
     >
-      <GetNameComponent variables={{ cvId }}>
-        {({ data }) => {
-          const name = data?.getCv.name;
-          if (!name) {
-            return <Skeleton variant="text" width={'100%'} height={40} />;
-          }
-          return (
-            <EditableTypography
-              id={'cv-name'}
-              value={name}
-              onSave={handleUpdateName}
-              variant="h3"
-              sx={{
-                textAlign: 'center',
-              }}
-            />
-          );
+      {/* CV Content */}
+      <Box
+        sx={{
+          gap: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          width: '1400px',
+          minHeight: '1600px',
+          padding: '80px 80px',
+          justifyContent: 'flex-start',
+          ...paperBackgroundStyles,
         }}
-      </GetNameComponent>
+      >
+        <GetNameComponent variables={{ cvId }}>
+          {({ data }) => {
+            const name = data?.getCv.name;
+            if (!name) {
+              return <Skeleton variant="text" width={'100%'} height={40} />;
+            }
+            return (
+              <EditableTypography
+                id={'cv-name'}
+                value={name}
+                onSave={handleUpdateName}
+                variant="h3"
+                sx={{ textAlign: 'center' }}
+              />
+            );
+          }}
+        </GetNameComponent>
 
-      <ContactInfo cvId={cvId} />
+        <ContactInfo cvId={cvId} />
 
-      <AboutMe cvId={cvId} />
+        <AboutMe cvId={cvId} />
 
-      <Divider />
+        <Divider />
 
-      <WorkExperience cvId={cvId} />
+        <WorkExperience cvId={cvId} />
 
-      <Divider />
+        <Divider />
 
-      <Projects cvId={cvId} />
+        <Projects cvId={cvId} />
 
-      <Divider />
+        <Divider />
 
-      <Education cvId={cvId} />
+        <Education cvId={cvId} />
 
-      <Divider />
+        <Divider />
 
-      <Skills cvId={cvId} />
+        <Skills cvId={cvId} />
+      </Box>
+
+      {/* Suggestions Panel */}
+
+      <SuggestionsPanel />
     </Box>
   );
 };

@@ -1,0 +1,178 @@
+import React, { useRef, useCallback, useEffect } from 'react';
+import { Box, Typography, TextField } from '@mui/material';
+import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
+import { styled } from '@mui/material/styles';
+import { useSuggestions } from '../../../contexts/use-suggestions/SuggestionsProvider';
+import type { Suggestion } from '../../../contexts/use-suggestions/types';
+
+const CardContainer = styled(Box)<{ isActive?: boolean }>(
+  ({ theme, isActive }) => ({
+    border: isActive ? '2px solid #8b5cf6' : '2px solid #f3f4f6',
+    borderRadius: '8px',
+    backgroundColor: '#ffffff',
+    padding: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    transition: 'all 0.2s ease-out',
+    '&:hover': isActive ? {} : { borderColor: '#8b5cf630', transition: 'none' },
+  })
+);
+
+const HeaderActions = styled(Box)({
+  display: 'flex',
+  gap: '16px',
+  paddingBottom: '12px',
+  borderBottom: '1px solid #e5e7eb',
+});
+
+const ActionButton = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  cursor: 'pointer',
+  fontSize: '14px',
+  fontWeight: 500,
+  color: '#6b7280',
+  transition: 'color 0.2s ease-in-out',
+  padding: 6,
+  borderRadius: 8,
+  '&:hover': { color: '#111827', backgroundColor: '#f3f4f6' },
+  '& svg': { fontSize: '18px' },
+}));
+
+const AuthorSection = styled(Box)({
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: '8px',
+  marginBottom: '4px',
+});
+
+const AuthorName = styled(Typography)({
+  fontSize: '14px',
+  fontWeight: 600,
+  color: '#111827',
+});
+
+const Timestamp = styled(Typography)({
+  fontSize: '13px',
+  color: '#9ca3af',
+  fontWeight: 400,
+});
+
+const CommentText = styled(Typography)({
+  fontSize: '14px',
+  lineHeight: '1.6',
+  color: '#374151',
+  marginBottom: '8px',
+});
+
+const ReplyInput = styled(TextField)({
+  '& .MuiOutlinedInput-root': {
+    fontSize: '14px',
+    backgroundColor: '#f9fafb',
+    borderRadius: '6px',
+    '& fieldset': { borderColor: '#e5e7eb' },
+    '&:hover fieldset': { borderColor: '#d1d5db' },
+    '&.Mui-focused fieldset': { borderColor: '#8b5cf6', borderWidth: '1px' },
+  },
+  '& .MuiOutlinedInput-input': {
+    padding: '10px 12px',
+    '&::placeholder': { color: '#9ca3af', opacity: 1 },
+  },
+});
+
+interface SuggestionCardProps {
+  suggestion: Suggestion;
+  blockId: string;
+  isActive: boolean;
+  onAccept: () => void;
+  onReject: () => void;
+  registerRef?: (suggestionId: string, element: HTMLDivElement | null) => void;
+}
+
+export const SuggestionCard: React.FC<SuggestionCardProps> = ({
+  suggestion,
+  blockId,
+  isActive,
+  onAccept,
+  onReject,
+  registerRef,
+}) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const { setHoveredBlockId, setActiveSuggestionId } = useSuggestions();
+
+  const handleMouseEnter = useCallback(() => {
+    setHoveredBlockId(blockId);
+  }, [blockId, setHoveredBlockId]);
+
+  const handleMouseLeave = useCallback(() => {
+    setHoveredBlockId(null);
+  }, [setHoveredBlockId]);
+
+  const handleCardClick = useCallback(() => {
+    setActiveSuggestionId(suggestion.id);
+  }, [suggestion.id, setActiveSuggestionId]);
+
+  // Register ref for scrolling
+  useEffect(() => {
+    if (registerRef && cardRef.current) {
+      registerRef(suggestion.id, cardRef.current);
+    }
+    return () => {
+      if (registerRef) {
+        registerRef(suggestion.id, null);
+      }
+    };
+  }, [registerRef, suggestion.id]);
+
+  const formatTimestamp = (date?: Date) => {
+    if (!date) return 'Just now';
+    return new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(
+      Math.floor((date.getTime() - Date.now()) / (1000 * 60)),
+      'minute'
+    );
+  };
+
+  return (
+    <CardContainer
+      ref={cardRef}
+      isActive={isActive}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleCardClick}
+      data-suggestion-card
+    >
+      {/* Header Actions */}
+      <HeaderActions>
+        <ActionButton
+          onClick={(e) => {
+            e.stopPropagation();
+            onAccept();
+          }}
+        >
+          <CheckIcon />
+          <span>Resolve</span>
+        </ActionButton>
+        <ActionButton
+          onClick={(e) => {
+            e.stopPropagation();
+            onReject();
+          }}
+        >
+          <CloseIcon />
+          <span>Reject</span>
+        </ActionButton>
+      </HeaderActions>
+
+      {/* Author and Timestamp */}
+      <AuthorSection>
+        <AuthorName>{suggestion.authorName || 'AI Assistant'}</AuthorName>
+        <Timestamp>· {formatTimestamp(suggestion.createdAt)}</Timestamp>
+      </AuthorSection>
+
+      {/* Comment Text */}
+      <CommentText>{suggestion.text}</CommentText>
+    </CardContainer>
+  );
+};
