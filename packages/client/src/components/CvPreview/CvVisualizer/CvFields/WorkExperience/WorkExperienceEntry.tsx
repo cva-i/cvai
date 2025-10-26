@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { EditableTypography, Row } from '../../../../atoms';
+import { EditableTypography, RowLayout } from '../../../../atoms';
 import type { CvEntryItemProps } from '../../types';
 import {
   DescriptionTextSection,
@@ -22,7 +22,7 @@ export const WorkExperienceEntry = ({
         alignItems={'start'}
       >
         <Box display={'flex'} flexDirection={'column'}>
-          <Row gap={1}>
+          <RowLayout gap={1}>
             <EditableTypography
               id={`we-position-${we._id}`}
               value={we.position}
@@ -57,7 +57,7 @@ export const WorkExperienceEntry = ({
                 textWrap: 'nowrap',
               }}
             />
-          </Row>
+          </RowLayout>
           {/* </WithRemoveEntryButton>*/}
 
           <JobTypeTextSection

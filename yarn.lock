@@ -1733,7 +1733,6 @@ __metadata:
     jiti: "npm:^2.4.0"
     jsondiffpatch: "npm:^0.6.0"
     lodash: "npm:^4.17.21"
-    nanoid: "npm:^5.1.6"
     openapi-fetch: "npm:^0.13.0"
     openapi-typescript: "npm:^7.4.3"
     prettier: "npm:^3.3.3"
@@ -12986,15 +12985,6 @@ __metadata:
   bin:
     nanoid: bin/nanoid.cjs
   checksum: 10/73b5afe5975a307aaa3c95dfe3334c52cdf9ae71518176895229b8d65ab0d1c0417dd081426134eb7571c055720428ea5d57c645138161e7d10df80815527c48
-  languageName: node
-  linkType: hard
-
-"nanoid@npm:^5.1.6":
-  version: 5.1.6
-  resolution: "nanoid@npm:5.1.6"
-  bin:
-    nanoid: bin/nanoid.js
-  checksum: 10/4109dbcf596d7f297a9b42f459b8f01694a03ebbdd2f41408d963ad54e5ec7234cbe7b4acad137751f31add11bb4fb3415a3e688082516745812811f05570014
   languageName: node
   linkType: hard
 

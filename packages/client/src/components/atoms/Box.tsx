@@ -16,12 +16,12 @@ export const CenteredBox = styled(Box)({
   height: '100%',
 });
 
-export const Row = styled(Box)({
+export const RowLayout = styled(Box)({
   display: 'flex',
   flexDirection: 'row',
 });
 
-export const Column = styled(Box)({
+export const ColumnLayout = styled(Box)({
   display: 'flex',
   flexDirection: 'column',
 });

@@ -8,7 +8,7 @@ import {
   Skills,
   WorkExperience,
 } from './CvFields';
-import { EditableTypography } from '../../atoms';
+import { EditableTypography, RowLayout } from '../../atoms';
 import {
   GetNameComponent,
   refetchGetCvVersionHistoryQuery,
@@ -135,12 +135,12 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
     </Box>
   );
 
-  return isPreviewing
-    ? (
-      <Box sx={wrapperStyles}>
-        {content}
-        <SuggestionsPanel />
-      </Box>
-    )
-    : content;
+  return isPreviewing ? (
+    <Box sx={wrapperStyles}>{content}</Box>
+  ) : (
+    <RowLayout>
+      {content}
+      <SuggestionsPanel />
+    </RowLayout>
+  );
 };

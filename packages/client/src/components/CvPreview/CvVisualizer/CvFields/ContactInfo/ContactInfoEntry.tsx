@@ -1,5 +1,5 @@
 import React from 'react';
-import { Column, EditableTypography } from '../../../../atoms';
+import { ColumnLayout, EditableTypography } from '../../../../atoms';
 import type { CvEntryItemProps } from '../../types';
 
 export const ContactInfoEntry = ({
@@ -8,7 +8,7 @@ export const ContactInfoEntry = ({
   isEditing,
 }: CvEntryItemProps<'contactInfoEntries'>) => {
   return (
-    <Column>
+    <ColumnLayout>
       <EditableTypography
         id={`contactInfo-category-${contactInfo._id}`}
         value={contactInfo.linkName}
@@ -43,6 +43,6 @@ export const ContactInfoEntry = ({
           color: 'primary.main',
         }}
       />
-    </Column>
+    </ColumnLayout>
   );
 };

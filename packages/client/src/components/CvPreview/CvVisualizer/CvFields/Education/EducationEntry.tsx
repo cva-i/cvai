@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { EditableTypography, Row } from '../../../../atoms';
+import { EditableTypography, RowLayout } from '../../../../atoms';
 import type { CvEntryItemProps } from '../../types';
 import {
   DescriptionTextSection,
@@ -21,7 +21,7 @@ export const EducationEntry = ({
         alignItems={'start'}
       >
         <Box display={'flex'} flexDirection={'column'}>
-          <Row gap={1}>
+          <RowLayout gap={1}>
             <EditableTypography
               id={`education-degree-${ed._id}`}
               value={ed.degree || ''}
@@ -56,7 +56,7 @@ export const EducationEntry = ({
                 textWrap: 'nowrap',
               }}
             />
-          </Row>
+          </RowLayout>
 
           <DescriptionTextSection
             id={ed._id}
