@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Suggestion, SuggestionBlock } from '../contexts/use-suggestions/types';
+import type { SuggestionBlock } from '../contexts/use-suggestions/types';
 import {
   getSuggestionsForBlock,
   hasSuggestions,

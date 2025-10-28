@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useEditableTypographyBase } from '../../../hooks';
 import { EditableTypographyBase } from './EditableTypographyBase';
 import { EditableTypographyWithSuggestions } from './EditableTypographyWithSuggestions';
@@ -19,6 +19,7 @@ export const EditableTypography = ({
   sx,
   ...typographyProps
 }: EditableTypographyProps) => {
+  const textRef = useRef<HTMLDivElement>(null);
   const { isEntryActive } = useEntryEdit();
   const {
     suggestionBlocks,
@@ -80,8 +81,15 @@ export const EditableTypography = ({
   // Default behavior for blocks without suggestions
   return (
     <EditableTypographyBase
-      sx={sx}
-      typographyProps={typographyProps}
+      ref={textRef}
+      sx={{ alignContent: 'center', ...sx }}
+      typographyProps={{
+        ...typographyProps,
+        sx: {
+          width: 'fit-content',
+          ...((typographyProps as any).sx || {}),
+        },
+      }}
       id={id}
       isEditing={shouldBeEditing}
       tempValue={tempValue}

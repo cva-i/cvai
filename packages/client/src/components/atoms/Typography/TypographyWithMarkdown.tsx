@@ -34,22 +34,8 @@ export const TypographyWithMarkdown = forwardRef<
             {...props}
           />
         ),
-        strong: ({ node, ref: _, ...props }) => (
-          <Typography
-            component="span"
-            variant={variant}
-            sx={{ fontWeight: 'bold', ...sx }}
-            {...props}
-          />
-        ),
-        em: ({ node, ref: _, ...props }) => (
-          <Typography
-            component="span"
-            variant={variant}
-            sx={{ fontStyle: 'italic', ...sx }}
-            {...props}
-          />
-        ),
+        strong: ({ node, ref: _, ...props }) => <strong {...props} />,
+        em: ({ node, ref: _, ...props }) => <em {...props} />,
         a: ({ node, ref: _, ...props }) => <Link {...props} sx={sx} />,
       }}
     >

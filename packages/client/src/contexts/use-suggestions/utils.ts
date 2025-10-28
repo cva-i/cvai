@@ -1,4 +1,4 @@
-import { Suggestion, SuggestionBlock } from './types';
+import type { Suggestion, SuggestionBlock } from './types';
 
 const STORAGE_KEY = 'cv-suggestions';
 

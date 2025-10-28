@@ -1,4 +1,4 @@
-import { SuggestionBlock } from './types';
+import type { SuggestionBlock } from './types';
 
 // Demo data for initial suggestions
 export const DEMO_SUGGESTIONS: SuggestionBlock[] = [

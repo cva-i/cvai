@@ -1,13 +1,14 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { EditableTypographyBase } from './EditableTypographyBase';
 import { HighlightedText } from './HighlightedText';
 import { useSuggestionHighlight } from '../../../hooks/use-suggestion-highlight';
+import { useEditableTypographyBase } from '../../../hooks';
 import type { EditableTypographyProps } from './types';
-import type { Suggestion } from '../../../contexts/use-suggestions/types';
+import type { SuggestionBlock } from "../../../contexts";
 
 interface EditableTypographyWithSuggestionsProps
   extends EditableTypographyProps {
-  suggestionBlocks: any[];
+  suggestionBlocks: SuggestionBlock[];
   activeSuggestionId: string | null;
   hoveredBlockId: string | null;
   setActiveSuggestionId: (id: string | null) => void;
@@ -30,6 +31,16 @@ export const EditableTypographyWithSuggestions = ({
   setActiveSuggestionId,
   ...typographyProps
 }: EditableTypographyWithSuggestionsProps) => {
+  const textRef = useRef<HTMLDivElement>(null);
+
+  const {
+    tempValue,
+    setTempValue,
+    handleSave: baseHandleSave,
+    handleCancel,
+    displayValue,
+  } = useEditableTypographyBase({ value, onSave });
+
   const {
     blockSuggestions,
     hasBlockSuggestions,
@@ -65,7 +76,7 @@ export const EditableTypographyWithSuggestions = ({
   // Extract textAlign from sx if it exists
   const textAlignFromSx =
     sx && typeof sx === 'object' && 'textAlign' in sx
-      ? (sx as any).textAlign
+      ? sx.textAlign
       : undefined;
 
   const combinedSx = Object.assign(
@@ -106,7 +117,7 @@ export const EditableTypographyWithSuggestions = ({
       width: '100%', // Changed from 'fit-content' to '100%' to ensure textAlign works
       // Preserve text alignment from parent sx
       ...(textAlignFromSx ? { textAlign: textAlignFromSx } : {}),
-      ...((typographyProps as any).sx || {}), // Merge existing sx props
+      ...((typographyProps as any).sx ?? {}), // Merge existing sx props. TODO: no sx here. investigate
     },
   };
 
@@ -115,7 +126,7 @@ export const EditableTypographyWithSuggestions = ({
     return (
       <HighlightedText
         id={id}
-        text={value || ''}
+        text={value ?? ''}
         suggestions={blockSuggestions}
         activeSuggestionId={activeSuggestionId}
         onSuggestionClick={handleSuggestionClick}
@@ -128,12 +139,22 @@ export const EditableTypographyWithSuggestions = ({
 
   return (
     <EditableTypographyBase
-      sx={combinedSx}
-      typographyProps={combinedTypographyProps}
+      ref={textRef}
+      sx={{ alignContent: 'center', ...combinedSx }}
+      typographyProps={{
+        ...combinedTypographyProps,
+        sx: {
+          width: 'fit-content',
+          ...(combinedTypographyProps.sx ?? {}),
+        },
+      }}
       id={id}
-      isEditing={defaultIsEditing}
-      value={value}
-      onSave={onSave}
+      isEditing={!!defaultIsEditing}
+      tempValue={tempValue}
+      value={displayValue}
+      setTempValue={setTempValue}
+      handleSave={baseHandleSave}
+      handleCancel={handleCancel}
       multiline={multiline}
       variant={typographyProps.variant}
       textFieldProps={{ ...textFieldProps }}

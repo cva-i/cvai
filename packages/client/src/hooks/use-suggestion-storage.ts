@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import { SuggestionBlock } from '../contexts/use-suggestions/types';
+import type { SuggestionBlock } from '../contexts/use-suggestions/types';
 import {
   loadSuggestionsFromStorage,
   saveSuggestionsToStorage,

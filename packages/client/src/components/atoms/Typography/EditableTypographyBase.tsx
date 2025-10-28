@@ -63,13 +63,14 @@ export const EditableTypographyBase = ({
 
         if (
           currentContent !== displayValue &&
+          !isEntryActive &&
           (!isEditing || document.activeElement !== contentEditableRef.current)
         ) {
           contentEditableRef.current.textContent = displayValue;
         }
       }
     },
-    [value, isEditing, useContentEditable, valueRender]
+    [value, isEditing, isEntryActive, useContentEditable, valueRender]
   );
 
   useEffect(
@@ -98,53 +99,21 @@ export const EditableTypographyBase = ({
     };
   }, []);
 
-  const debouncedSave = useCallback(() => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-    saveTimeoutRef.current = setTimeout(() => {
-      if (contentEditableRef.current) {
-        const currentContent = contentEditableRef.current.textContent ?? '';
-        const originalValue = valueRender?.(value) ?? value ?? '';
-        if (currentContent !== originalValue) {
-          handleSave(currentContent);
-        }
-      }
-    }, 1000);
-  }, [value, valueRender, handleSave]);
-
   const handleContentEditableInput = useCallback(() => {
-    if (multiline) {
-      debouncedSave();
-    }
-  }, [multiline, debouncedSave]);
+    // Do nothing - we'll save only when section becomes inactive
+  }, []);
 
   const handleContentEditableBlur = useCallback(() => {
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current);
-    }
-    if (contentEditableRef.current) {
-      const currentContent = contentEditableRef.current.textContent ?? '';
-      const originalValue = valueRender?.(value) ?? value ?? '';
-      if (currentContent !== originalValue) {
-        handleSave(currentContent);
-      }
-    }
-  }, [value, valueRender, handleSave]);
+    // Do nothing - we'll save only when section becomes inactive
+  }, []);
 
   const handleContentEditableKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Enter' && !multiline) {
+        // Prevent line break in single-line fields, but don't save
         e.preventDefault();
-        if (saveTimeoutRef.current) {
-          clearTimeout(saveTimeoutRef.current);
-        }
-        if (contentEditableRef.current) {
-          const currentContent = contentEditableRef.current.textContent ?? '';
-          handleSave(currentContent);
-          contentEditableRef.current.blur();
-        }
       } else if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+        // Cmd+Enter: Save and deactivate
         e.preventDefault();
         if (saveTimeoutRef.current) {
           clearTimeout(saveTimeoutRef.current);
@@ -156,6 +125,7 @@ export const EditableTypographyBase = ({
         }
         deactivate?.();
       } else if (e.key === 'Escape') {
+        // Escape: Cancel and revert changes
         e.preventDefault();
         if (saveTimeoutRef.current) {
           clearTimeout(saveTimeoutRef.current);

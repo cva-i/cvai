@@ -6,7 +6,11 @@ import React, {
   useEffect,
   useMemo,
 } from 'react';
-import { SuggestionsContextType, SuggestionBlock, Suggestion } from './types';
+import type {
+  SuggestionsContextType,
+  SuggestionBlock,
+  Suggestion,
+} from './types';
 import { DEMO_SUGGESTIONS } from './demo-data';
 import {
   generateSuggestionId,

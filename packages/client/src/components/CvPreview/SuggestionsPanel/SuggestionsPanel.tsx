@@ -16,7 +16,7 @@ import {
   ClearAll as ClearIcon,
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
-import { useSuggestions } from '../../../contexts/use-suggestions/SuggestionsProvider';
+import { useSuggestions } from '../../../contexts';
 import { SuggestionCard } from './SuggestionCard';
 import { useSuggestionScroll } from '../../../hooks/use-suggestion-scroll';
 
@@ -38,10 +38,10 @@ export const SuggestionsPanel: React.FC = () => {
   });
 
   // Calculate total suggestions count
-  const totalSuggestions = suggestionBlocks.reduce(
-    (total: number, block: any) => total + block.suggestions.length,
-    0
-  );
+  // const totalSuggestions = suggestionBlocks.reduce(
+  //   (total: number, block: any) => total + block.suggestions.length,
+  //   0
+  // );
 
   const handleToggleExpanded = () => {
     setIsExpanded(!isExpanded);
@@ -255,7 +255,7 @@ export const SuggestionsPanel: React.FC = () => {
                   },
                 }}
               >
-                {suggestionBlocks.map((block: any) => (
+                {suggestionBlocks.map((block) => (
                   <Box
                     key={block.id}
                     className="thread"
@@ -279,7 +279,7 @@ export const SuggestionsPanel: React.FC = () => {
                       }}
                     >
                       {block.suggestions.map(
-                        (suggestion: any, index: number) => (
+                        (suggestion)  => (
                           <SuggestionCard
                             key={suggestion.id}
                             suggestion={suggestion}

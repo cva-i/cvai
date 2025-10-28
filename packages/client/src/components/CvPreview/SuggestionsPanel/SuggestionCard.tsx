@@ -1,12 +1,12 @@
 import React, { useRef, useCallback, useEffect } from 'react';
-import { Box, Typography, TextField } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
-import { useSuggestions } from '../../../contexts/use-suggestions/SuggestionsProvider';
-import type { Suggestion } from '../../../contexts/use-suggestions/types';
+import { useSuggestions } from '../../../contexts';
+import type { Suggestion } from '../../../contexts';
 
 const CardContainer = styled(Box)<{ isActive?: boolean }>(
-  ({ theme, isActive }) => ({
+  ({ isActive }) => ({
     border: isActive ? '2px solid #8b5cf6' : '2px solid #f3f4f6',
     borderRadius: '8px',
     backgroundColor: '#ffffff',
@@ -26,7 +26,7 @@ const HeaderActions = styled(Box)({
   borderBottom: '1px solid #e5e7eb',
 });
 
-const ActionButton = styled(Box)(({ theme }) => ({
+const ActionButton = styled(Box)(() => ({
   display: 'flex',
   alignItems: 'center',
   gap: '6px',
@@ -67,20 +67,20 @@ const CommentText = styled(Typography)({
   marginBottom: '8px',
 });
 
-const ReplyInput = styled(TextField)({
-  '& .MuiOutlinedInput-root': {
-    fontSize: '14px',
-    backgroundColor: '#f9fafb',
-    borderRadius: '6px',
-    '& fieldset': { borderColor: '#e5e7eb' },
-    '&:hover fieldset': { borderColor: '#d1d5db' },
-    '&.Mui-focused fieldset': { borderColor: '#8b5cf6', borderWidth: '1px' },
-  },
-  '& .MuiOutlinedInput-input': {
-    padding: '10px 12px',
-    '&::placeholder': { color: '#9ca3af', opacity: 1 },
-  },
-});
+// const ReplyInput = styled(TextField)({
+//   '& .MuiOutlinedInput-root': {
+//     fontSize: '14px',
+//     backgroundColor: '#f9fafb',
+//     borderRadius: '6px',
+//     '& fieldset': { borderColor: '#e5e7eb' },
+//     '&:hover fieldset': { borderColor: '#d1d5db' },
+//     '&.Mui-focused fieldset': { borderColor: '#8b5cf6', borderWidth: '1px' },
+//   },
+//   '& .MuiOutlinedInput-input': {
+//     padding: '10px 12px',
+//     '&::placeholder': { color: '#9ca3af', opacity: 1 },
+//   },
+// });
 
 interface SuggestionCardProps {
   suggestion: Suggestion;
@@ -167,7 +167,7 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
 
       {/* Author and Timestamp */}
       <AuthorSection>
-        <AuthorName>{suggestion.authorName || 'AI Assistant'}</AuthorName>
+        <AuthorName>{suggestion.authorName ?? 'AI Assistant'}</AuthorName>
         <Timestamp>· {formatTimestamp(suggestion.createdAt)}</Timestamp>
       </AuthorSection>
 
