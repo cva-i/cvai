@@ -13,7 +13,11 @@ import EditIcon from '@mui/icons-material/Edit';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import { useCurrentCv, useCvCreationFlow, useDialog } from '../../contexts';
-import { useUpdateCvMutation, useDuplicateCvMutation, refetchGetCvsQuery } from '../../generated/graphql';
+import {
+  useUpdateCvMutation,
+  useDuplicateCvMutation,
+  refetchGetCvsQuery,
+} from '../../generated/graphql';
 import { RenameDialog } from '../RenameDialog';
 
 type ResumeListItemProps = {

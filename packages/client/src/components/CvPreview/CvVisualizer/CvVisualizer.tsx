@@ -8,7 +8,7 @@ import {
   Skills,
   WorkExperience,
 } from './CvFields';
-import { EditableTypography } from '../../atoms';
+import { EditableTypography, RowLayout } from '../../atoms';
 import {
   GetNameComponent,
   refetchGetCvVersionHistoryQuery,
@@ -17,6 +17,7 @@ import {
 } from '../../../generated/graphql';
 import { customPalette, shadowStyles } from '../../../theme';
 import { usePreviewMode } from '../../../contexts';
+import { SuggestionsPanel } from '../SuggestionsPanel';
 
 type CvVisualizerProps = {
   cvId: string;
@@ -38,12 +39,7 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
 
   const handleUpdateName = useCallback(
     async (name: string) => {
-      await updateNameMutation({
-        variables: {
-          cvId,
-          name,
-        },
-      });
+      await updateNameMutation({ variables: { cvId, name } });
     },
     [cvId, updateNameMutation]
   );
@@ -139,5 +135,12 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
     </Box>
   );
 
-  return isPreviewing ? <Box sx={wrapperStyles}>{content}</Box> : content;
+  return isPreviewing ? (
+    <Box sx={wrapperStyles}>{content}</Box>
+  ) : (
+    <RowLayout>
+      {content}
+      <SuggestionsPanel />
+    </RowLayout>
+  );
 };

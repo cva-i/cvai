@@ -47,8 +47,10 @@ export const useEditableTypographyBase = ({
   }, []);
 
   useEffect(() => {
-    setTempValue(value);
-  }, [value]);
+    if (!isEditing) {
+      setTempValue(value);
+    }
+  }, [value, isEditing]);
 
   const handleSave = useCallback(
     (valueToSave?: string) => {

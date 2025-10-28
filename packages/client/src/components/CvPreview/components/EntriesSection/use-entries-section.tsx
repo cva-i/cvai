@@ -104,23 +104,26 @@ export function useCvEntries<T extends CvEntryArrayFieldName>(
   );
 
   const handleAddEntry = useCallback(
+    // eslint-disable-next-line -- todo fix types
     async (entryData?: { positionIndex?: number; [key: string]: any }) => {
-      const variables: any = {
+      // TODO: fix hui here
+      const variables = {
         cvId,
         entryType,
       };
 
       if (entryData) {
-        const fieldMap: Record<CvEntryType, string> = {
+        const fieldMap = {
           [CvEntryType.WorkExperience]: 'workExperienceData',
           [CvEntryType.Skill]: 'skillData',
           [CvEntryType.Education]: 'educationData',
           [CvEntryType.Project]: 'projectData',
           [CvEntryType.ContactInfo]: 'contactInfoData',
-        };
+        } as const;
 
         const fieldName = fieldMap[entryType];
         if (fieldName) {
+          // @ts-ignore error here
           variables[fieldName] = entryData;
         }
       }

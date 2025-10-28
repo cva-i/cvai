@@ -11,13 +11,23 @@ export const TypographyWithMarkdown = forwardRef<
   HTMLDivElement,
   TypographyWithMarkdownProps
 >(({ children, variant = 'body1', sx, onClick, ...otherProps }, ref) => {
+  // Extract textAlign from sx if it exists
+  const textAlignFromSx =
+    sx && typeof sx === 'object' && 'textAlign' in sx
+      ? (sx as any).textAlign
+      : undefined;
+
   return (
     <ReactMarkdown
       components={{
         p: ({ node, ref: _, ...props }) => (
           <Typography
             variant={variant}
-            sx={sx}
+            sx={{
+              ...sx,
+              // Ensure text alignment is preserved
+              textAlign: textAlignFromSx || 'inherit',
+            }}
             onClick={onClick}
             ref={ref}
             {...otherProps}

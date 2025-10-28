@@ -12,7 +12,9 @@ import {
   PreviewModeProvider,
   useAuth,
 } from '../contexts';
+import { SuggestionsProvider } from '../contexts/use-suggestions';
 import { CvCreationDialog } from './CreateCvFlow';
+import { ClickOutsideHandler } from './ClickOutsideHandler';
 import {
   COLLAPSED_SIDEBAR_WIDTH,
   EXPANDED_SIDEBAR_WIDTH,
@@ -49,15 +51,19 @@ export const IndexPage = () => {
         <DialogProvider>
           <CvCreationFlowProvider>
             <PreviewModeProvider>
-              <AppContainer>
-                <FloatingSidebar
-                  isExpanded={isSidebarExpanded}
-                  onToggle={setIsSidebarExpanded}
-                />
-                <MainContent isSidebarExpanded={isSidebarExpanded}>
-                  <CurrentCvPreview />
-                </MainContent>
-              </AppContainer>
+              <SuggestionsProvider>
+                <ClickOutsideHandler>
+                  <AppContainer>
+                    <FloatingSidebar
+                      isExpanded={isSidebarExpanded}
+                      onToggle={setIsSidebarExpanded}
+                    />
+                    <MainContent isSidebarExpanded={isSidebarExpanded}>
+                      <CurrentCvPreview />
+                    </MainContent>
+                  </AppContainer>
+                </ClickOutsideHandler>
+              </SuggestionsProvider>
             </PreviewModeProvider>
 
             <CvCreationDialog />
@@ -79,8 +85,8 @@ const MainContent = styled(Box)<{ isSidebarExpanded: boolean }>(
   ({ isSidebarExpanded }) => ({
     flex: 1,
     marginLeft: isSidebarExpanded
-      ? EXPANDED_SIDEBAR_WIDTH + 24
-      : COLLAPSED_SIDEBAR_WIDTH + 24,
+      ? EXPANDED_SIDEBAR_WIDTH + 48
+      : COLLAPSED_SIDEBAR_WIDTH + 48,
     transition: 'margin 0.3s ease',
     overflow: 'auto',
   })

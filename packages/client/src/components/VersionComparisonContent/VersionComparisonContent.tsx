@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { Column } from '../atoms';
+import { ColumnLayout } from '../atoms';
 import { SectionChangeDisplay } from './SectionChangeDisplay';
 import {
   compareAboutMe,
@@ -42,13 +42,13 @@ export const VersionComparisonContent = ({
   }
 
   return (
-    <Column gap={3} sx={{ width: '100%' }}>
+    <ColumnLayout gap={3} sx={{ width: '100%' }}>
       {changes.map((section, idx) => (
         <SectionChangeDisplay
           key={`${section.section}-${idx}`}
           section={section}
         />
       ))}
-    </Column>
+    </ColumnLayout>
   );
 };

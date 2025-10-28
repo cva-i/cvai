@@ -9,9 +9,11 @@ import { WithEditableSection } from './WithEditableSection';
 
 type WithRemoveEntryButtonProps = React.PropsWithChildren<{
   removeEntry: () => {};
+  // eslint-disable-next-line
   onAddEntry?: (entryData?: any) => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
+  // eslint-disable-next-line
   currentEntry?: { positionIndex: number; [key: string]: any };
 }> &
   BoxProps;

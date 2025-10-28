@@ -8,7 +8,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useGetCvQuery } from '../../../generated/graphql';
-import { Column } from '../../atoms';
+import { ColumnLayout } from '../../atoms';
 import { VersionComparisonContent } from '../../VersionComparisonContent';
 
 interface VersionComparisonDialogProps {
@@ -70,10 +70,10 @@ export const VersionComparisonDialog = ({
 
       <DialogContent>
         {isError && (
-          <Column>
+          <ColumnLayout>
             <Typography color={'error'}>{leftCvError?.message}</Typography>
             <Typography color={'error'}>{rightCvError?.message}</Typography>
-          </Column>
+          </ColumnLayout>
         )}
 
         {isLoading && !isError && <Typography>Loading...</Typography>}
