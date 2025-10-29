@@ -1,13 +1,14 @@
 import type {
-  OperationVariables,
-  MutationFunctionOptions,
+  DocumentNode,
   FetchResult,
+  MutationFunctionOptions,
+  OperationVariables,
 } from '@apollo/client';
 import type { MutationHookOptions } from '@apollo/client/react';
 import { useMutation } from '@apollo/client/react';
+import type { ReactElement } from 'react';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
-import type { ReactElement } from 'react';
 
 interface ChildrenProps<
   TData,
@@ -25,6 +26,7 @@ export interface MutationProps<
   TData = unknown,
   TVariables extends OperationVariables = OperationVariables,
 > extends MutationHookOptions<TData, TVariables> {
+  mutation: DocumentNode;
   children: (result: ChildrenProps<TData, TVariables>) => ReactElement;
   showErrorToast?: boolean;
   customErrorMessage?: string;
@@ -57,7 +59,7 @@ function Mutation<
       }
 
       const errorMessage =
-        customErrorMessage || error.message || 'An error occurred';
+        customErrorMessage ?? (error.message || 'An error occurred');
       toast.error(errorMessage);
       console.error(error);
     }
