@@ -1742,7 +1742,7 @@ __metadata:
     react-markdown: "npm:^9.0.1"
     react-router-dom: "npm:^6.28.0"
     react-toastify: "npm:^10.0.6"
-    ts-pattern: "npm:^5.5.0"
+    ts-pattern: "npm:^5.9.0"
     tslib: "npm:^2.6.1"
     typescript: "npm:^5.6.3"
     vite: "npm:^5.4.10"
@@ -16174,10 +16174,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-pattern@npm:^5.5.0, ts-pattern@npm:^5.6.2":
+"ts-pattern@npm:^5.6.2":
   version: 5.8.0
   resolution: "ts-pattern@npm:5.8.0"
   checksum: 10/fdfa0ea99463c4bb91fee6ade4c31dd93af6760759c302c04dfacab29e556025d656a65f5e855e77015e3fcfc627dd05662d5fc89eb02df024708b2b96d6e00e
+  languageName: node
+  linkType: hard
+
+"ts-pattern@npm:^5.9.0":
+  version: 5.9.0
+  resolution: "ts-pattern@npm:5.9.0"
+  checksum: 10/0df8cc63d731a596f3541a305eff10f055c9a761d1a8b3776781dc6d6430c6bd8be8cd333fac62138c5d88e1209b4d8dccf1f40041091b634e5018908281417b
   languageName: node
   linkType: hard
 
