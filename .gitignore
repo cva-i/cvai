@@ -46,3 +46,4 @@ packages/**/.env*
 
 deploy.zipCLAUDE.md
 setenvs.sh
+setEBenv.sh
