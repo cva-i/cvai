@@ -53,3 +53,5 @@ setEBenv.sh
 CLAUDE.md
 notes.md/
 *.pdf
+
+packages/client/.env
