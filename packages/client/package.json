@@ -25,7 +25,7 @@
     "react-markdown": "^9.0.1",
     "react-router-dom": "^6.28.0",
     "react-toastify": "^10.0.6",
-    "ts-pattern": "^5.5.0",
+    "ts-pattern": "^5.9.0",
     "tslib": "^2.6.1",
     "web-vitals": "^2.1.4",
     "zod": "^3.24.2"

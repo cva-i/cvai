@@ -29,21 +29,10 @@ export class Comment {
   @Field({ nullable: true })
   suggestedText?: string;
 
-  @Prop({ enum: ['chunk', 'sentence', 'section'], default: 'section' })
+  // Always highlight the entire section
+  @Prop({ default: 'section' })
   @Field()
-  highlightType!: 'chunk' | 'sentence' | 'section';
-
-  @Prop()
-  @Field({ nullable: true })
-  sentenceIndex?: number;
-
-  @Prop()
-  @Field({ nullable: true })
-  startOffset?: number;
-
-  @Prop()
-  @Field({ nullable: true })
-  endOffset?: number;
+  highlightType!: 'section';
 
   @Prop({ enum: ['open', 'resolved', 'rejected'], default: 'open' })
   @Field()

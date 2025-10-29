@@ -52,10 +52,6 @@ export class SuggestionsService {
         blockId: s.blockId,
         text: s.text,
         suggestedText: s.suggestedText,
-        highlightType: s.highlightType,
-        sentenceIndex: s.sentenceIndex,
-        startOffset: s.startOffset,
-        endOffset: s.endOffset,
         status: s.status,
         authorName: s.authorName,
         createdAt: s.createdAt ?? new Date(),
@@ -163,21 +159,13 @@ export class SuggestionsService {
 
     const createdSuggestions = await Promise.all(
       response.comments.map(async (commentItem) => {
-        const offsets = this.computeOffsetsFromHighlightInfo(
-          commentItem,
-          this.getFieldTextByBlockId(cv, metadata.metadata, commentItem.blockId)
-        );
-
         return this.suggestionModel.create({
           cvId: new Types.ObjectId(cvId),
           cvVersionId: cv.versionId,
           blockId: commentItem.blockId,
           text: commentItem.text,
           suggestedText: commentItem.suggestedText,
-          highlightType: commentItem.highlightType,
-          sentenceIndex: commentItem.sentenceIndex,
-          startOffset: offsets.startOffset,
-          endOffset: offsets.endOffset,
+          highlightType: 'section',
           status: 'open',
           authorName: 'AI Assistant',
         });
@@ -209,15 +197,9 @@ export class SuggestionsService {
 
     return {
       _id: suggestion._id.toString(),
-      cvId: suggestion.cvId.toString(),
-      cvVersionId: suggestion.cvVersionId,
-      blockId: suggestion.blockId,
       text: suggestion.text,
-      startOffset: suggestion.startOffset,
-      endOffset: suggestion.endOffset,
+      suggestedText: suggestion.suggestedText,
       status: suggestion.status,
-      authorName: suggestion.authorName,
-      createdAt: suggestion.createdAt,
       updatedAt: suggestion.updatedAt,
     };
   }
@@ -249,75 +231,5 @@ export class SuggestionsService {
     });
 
     return true;
-  }
-
-  private splitIntoSentences(text: string): string[] {
-    return text.match(/[^.!?]+[.!?]+/g) || [text];
-  }
-
-  private computeOffsetsFromHighlightInfo(
-    commentItem: { highlightType: string; sentenceIndex: number | null; startOffset: number | null; endOffset: number | null },
-    fieldText: string | null
-  ): { startOffset: number | null; endOffset: number | null } {
-    if (!fieldText) {
-      return { startOffset: null, endOffset: null };
-    }
-
-    if (commentItem.highlightType === 'section') {
-      return { startOffset: 0, endOffset: fieldText.length };
-    }
-
-    if (commentItem.highlightType === 'sentence' && commentItem.sentenceIndex !== null) {
-      const sentences = this.splitIntoSentences(fieldText);
-      if (commentItem.sentenceIndex < sentences.length) {
-        let offset = 0;
-        for (let i = 0; i < commentItem.sentenceIndex; i++) {
-          offset += sentences[i].length;
-        }
-        return {
-          startOffset: offset,
-          endOffset: offset + sentences[commentItem.sentenceIndex].length,
-        };
-      }
-    }
-
-    if (commentItem.highlightType === 'chunk' && commentItem.startOffset !== null && commentItem.endOffset !== null) {
-      return {
-        startOffset: commentItem.startOffset,
-        endOffset: commentItem.endOffset,
-      };
-    }
-
-    return { startOffset: null, endOffset: null };
-  }
-
-  private getFieldTextByBlockId(cv: any, metadata: any, blockId: string): string | null {
-    const fieldPath = this.findFieldPathByFieldId(metadata, blockId);
-    if (!fieldPath) return null;
-
-    let current = cv;
-    for (const part of fieldPath) {
-      if (!current) return null;
-      current = current[part];
-    }
-
-    return typeof current === 'string' ? current : null;
-  }
-
-  private findFieldPathByFieldId(metadata: any, fieldId: string, path: string[] = []): string[] | null {
-    if (!metadata || typeof metadata !== 'object') return null;
-
-    for (const [key, value] of Object.entries(metadata)) {
-      if (value && typeof value === 'object') {
-        if ('fieldId' in value && value.fieldId === fieldId) {
-          return [...path, key];
-        }
-
-        const result = this.findFieldPathByFieldId(value, fieldId, [...path, key]);
-        if (result) return result;
-      }
-    }
-
-    return null;
   }
 }

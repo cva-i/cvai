@@ -48,10 +48,6 @@ export type CommentObjectType = {
   createdAt: Scalars['DateTime']['output'];
   cvId: Scalars['String']['output'];
   cvVersionId: Scalars['String']['output'];
-  endOffset?: Maybe<Scalars['Int']['output']>;
-  highlightType: Scalars['String']['output'];
-  sentenceIndex?: Maybe<Scalars['Int']['output']>;
-  startOffset?: Maybe<Scalars['Int']['output']>;
   status: Scalars['String']['output'];
   suggestedText?: Maybe<Scalars['String']['output']>;
   text: Scalars['String']['output'];
@@ -696,7 +692,7 @@ export type GenerateSuggestionsForCvMutationVariables = Exact<{
 }>;
 
 
-export type GenerateSuggestionsForCvMutation = { __typename?: 'Mutation', generateSuggestionsForCv: Array<{ __typename?: 'CommentBlockObjectType', blockId: string, comments: Array<{ __typename?: 'CommentObjectType', _id: string, cvId: string, cvVersionId: string, blockId: string, text: string, suggestedText?: string | null, highlightType: string, sentenceIndex?: number | null, startOffset?: number | null, endOffset?: number | null, status: string, authorName: string, createdAt: any, updatedAt: any }> }> };
+export type GenerateSuggestionsForCvMutation = { __typename?: 'Mutation', generateSuggestionsForCv: Array<{ __typename?: 'CommentBlockObjectType', blockId: string, comments: Array<{ __typename?: 'CommentObjectType', _id: string, cvId: string, cvVersionId: string, blockId: string, text: string, suggestedText?: string | null, status: string, authorName: string, createdAt: any, updatedAt: any }> }> };
 
 export type UpdateSuggestionStatusMutationVariables = Exact<{
   input: UpdateSuggestionStatusInput;
@@ -724,7 +720,7 @@ export type GetSuggestionsForCvQueryVariables = Exact<{
 }>;
 
 
-export type GetSuggestionsForCvQuery = { __typename?: 'Query', getSuggestionsForCv: Array<{ __typename?: 'CommentBlockObjectType', blockId: string, comments: Array<{ __typename?: 'CommentObjectType', _id: string, cvId: string, cvVersionId: string, blockId: string, text: string, suggestedText?: string | null, highlightType: string, sentenceIndex?: number | null, startOffset?: number | null, endOffset?: number | null, status: string, authorName: string, createdAt: any, updatedAt: any }> }> };
+export type GetSuggestionsForCvQuery = { __typename?: 'Query', getSuggestionsForCv: Array<{ __typename?: 'CommentBlockObjectType', blockId: string, comments: Array<{ __typename?: 'CommentObjectType', _id: string, cvId: string, cvVersionId: string, blockId: string, text: string, suggestedText?: string | null, status: string, authorName: string, createdAt: any, updatedAt: any }> }> };
 
 export const AboutMeFragmentDoc = gql`
     fragment AboutMeFragment on AboutMe {
@@ -2039,10 +2035,6 @@ export const GenerateSuggestionsForCvDocument = gql`
       blockId
       text
       suggestedText
-      highlightType
-      sentenceIndex
-      startOffset
-      endOffset
       status
       authorName
       createdAt
@@ -2211,10 +2203,6 @@ export const GetSuggestionsForCvDocument = gql`
       blockId
       text
       suggestedText
-      highlightType
-      sentenceIndex
-      startOffset
-      endOffset
       status
       authorName
       createdAt

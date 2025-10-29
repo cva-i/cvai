@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 
 @ObjectType()
 export class CommentObjectType {
@@ -19,18 +19,6 @@ export class CommentObjectType {
 
   @Field({ nullable: true })
   suggestedText?: string;
-
-  @Field()
-  highlightType!: string;
-
-  @Field(() => Int, { nullable: true })
-  sentenceIndex?: number;
-
-  @Field(() => Int, { nullable: true })
-  startOffset?: number;
-
-  @Field(() => Int, { nullable: true })
-  endOffset?: number;
 
   @Field()
   status!: 'open' | 'resolved' | 'rejected';

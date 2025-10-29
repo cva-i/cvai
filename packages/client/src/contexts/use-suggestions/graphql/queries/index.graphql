@@ -8,10 +8,6 @@ query GetSuggestionsForCv($cvId: ID!) {
       blockId
       text
       suggestedText
-      highlightType
-      sentenceIndex
-      startOffset
-      endOffset
       status
       authorName
       createdAt

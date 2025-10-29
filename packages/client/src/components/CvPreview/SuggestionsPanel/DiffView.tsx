@@ -20,7 +20,7 @@ const DiffRow = styled(Box)<{ variant: 'old' | 'new' }>(({ variant }) => ({
   lineHeight: '1.6',
 }));
 
-const DiffMarker = styled(Typography)<{ variant: 'old' | 'new' }>(
+const DiffMarker = styled(Box)<{ variant: 'old' | 'new' }>(
   ({ variant }) => ({
     fontSize: '14px',
     fontWeight: 600,
@@ -30,7 +30,7 @@ const DiffMarker = styled(Typography)<{ variant: 'old' | 'new' }>(
   })
 );
 
-const DiffText = styled(Typography)<{ variant: 'old' | 'new' }>(
+const DiffText = styled(Box)<{ variant: 'old' | 'new' }>(
   ({ variant }) => ({
     fontSize: '14px',
     lineHeight: '1.6',

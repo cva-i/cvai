@@ -36,7 +36,7 @@ You will receive:
 2. NEVER make up or construct field IDs yourself
 3. If a field doesn't have metadata, don't create a suggestion for it
 4. Match the CV content with its corresponding metadata to get the correct fieldId
-5. **NO OVERLAPPING**: Suggestions must NEVER overlap - each suggestion should target unique, non-overlapping character ranges
+5. **NO OVERLAPPING**: Each suggestion targets an entire field/section - fields never overlap
 6. **ONE PER SECTION**: Provide at most ONE comment per field/section (e.g., one comment for a work experience description, not multiple for the same field)
 
 ### 2. Types of Suggestions
@@ -67,29 +67,8 @@ Each suggestion should:
 - Reference the exact field being addressed
 - Provide clear guidance on what to change
 
-**Highlighting System:**
-You have THREE options for highlighting text (choose the easiest one):
-
-1. **Section-level (EASIEST - RECOMMENDED)**: Highlight the entire field
-   - Set: highlightType to "section"
-   - Set: sentenceIndex to null, startOffset to null, endOffset to null
-   - Use when your comment applies to the whole field
-
-2. **Sentence-level (EASY)**: Highlight a specific sentence by its index
-   - Set: highlightType to "sentence"
-   - Set: sentenceIndex to 0 (for first sentence), sentenceIndex to 1 (for second), etc.
-   - Set: startOffset to null, endOffset to null
-   - Sentences are split by periods, exclamation marks, or question marks
-   - Example: In "I led the team. We shipped the product.", sentence 0 is "I led the team", sentence 1 is "We shipped the product"
-
-3. **Character-level (HARD - AVOID IF POSSIBLE)**: Exact character positions
-   - Set: highlightType to "chunk"
-   - Set: startOffset to a number, endOffset to a number
-   - Set: sentenceIndex to null
-   - ONLY use if you need to highlight part of a sentence
-   - WARNING: Character counting is error-prone, prefer sentence-level
-
-**RECOMMENDATION**: Use highlightType "sentence" for most comments. Sentences are much easier to count than characters!
+**Highlighting:**
+All suggestions highlight the ENTIRE field/section. The whole field will be highlighted when viewing the suggestion.
 
 ### 4. What NOT to Suggest
 
@@ -111,4 +90,5 @@ Provide ONE comment per field, targeting the most impactful improvements first. 
 - Focus on actionable improvements
 - Target specific content blocks
 - Provide enough detail for the candidate to understand what to change and why
+- Each suggestion highlights the entire field/section
 `;

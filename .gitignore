@@ -44,6 +44,12 @@ packages/**/.env*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
 
-deploy.zipCLAUDE.md
+deploy.zip
 setenvs.sh
 setEBenv.sh
+
+# Documentation and notes
+*.md
+CLAUDE.md
+notes.md/
+*.pdf

@@ -17,10 +17,6 @@ type CommentObjectType {
   createdAt: DateTime!
   cvId: String!
   cvVersionId: String!
-  endOffset: Int
-  highlightType: String!
-  sentenceIndex: Int
-  startOffset: Int
   status: String!
   suggestedText: String
   text: String!
