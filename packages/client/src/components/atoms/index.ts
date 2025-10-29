@@ -8,3 +8,4 @@ export * from './Box';
 export * from './IconButton';
 export * from './Tooltip';
 export * from './EmptyLabel';
+export * from './ActionButtonsContainer';

@@ -5,11 +5,7 @@ import React, {
   useState,
   useMemo,
 } from 'react';
-import type {
-  SuggestionsContextType,
-  SuggestionBlock,
-  Suggestion,
-} from './types';
+import type { SuggestionsContextType, SuggestionBlock } from './types';
 import {
   useGetSuggestionsForCvLazyQuery,
   useGenerateSuggestionsForCvMutation,
@@ -63,8 +59,6 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({
                 blockId: s.blockId,
                 text: s.text,
                 suggestedText: s.suggestedText ?? undefined,
-                startOffset: s.startOffset ?? undefined,
-                endOffset: s.endOffset ?? undefined,
                 status: s.status as 'open' | 'resolved' | 'rejected',
                 authorName: s.authorName,
                 createdAt: s.createdAt ? new Date(s.createdAt) : undefined,
@@ -75,7 +69,8 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({
           setSuggestionBlocks(blocks);
         }
       } catch (err) {
-        const error = err instanceof Error ? err : new Error('Failed to fetch suggestions');
+        const error =
+          err instanceof Error ? err : new Error('Failed to fetch suggestions');
         setError(error);
         toast.error(error.message);
         console.error('Failed to fetch suggestions:', err);
@@ -102,8 +97,6 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({
                 blockId: s.blockId,
                 text: s.text,
                 suggestedText: s.suggestedText ?? undefined,
-                startOffset: s.startOffset ?? undefined,
-                endOffset: s.endOffset ?? undefined,
                 status: s.status as 'open' | 'resolved' | 'rejected',
                 authorName: s.authorName,
                 createdAt: s.createdAt ? new Date(s.createdAt) : undefined,
@@ -115,7 +108,10 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({
           setSuggestionBlocks(blocks);
         }
       } catch (err) {
-        const error = err instanceof Error ? err : new Error('Failed to generate suggestions');
+        const error =
+          err instanceof Error
+            ? err
+            : new Error('Failed to generate suggestions');
         setError(error);
         toast.error(error.message);
         console.error('Failed to generate suggestions:', err);
@@ -145,7 +141,8 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({
           }))
         );
       } catch (err) {
-        const error = err instanceof Error ? err : new Error('Failed to update suggestion');
+        const error =
+          err instanceof Error ? err : new Error('Failed to update suggestion');
         setError(error);
         toast.error(error.message);
         console.error('Failed to update suggestion status:', err);
@@ -166,12 +163,15 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({
           prev
             .map((block) => ({
               ...block,
-              suggestions: block.suggestions.filter((s) => s._id !== suggestionId),
+              suggestions: block.suggestions.filter(
+                (s) => s._id !== suggestionId
+              ),
             }))
             .filter((block) => block.suggestions.length > 0)
         );
       } catch (err) {
-        const error = err instanceof Error ? err : new Error('Failed to delete suggestion');
+        const error =
+          err instanceof Error ? err : new Error('Failed to delete suggestion');
         setError(error);
         toast.error(error.message);
         console.error('Failed to delete suggestion:', err);
@@ -188,7 +188,8 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({
         await clearAllMutation({ variables: { cvId } });
         setSuggestionBlocks([]);
       } catch (err) {
-        const error = err instanceof Error ? err : new Error('Failed to clear suggestions');
+        const error =
+          err instanceof Error ? err : new Error('Failed to clear suggestions');
         setError(error);
         toast.error(error.message);
         console.error('Failed to clear suggestions:', err);

@@ -6,8 +6,7 @@ interface UseSuggestionScrollProps {
 }
 
 interface UseSuggestionScrollReturn {
-  scrollContainerRef: React.RefObject<HTMLDivElement>;
-  suggestionRefs: React.MutableRefObject<Map<string, HTMLDivElement>>;
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
   registerSuggestionRef: (
     suggestionId: string,
     element: HTMLDivElement | null
@@ -43,15 +42,21 @@ export const useSuggestionScroll = ({
       if (!scrollContainerRef.current) return;
 
       const container = scrollContainerRef.current;
-      const containerRect = container.getBoundingClientRect();
       const elementRect = suggestionElement.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
 
-      // Calculate the position to scroll to within the container
-      const scrollTop =
-        container.scrollTop + (elementRect.top - containerRect.top) - 20; // 20px offset from top
+      // Calculate current position of element relative to container
+      const elementTop =
+        elementRect.top - containerRect.top + container.scrollTop;
+
+      // Scroll to position the element with some padding from the top (20px)
+      const targetScrollTop = elementTop - 20;
 
       // Scroll within the suggestions panel container only
-      container.scrollTo({ top: scrollTop, behavior: 'smooth' });
+      container.scrollTo({
+        top: Math.max(0, targetScrollTop),
+        behavior: 'smooth',
+      });
     },
     []
   );
@@ -68,5 +73,5 @@ export const useSuggestionScroll = ({
     []
   );
 
-  return { scrollContainerRef, suggestionRefs, registerSuggestionRef };
+  return { scrollContainerRef, registerSuggestionRef };
 };

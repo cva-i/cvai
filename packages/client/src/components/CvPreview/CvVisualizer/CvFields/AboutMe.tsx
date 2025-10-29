@@ -54,21 +54,21 @@ export const AboutMe = ({ cvId }: CvEntryComponentProps) => {
 
         return (
           <WithEditableSection flexDirection="column">
-            <EditableTypography
-              id={titleFieldId || `about-me-fieldName`}
-              value={aboutMe.fieldName}
-              onSave={(value) =>
-                updateField({
-                  fieldName: 'fieldName',
-                  value,
-                })
-              }
-              variant="h5"
-              gutterBottom
-            />
+            {/* <EditableTypography*/}
+            {/*  id={titleFieldId ?? `about-me-fieldName`}*/}
+            {/*  value={aboutMe.fieldName}*/}
+            {/*  onSave={(value) =>*/}
+            {/*    updateField({*/}
+            {/*      fieldName: 'fieldName',*/}
+            {/*      value,*/}
+            {/*    })*/}
+            {/*  }*/}
+            {/*  variant="h5"*/}
+            {/*  gutterBottom*/}
+            {/* />*/}
 
             <EditableTypography
-              id={descriptionFieldId || `about-me-description`}
+              id={descriptionFieldId ?? `about-me-description`}
               value={aboutMe.description}
               onSave={(value) =>
                 updateField({

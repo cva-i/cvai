@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import { Box, Divider, Skeleton } from '@mui/material';
 import {
   AboutMe,
@@ -8,18 +8,17 @@ import {
   Skills,
   WorkExperience,
 } from './CvFields';
-import { EditableTypography, RowLayout } from '../../atoms';
+import { EditableTypography } from '../../atoms';
 import {
   GetNameComponent,
   refetchGetCvVersionHistoryQuery,
   refetchGetNameQuery,
-  useUpdateCvNameMutation,
   useGetCvQuery,
+  useUpdateCvNameMutation,
 } from '../../../generated/graphql';
 import { customPalette, shadowStyles } from '../../../theme';
 import { usePreviewMode, useSuggestions } from '../../../contexts';
 import { CvMetadataProvider } from '../../../contexts/CvMetadataContext';
-import { SuggestionsPanel } from '../SuggestionsPanel';
 
 type CvVisualizerProps = {
   cvId: string;
@@ -60,48 +59,30 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
       display: 'flex',
       flexDirection: 'column' as const,
       justifyContent: 'flex-start' as const,
-    };
-
-    if (isPreviewing) {
-      return {
-        ...baseStyles,
-        width: '100%',
-        maxWidth: '1200px',
-        padding: '40px 60px',
-        fontSize: '1.15em',
-      };
-    }
-
-    return {
-      ...baseStyles,
+      fontSize: '1.15em',
       margin: '0 auto',
-      width: '210mm',
-      minHeight: '297mm',
-      padding: '20mm 15mm',
-      backgroundColor: customPalette.background.surface,
-      boxShadow: shadowStyles.section.boxShadow,
+      padding: '20px 15px',
     };
+
+    return isPreviewing
+      ? {
+          ...baseStyles,
+          height: 'fit-content',
+          width: '100%',
+          maxWidth: '1200px',
+        }
+      : {
+          ...baseStyles,
+          height: '100vh',
+          overflowY: 'auto',
+          width: '300mm',
+          minHeight: '297mm',
+          backgroundColor: customPalette.background.surface,
+          boxShadow: shadowStyles.section.boxShadow,
+        };
   }, [isPreviewing]);
 
-  const wrapperStyles = useMemo(
-    () =>
-      isPreviewing
-        ? {
-            display: 'flex',
-            justifyContent: 'center' as const,
-            alignItems: 'flex-start' as const,
-            width: '100vw',
-            minHeight: '100vh',
-            position: 'fixed' as const,
-            left: 0,
-            top: 0,
-            paddingLeft: '65px',
-          }
-        : {},
-    [isPreviewing]
-  );
-
-  const content = (
+  return (
     <CvMetadataProvider metadata={cvData?.getCv?.metadata ?? null}>
       <Box sx={contentBoxStyles}>
         <GetNameComponent variables={{ cvId }}>
@@ -145,14 +126,5 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
         <Skills cvId={cvId} />
       </Box>
     </CvMetadataProvider>
-  );
-
-  return isPreviewing ? (
-    <Box sx={wrapperStyles}>{content}</Box>
-  ) : (
-    <RowLayout>
-      {content}
-      <SuggestionsPanel cvId={cvId} />
-    </RowLayout>
   );
 };

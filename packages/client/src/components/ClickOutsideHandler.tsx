@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSuggestions } from '../contexts/use-suggestions/SuggestionsProvider';
+import { useSuggestions } from '../contexts';
 
 interface ClickOutsideHandlerProps {
   children: React.ReactNode;

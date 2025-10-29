@@ -9,7 +9,7 @@ import {
 import {
   GenericEntriesSection,
   useCvEntries,
-  WithRemoveEntryButton,
+  WithEntryControls,
 } from '../../../components';
 
 export const ContactInfo = ({ cvId }: CvEntryComponentProps) => {
@@ -38,7 +38,7 @@ export const ContactInfo = ({ cvId }: CvEntryComponentProps) => {
       entries={entries}
       noEntriesText="No contact info entries available."
       renderEntry={(contactInfo, index) => (
-        <WithRemoveEntryButton
+        <WithEntryControls
           removeEntry={() => removeEntry(contactInfo._id)}
           onAddEntry={handleAddEntry}
           onMoveUp={index > 0 ? () => moveUp(contactInfo._id) : undefined}
@@ -55,7 +55,7 @@ export const ContactInfo = ({ cvId }: CvEntryComponentProps) => {
             entry={contactInfo}
             updateField={updateField}
           />
-        </WithRemoveEntryButton>
+        </WithEntryControls>
       )}
       onAdd={() => handleAddEntry()}
       sx={{

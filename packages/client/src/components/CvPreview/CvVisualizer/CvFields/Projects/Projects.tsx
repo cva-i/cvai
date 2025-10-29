@@ -3,7 +3,7 @@ import { ProjectEntry } from './ProjectEntry';
 import {
   GenericEntriesSection,
   useCvEntries,
-  WithRemoveEntryButton,
+  WithEntryControls,
 } from '../../../components';
 import type { CvEntryComponentProps } from '../../types';
 import type { Project as ProjectGraphqlType } from '../../../../../generated/graphql';
@@ -38,7 +38,7 @@ export const Projects = ({ cvId }: CvEntryComponentProps) => {
       entries={entries}
       noEntriesText="No project entries."
       renderEntry={(project, index) => (
-        <WithRemoveEntryButton
+        <WithEntryControls
           removeEntry={() => removeEntry(project._id)}
           onAddEntry={handleAddEntry}
           onMoveUp={index > 0 ? () => moveUp(project._id) : undefined}
@@ -49,7 +49,7 @@ export const Projects = ({ cvId }: CvEntryComponentProps) => {
           key={project._id}
         >
           <ProjectEntry cvId={cvId} entry={project} updateField={updateField} />
-        </WithRemoveEntryButton>
+        </WithEntryControls>
       )}
       onAdd={() => handleAddEntry()}
     />

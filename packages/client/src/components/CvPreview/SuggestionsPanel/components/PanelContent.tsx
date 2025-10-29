@@ -13,8 +13,11 @@ interface PanelContentProps {
   }>;
   cvData: GetCvQuery | undefined;
   activeSuggestionId: string | null;
-  scrollContainerRef: React.RefObject<HTMLDivElement>;
-  registerSuggestionRef: (suggestionId: string, element: HTMLDivElement | null) => void;
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
+  registerSuggestionRef: (
+    suggestionId: string,
+    element: HTMLDivElement | null
+  ) => void;
   onAccept: (suggestionId: string) => void;
   onReject: (suggestionId: string) => void;
 }
@@ -30,7 +33,11 @@ export const PanelContent: React.FC<PanelContentProps> = ({
   onReject,
 }) => {
   return (
-    <Collapse in={isExpanded} timeout={300}>
+    <Collapse
+      in={isExpanded}
+      timeout={300}
+      sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}
+    >
       <Box
         sx={{
           flex: 1,
@@ -38,6 +45,8 @@ export const PanelContent: React.FC<PanelContentProps> = ({
           p: 2,
           backgroundColor: 'white',
           minHeight: 0,
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         {match(suggestionBlocks.length)

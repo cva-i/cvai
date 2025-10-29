@@ -10,8 +10,11 @@ interface SuggestionsListProps {
   }>;
   cvData: GetCvQuery | undefined;
   activeSuggestionId: string | null;
-  scrollContainerRef: React.RefObject<HTMLDivElement>;
-  registerSuggestionRef: (suggestionId: string, element: HTMLDivElement | null) => void;
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
+  registerSuggestionRef: (
+    suggestionId: string,
+    element: HTMLDivElement | null
+  ) => void;
   onAccept: (suggestionId: string) => void;
   onReject: (suggestionId: string) => void;
 }
@@ -47,6 +50,7 @@ export const SuggestionsList: React.FC<SuggestionsListProps> = ({
         margin: '0 -1rem',
         overflow: 'auto',
         padding: '0 1rem',
+        flex: '1 1 auto',
         minHeight: 0,
         overscrollBehavior: 'contain',
         ...scrollbarStyles,

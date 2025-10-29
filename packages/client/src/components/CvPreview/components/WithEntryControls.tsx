@@ -18,7 +18,7 @@ type WithRemoveEntryButtonProps = React.PropsWithChildren<{
 }> &
   BoxProps;
 
-export const WithRemoveEntryButton = ({
+export const WithEntryControls = ({
   children,
   removeEntry,
   onAddEntry,

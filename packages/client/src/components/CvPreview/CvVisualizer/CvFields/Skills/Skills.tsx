@@ -3,7 +3,7 @@ import { SkillEntry } from './SkillEntry';
 import {
   GenericEntriesSection,
   useCvEntries,
-  WithRemoveEntryButton,
+  WithEntryControls,
 } from '../../../components';
 import type { CvEntryComponentProps } from '../../types';
 import type { Skill as SkillGraphqlType } from '../../../../../generated/graphql';
@@ -37,7 +37,7 @@ export const Skills: React.FC<CvEntryComponentProps> = ({ cvId }) => {
       entries={entries}
       noEntriesText="No skills available."
       renderEntry={(skill, index) => (
-        <WithRemoveEntryButton
+        <WithEntryControls
           removeEntry={() => removeEntry(skill._id)}
           onAddEntry={handleAddEntry}
           onMoveUp={index > 0 ? () => moveUp(skill._id) : undefined}
@@ -48,7 +48,7 @@ export const Skills: React.FC<CvEntryComponentProps> = ({ cvId }) => {
           key={skill._id}
         >
           <SkillEntry cvId={cvId} entry={skill} updateField={updateField} />
-        </WithRemoveEntryButton>
+        </WithEntryControls>
       )}
       onAdd={() => handleAddEntry()}
     />

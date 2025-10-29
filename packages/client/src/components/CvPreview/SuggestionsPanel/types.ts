@@ -9,10 +9,6 @@ export interface SuggestionData {
   blockId?: string | null;
   text: string;
   suggestedText?: string | null;
-  highlightType?: string | null;
-  sentenceIndex?: number | null;
-  startOffset?: number | null;
-  endOffset?: number | null;
   status: string;
   authorName?: string | null;
   createdAt?: Date;
