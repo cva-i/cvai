@@ -30,7 +30,10 @@ interface CardHeaderProps {
   onReject: () => void;
 }
 
-export const CardHeader: React.FC<CardHeaderProps> = ({ onResolve, onReject }) => {
+export const CardHeader: React.FC<CardHeaderProps> = ({
+  onResolve,
+  onReject,
+}) => {
   return (
     <HeaderActions>
       <ActionButton

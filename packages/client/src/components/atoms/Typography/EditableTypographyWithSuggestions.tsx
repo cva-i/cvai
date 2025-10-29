@@ -4,7 +4,7 @@ import { HighlightedText } from './HighlightedText';
 import { useSuggestionHighlight } from '../../../hooks/use-suggestion-highlight';
 import { useEditableTypographyBase } from '../../../hooks';
 import type { EditableTypographyProps } from './types';
-import type { SuggestionBlock } from "../../../contexts";
+import type { SuggestionBlock } from '../../../contexts';
 
 interface EditableTypographyWithSuggestionsProps
   extends EditableTypographyProps {
@@ -41,17 +41,13 @@ export const EditableTypographyWithSuggestions = ({
     displayValue,
   } = useEditableTypographyBase({ value, onSave });
 
-  const {
-    blockSuggestions,
-    hasBlockSuggestions,
-    isHighlighted,
-    isActive,
-  } = useSuggestionHighlight({
-    suggestionBlocks,
-    blockId: id,
-    activeSuggestionId,
-    hoveredBlockId,
-  });
+  const { blockSuggestions, hasBlockSuggestions, isHighlighted, isActive } =
+    useSuggestionHighlight({
+      suggestionBlocks,
+      blockId: id,
+      activeSuggestionId,
+      hoveredBlockId,
+    });
 
   // Handle click to activate suggestion
   const handleClick = useCallback(() => {
@@ -89,7 +85,7 @@ export const EditableTypographyWithSuggestions = ({
 
   // If we have suggestions and we're not editing, use HighlightedText
   if (hasBlockSuggestions && !defaultIsEditing) {
-    const openSuggestions = blockSuggestions.filter(s => s.status === 'open');
+    const openSuggestions = blockSuggestions.filter((s) => s.status === 'open');
     return (
       <HighlightedText
         id={id}

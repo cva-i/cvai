@@ -5,7 +5,10 @@ interface UsePanelActionsParams {
   isGenerating: boolean;
   clearAllSuggestions: (cvId: string) => Promise<void>;
   generateSuggestions: (cvId: string) => Promise<void>;
-  updateSuggestionStatus: (id: string, status: 'open' | 'resolved' | 'rejected') => Promise<void>;
+  updateSuggestionStatus: (
+    id: string,
+    status: 'open' | 'resolved' | 'rejected'
+  ) => Promise<void>;
   deleteSuggestion: (id: string) => Promise<void>;
 }
 

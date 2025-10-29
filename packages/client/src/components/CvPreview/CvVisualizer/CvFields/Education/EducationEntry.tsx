@@ -16,7 +16,9 @@ export const EducationEntry = ({
 }: CvEntryItemProps<'educationEntries'>) => {
   const degreeFieldId = useFieldId(`educationEntries.${ed._id}.degree`);
   const nameFieldId = useFieldId(`educationEntries.${ed._id}.name`);
-  const descriptionFieldId = useFieldId(`educationEntries.${ed._id}.description`);
+  const descriptionFieldId = useFieldId(
+    `educationEntries.${ed._id}.description`
+  );
   const locationFieldId = useFieldId(`educationEntries.${ed._id}.location`);
   const durationFieldId = useFieldId(`educationEntries.${ed._id}.duration`);
   const skillsFieldId = useFieldId(`educationEntries.${ed._id}.skills`);

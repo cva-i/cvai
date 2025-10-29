@@ -15,13 +15,10 @@ export function fieldValueToString(value: unknown): string {
 /**
  * Extracts text from a specific entry field
  */
-function extractFromEntry(
-  entry: any,
-  blockId: string
-): string | null {
+function extractFromEntry(entry: any, blockId: string): string | null {
   if (!entry?.metadata) return null;
 
-  for (const [fieldName, meta] of Object.entries(entry.metadata as any)) {
+  for (const [fieldName, meta] of Object.entries(entry.metadata)) {
     const fieldMeta = meta as any;
     if (fieldMeta?.fieldId === blockId) {
       return fieldValueToString(entry[fieldName]);
@@ -58,10 +55,7 @@ function hasMetadata(cv: any): cv is any {
 /**
  * Extracts text from aboutMe section
  */
-function extractFromAboutMe(
-  cv: any,
-  blockId: string
-): string | null {
+function extractFromAboutMe(cv: any, blockId: string): string | null {
   if (!hasMetadata(cv) || !cv.aboutMe) return null;
 
   const { metadata, aboutMe } = cv;

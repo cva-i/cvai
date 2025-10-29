@@ -4,11 +4,13 @@ interface CvMetadataContextType {
   metadata: any | null;
 }
 
-const CvMetadataContext = createContext<CvMetadataContextType | undefined>(undefined);
+const CvMetadataContext = createContext<CvMetadataContextType | undefined>(
+  undefined
+);
 
 export function CvMetadataProvider({
   children,
-  metadata
+  metadata,
 }: {
   children: React.ReactNode;
   metadata: any | null;

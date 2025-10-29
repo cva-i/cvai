@@ -29,7 +29,10 @@ interface ApplyButtonProps {
   onClick: (e: React.MouseEvent) => void;
 }
 
-export const ApplyButton: React.FC<ApplyButtonProps> = ({ loading, onClick }) => {
+export const ApplyButton: React.FC<ApplyButtonProps> = ({
+  loading,
+  onClick,
+}) => {
   return (
     <StyledButton onClick={onClick}>
       <CheckIcon />

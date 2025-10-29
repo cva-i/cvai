@@ -8,7 +8,9 @@ export const ContactInfoEntry = ({
   updateField,
   isEditing,
 }: CvEntryItemProps<'contactInfoEntries'>) => {
-  const linkNameFieldId = useFieldId(`contactInfoEntries.${contactInfo._id}.linkName`);
+  const linkNameFieldId = useFieldId(
+    `contactInfoEntries.${contactInfo._id}.linkName`
+  );
   const linkFieldId = useFieldId(`contactInfoEntries.${contactInfo._id}.link`);
 
   return (

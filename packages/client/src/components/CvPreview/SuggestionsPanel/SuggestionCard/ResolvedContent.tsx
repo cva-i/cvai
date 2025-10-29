@@ -13,8 +13,8 @@ export const ResolvedContent = memo<ResolvedContentProps>(({ suggestion }) => {
       <>
         <PreviewLabel>Preview (Resolved)</PreviewLabel>
         <PreviewText>
-          This suggestion has been marked as resolved. The text change is
-          being previewed.
+          This suggestion has been marked as resolved. The text change is being
+          previewed.
         </PreviewText>
       </>
     ))

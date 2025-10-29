@@ -14,7 +14,9 @@ export const ProjectEntry = ({
   isEditing,
 }: CvEntryItemProps<'projectEntries'>) => {
   const nameFieldId = useFieldId(`projectEntries.${project._id}.name`);
-  const descriptionFieldId = useFieldId(`projectEntries.${project._id}.description`);
+  const descriptionFieldId = useFieldId(
+    `projectEntries.${project._id}.description`
+  );
   const skillsFieldId = useFieldId(`projectEntries.${project._id}.skills`);
 
   return (

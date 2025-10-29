@@ -39,7 +39,9 @@ export const HighlightedText = forwardRef<HTMLDivElement, HighlightedTextProps>(
 
     // Check if this text has any suggestions
     const hasSuggestions = suggestions.length > 0;
-    const activeSuggestion = suggestions.find(s => s._id === activeSuggestionId);
+    const activeSuggestion = suggestions.find(
+      (s) => s._id === activeSuggestionId
+    );
     const isActive = !!activeSuggestion;
     const shouldHighlight = hasSuggestions && (isActive || isHovered);
 
@@ -58,8 +60,9 @@ export const HighlightedText = forwardRef<HTMLDivElement, HighlightedTextProps>(
 
     const handleMouseLeave = (e: React.MouseEvent<HTMLSpanElement>) => {
       if (hasSuggestions) {
-        e.currentTarget.style.boxShadow =
-          isActive ? 'inset 0 0 0 1000px #fef3c7' : 'none';
+        e.currentTarget.style.boxShadow = isActive
+          ? 'inset 0 0 0 1000px #fef3c7'
+          : 'none';
       }
     };
 

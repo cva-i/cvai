@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 const DiffContainer = styled(Box)({
@@ -20,25 +20,21 @@ const DiffRow = styled(Box)<{ variant: 'old' | 'new' }>(({ variant }) => ({
   lineHeight: '1.6',
 }));
 
-const DiffMarker = styled(Box)<{ variant: 'old' | 'new' }>(
-  ({ variant }) => ({
-    fontSize: '14px',
-    fontWeight: 600,
-    color: variant === 'old' ? '#c00' : '#0a0',
-    minWidth: '16px',
-    fontFamily: 'monospace',
-  })
-);
+const DiffMarker = styled(Box)<{ variant: 'old' | 'new' }>(({ variant }) => ({
+  fontSize: '14px',
+  fontWeight: 600,
+  color: variant === 'old' ? '#c00' : '#0a0',
+  minWidth: '16px',
+  fontFamily: 'monospace',
+}));
 
-const DiffText = styled(Box)<{ variant: 'old' | 'new' }>(
-  ({ variant }) => ({
-    fontSize: '14px',
-    lineHeight: '1.6',
-    color: variant === 'old' ? '#600' : '#060',
-    flex: 1,
-    wordBreak: 'break-word',
-  })
-);
+const DiffText = styled(Box)<{ variant: 'old' | 'new' }>(({ variant }) => ({
+  fontSize: '14px',
+  lineHeight: '1.6',
+  color: variant === 'old' ? '#600' : '#060',
+  flex: 1,
+  wordBreak: 'break-word',
+}));
 
 interface DiffViewProps {
   oldText: string;

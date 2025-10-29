@@ -34,7 +34,12 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
       }}
     >
       {/* Title and Actions */}
-      <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        mb={1}
+      >
         <Typography
           variant="h6"
           fontWeight={600}
@@ -53,7 +58,10 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
       </Box>
 
       {/* Filter Buttons */}
-      <FilterButtons activeFilter={activeFilter} onFilterChange={onFilterChange} />
+      <FilterButtons
+        activeFilter={activeFilter}
+        onFilterChange={onFilterChange}
+      />
     </Box>
   );
 };

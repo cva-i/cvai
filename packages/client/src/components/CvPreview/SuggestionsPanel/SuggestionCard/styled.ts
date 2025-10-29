@@ -1,17 +1,19 @@
 import { Box, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-export const CardContainer = styled(Box)<{ isActive?: boolean }>(({ isActive }) => ({
-  border: isActive ? '2px solid #8b5cf6' : '2px solid #f3f4f6',
-  borderRadius: '8px',
-  backgroundColor: '#ffffff',
-  padding: '16px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '12px',
-  transition: 'all 0.2s ease-out',
-  '&:hover': isActive ? {} : { borderColor: '#8b5cf630', transition: 'none' },
-}));
+export const CardContainer = styled(Box)<{ isActive?: boolean }>(
+  ({ isActive }) => ({
+    border: isActive ? '2px solid #8b5cf6' : '2px solid #f3f4f6',
+    borderRadius: '8px',
+    backgroundColor: '#ffffff',
+    padding: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    transition: 'all 0.2s ease-out',
+    '&:hover': isActive ? {} : { borderColor: '#8b5cf630', transition: 'none' },
+  })
+);
 
 export const CommentText = styled(Typography)({
   fontSize: '14px',

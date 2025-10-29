@@ -23,7 +23,10 @@ export interface SuggestionsContextType {
   // Actions
   fetchSuggestions: (cvId: string) => Promise<void>;
   generateSuggestions: (cvId: string) => Promise<void>;
-  updateSuggestionStatus: (suggestionId: string, status: 'open' | 'resolved' | 'rejected') => Promise<void>;
+  updateSuggestionStatus: (
+    suggestionId: string,
+    status: 'open' | 'resolved' | 'rejected'
+  ) => Promise<void>;
   deleteSuggestion: (suggestionId: string) => Promise<void>;
   clearAllSuggestions: (cvId: string) => Promise<void>;
 

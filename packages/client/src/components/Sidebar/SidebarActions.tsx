@@ -38,10 +38,15 @@ export const SidebarActions = () => {
             {isGenerating ? (
               <CircularProgress size={16} sx={{ color: 'primary.dark' }} />
             ) : (
-              <AutoAwesomeIcon fontSize="small" sx={{ color: 'primary.dark' }} />
+              <AutoAwesomeIcon
+                fontSize="small"
+                sx={{ color: 'primary.dark' }}
+              />
             )}
             <ItemText variant="body2">
-              {isGenerating ? 'Generating suggestions...' : 'Generate AI Suggestions'}
+              {isGenerating
+                ? 'Generating suggestions...'
+                : 'Generate AI Suggestions'}
             </ItemText>
           </ItemContent>
         </ActionItem>

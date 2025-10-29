@@ -1,4 +1,4 @@
-import { match, P } from 'ts-pattern';
+import { match } from 'ts-pattern';
 import type { GetCvQuery, UpdateCvInput } from '../../../../generated/graphql';
 import { applyTextSubstitution } from './text-substitution';
 
@@ -42,7 +42,7 @@ function findFieldInEntries(
     const entryMetadata = metadataEntries[entry._id];
     if (!entryMetadata) continue;
 
-    for (const [fieldName, fieldMeta] of Object.entries(entryMetadata as any)) {
+    for (const [fieldName, fieldMeta] of Object.entries(entryMetadata)) {
       if (
         fieldMeta &&
         typeof fieldMeta === 'object' &&
@@ -85,7 +85,10 @@ function buildAboutMeUpdate(
   }
 
   // Check title field (fieldName in aboutMe)
-  if (metadata.aboutMe?.title?.fieldId === suggestion.blockId && aboutMe?.title) {
+  if (
+    metadata.aboutMe?.title?.fieldId === suggestion.blockId &&
+    aboutMe?.title
+  ) {
     return {
       aboutMe: {
         fieldName: suggestion.suggestedText,
@@ -153,7 +156,12 @@ function buildEntryUpdate(
   ];
 
   for (const { entries, key, metadata: entryMetadata } of entrySearches) {
-    const fieldInfo = findFieldInEntries(entries, key, entryMetadata, suggestion);
+    const fieldInfo = findFieldInEntries(
+      entries,
+      key,
+      entryMetadata,
+      suggestion
+    );
 
     if (fieldInfo) {
       return {
@@ -189,14 +197,17 @@ export function buildUpdateInputForSuggestion(
 
   // Try different update strategies
   return match<any, UpdateCvInput | null>(null)
-    .when(() => buildAboutMeUpdate(cv, suggestion) !== null, () =>
-      buildAboutMeUpdate(cv, suggestion)
+    .when(
+      () => buildAboutMeUpdate(cv, suggestion) !== null,
+      () => buildAboutMeUpdate(cv, suggestion)
     )
-    .when(() => buildTopLevelUpdate(cv, suggestion) !== null, () =>
-      buildTopLevelUpdate(cv, suggestion)
+    .when(
+      () => buildTopLevelUpdate(cv, suggestion) !== null,
+      () => buildTopLevelUpdate(cv, suggestion)
     )
-    .when(() => buildEntryUpdate(cv, suggestion) !== null, () =>
-      buildEntryUpdate(cv, suggestion)
+    .when(
+      () => buildEntryUpdate(cv, suggestion) !== null,
+      () => buildEntryUpdate(cv, suggestion)
     )
     .otherwise(() => {
       console.log('No matching field found for blockId:', suggestion.blockId);
