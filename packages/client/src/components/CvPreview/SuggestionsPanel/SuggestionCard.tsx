@@ -5,8 +5,9 @@ import { styled } from '@mui/material/styles';
 import { useSuggestions } from '../../../contexts';
 import type { Suggestion } from '../../../contexts';
 import { DiffView } from './DiffView';
-import { extractCurrentText } from './utils';
+import { extractCurrentText, buildUpdateInputForSuggestion } from './utils';
 import type { GetCvQuery } from '../../../generated/graphql';
+import { useUpdateCvMutation, useUpdateSuggestionStatusMutation } from '../../../generated/graphql';
 
 const CardContainer = styled(Box)<{ isActive?: boolean }>(
   ({ isActive }) => ({
@@ -148,6 +149,8 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const { setHoveredBlockId, setActiveSuggestionId } = useSuggestions();
+  const [updateCvMutation, { loading: updateLoading }] = useUpdateCvMutation();
+  const [updateSuggestionStatus] = useUpdateSuggestionStatusMutation();
 
   const currentText = useMemo(() => {
     if (!suggestion.suggestedText) return null;
@@ -240,14 +243,44 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
             newText={suggestion.suggestedText}
           />
           <ApplyButton
-            onClick={(e) => {
+            onClick={async (e) => {
               e.stopPropagation();
-              // TODO: implement apply logic
-              console.log('Apply suggestion:', suggestion._id);
+              if (!cvData?.getCv) return;
+
+              const updateInput = buildUpdateInputForSuggestion(cvData, suggestion);
+              if (!updateInput) {
+                console.error('Failed to build update input', {
+                  blockId: suggestion.blockId,
+                  cvData: cvData.getCv,
+                  suggestion,
+                });
+                return;
+              }
+              console.log('Update input:', updateInput);
+
+              try {
+                await updateCvMutation({
+                  variables: {
+                    cvId: cvData.getCv._id,
+                    data: updateInput,
+                  },
+                });
+
+                await updateSuggestionStatus({
+                  variables: {
+                    input: {
+                      suggestionId: suggestion._id,
+                      status: 'resolved',
+                    },
+                  },
+                });
+              } catch (error) {
+                console.error('Failed to apply suggestion:', error);
+              }
             }}
           >
             <CheckIcon />
-            <span>Apply Change</span>
+            <span>{updateLoading ? 'Applying...' : 'Apply Change'}</span>
           </ApplyButton>
         </>
       )}

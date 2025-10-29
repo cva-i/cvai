@@ -20,6 +20,12 @@ export class CommentObjectType {
   @Field({ nullable: true })
   suggestedText?: string;
 
+  @Field()
+  highlightType!: string;
+
+  @Field(() => Int, { nullable: true })
+  sentenceIndex?: number;
+
   @Field(() => Int, { nullable: true })
   startOffset?: number;
 

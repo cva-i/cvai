@@ -67,17 +67,29 @@ Each suggestion should:
 - Reference the exact field being addressed
 - Provide clear guidance on what to change
 
-**Character-Level Highlighting:**
-When suggesting improvements to specific text within a field (not the entire field), you MUST provide startOffset and endOffset:
-- startOffset: The character position where the problematic text begins (0-indexed)
-- endOffset: The character position where the problematic text ends (exclusive)
-- These offsets will highlight the exact text that needs improvement
-- If your suggestion applies to the entire field content, set both to null
+**Highlighting System:**
+You have THREE options for highlighting text (choose the easiest one):
 
-**Examples:**
-- If field text is "Managed team and completed projects" and you want to highlight "Managed", use startOffset: 0, endOffset: 7
-- If field text is "Worked on various tasks" and you want to highlight "various tasks", use startOffset: 10, endOffset: 23
-- If your suggestion is about the entire field structure or content, use startOffset: null, endOffset: null
+1. **Section-level (EASIEST - RECOMMENDED)**: Highlight the entire field
+   - Set: highlightType to "section"
+   - Set: sentenceIndex to null, startOffset to null, endOffset to null
+   - Use when your comment applies to the whole field
+
+2. **Sentence-level (EASY)**: Highlight a specific sentence by its index
+   - Set: highlightType to "sentence"
+   - Set: sentenceIndex to 0 (for first sentence), sentenceIndex to 1 (for second), etc.
+   - Set: startOffset to null, endOffset to null
+   - Sentences are split by periods, exclamation marks, or question marks
+   - Example: In "I led the team. We shipped the product.", sentence 0 is "I led the team", sentence 1 is "We shipped the product"
+
+3. **Character-level (HARD - AVOID IF POSSIBLE)**: Exact character positions
+   - Set: highlightType to "chunk"
+   - Set: startOffset to a number, endOffset to a number
+   - Set: sentenceIndex to null
+   - ONLY use if you need to highlight part of a sentence
+   - WARNING: Character counting is error-prone, prefer sentence-level
+
+**RECOMMENDATION**: Use highlightType "sentence" for most comments. Sentences are much easier to count than characters!
 
 ### 4. What NOT to Suggest
 

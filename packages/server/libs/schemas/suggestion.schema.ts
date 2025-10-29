@@ -29,6 +29,14 @@ export class Comment {
   @Field({ nullable: true })
   suggestedText?: string;
 
+  @Prop({ enum: ['chunk', 'sentence', 'section'], default: 'section' })
+  @Field()
+  highlightType!: 'chunk' | 'sentence' | 'section';
+
+  @Prop()
+  @Field({ nullable: true })
+  sentenceIndex?: number;
+
   @Prop()
   @Field({ nullable: true })
   startOffset?: number;
