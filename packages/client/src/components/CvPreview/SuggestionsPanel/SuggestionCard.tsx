@@ -4,6 +4,7 @@ import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { useSuggestions } from '../../../contexts';
 import type { Suggestion } from '../../../contexts';
+import { DiffView } from './DiffView';
 
 const CardContainer = styled(Box)<{ isActive?: boolean }>(
   ({ isActive }) => ({
@@ -195,8 +196,19 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
       {/* Comment Text */}
       <CommentText>{suggestion.text}</CommentText>
 
+      {/* Show diff view if there's a suggested text replacement */}
+      {suggestion.suggestedText && (
+        <>
+          <PreviewLabel>Suggested Change</PreviewLabel>
+          <DiffView
+            oldText="Current text"
+            newText={suggestion.suggestedText}
+          />
+        </>
+      )}
+
       {/* Show preview for resolved suggestions */}
-      {suggestion.status === 'resolved' && (
+      {suggestion.status === 'resolved' && !suggestion.suggestedText && (
         <>
           <PreviewLabel>Preview (Resolved)</PreviewLabel>
           <PreviewText>

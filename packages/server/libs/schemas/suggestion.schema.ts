@@ -4,7 +4,7 @@ import { Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 @ObjectType()
-export class Suggestion {
+export class Comment {
   @Prop({ type: Types.ObjectId, default: () => new Types.ObjectId() })
   @Field()
   _id!: Types.ObjectId;
@@ -24,6 +24,10 @@ export class Suggestion {
   @Prop({ required: true })
   @Field()
   text!: string;
+
+  @Prop()
+  @Field({ nullable: true })
+  suggestedText?: string;
 
   @Prop()
   @Field({ nullable: true })
@@ -48,5 +52,10 @@ export class Suggestion {
   updatedAt?: Date;
 }
 
-export type SuggestionDocument = Suggestion & Document;
-export const SuggestionSchema = SchemaFactory.createForClass(Suggestion);
+export type CommentDocument = Comment & Document;
+export const CommentSchema = SchemaFactory.createForClass(Comment);
+
+// Keep backward compatibility aliases
+export const Suggestion = Comment;
+export type SuggestionDocument = CommentDocument;
+export const SuggestionSchema = CommentSchema;

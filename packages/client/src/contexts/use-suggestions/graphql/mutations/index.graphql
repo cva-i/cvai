@@ -1,12 +1,13 @@
 mutation GenerateSuggestionsForCv($cvId: ID!) {
   generateSuggestionsForCv(cvId: $cvId) {
     blockId
-    suggestions {
+    comments {
       _id
       cvId
       cvVersionId
       blockId
       text
+      suggestedText
       startOffset
       endOffset
       status
@@ -20,6 +21,8 @@ mutation GenerateSuggestionsForCv($cvId: ID!) {
 mutation UpdateSuggestionStatus($input: UpdateSuggestionStatusInput!) {
   updateSuggestionStatus(input: $input) {
     _id
+    text
+    suggestedText
     status
     updatedAt
   }

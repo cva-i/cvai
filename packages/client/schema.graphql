@@ -5,6 +5,26 @@ type AboutMe {
   fieldName: String!
 }
 
+type CommentBlockObjectType {
+  blockId: String!
+  comments: [CommentObjectType!]!
+}
+
+type CommentObjectType {
+  _id: String!
+  authorName: String!
+  blockId: String!
+  createdAt: DateTime!
+  cvId: String!
+  cvVersionId: String!
+  endOffset: Int
+  startOffset: Int
+  status: String!
+  suggestedText: String
+  text: String!
+  updatedAt: DateTime!
+}
+
 type ContactInfo {
   _id: ID!
   link: String!
@@ -144,14 +164,14 @@ type Mutation {
   deleteSuggestion(suggestionId: ID!): Boolean!
   duplicateCv(cvId: ID!): CvObjectType!
   generateNewEntryItem(contactInfoData: CreateContactInfoInput, cvId: ID!, educationData: CreateEducationInput, entryFieldName: CvEntryType!, projectData: CreateProjectInput, skillData: CreateSkillInput, workExperienceData: CreateWorkExperienceInput): GenerateNewEntryItemObjectType!
-  generateSuggestionsForCv(cvId: ID!): [SuggestionBlockObjectType!]!
+  generateSuggestionsForCv(cvId: ID!): [CommentBlockObjectType!]!
   logout: Boolean!
   redoCvVersion(cvId: ID!): CvObjectType!
   reviewCv(cvId: ID!): ReviewCvOutput!
   transformCv(message: String!, templateId: String!): TransformCvObjectType!
   undoCvVersion(cvId: ID!): CvObjectType!
   updateCv(cvId: ID!, data: UpdateCvInput!): CvObjectType!
-  updateSuggestionStatus(input: UpdateSuggestionStatusInput!): SuggestionObjectType!
+  updateSuggestionStatus(input: UpdateSuggestionStatusInput!): CommentObjectType!
 }
 
 type PaginatedCvVersionHistoryObjectType {
@@ -181,7 +201,7 @@ type Query {
   getCvVersionHistory(cvId: ID!): PaginatedCvVersionHistoryObjectType!
   getCvs: [CvObjectType!]!
   getReviewStatus(cvId: ID!): ReviewStatusType!
-  getSuggestionsForCv(cvId: ID!): [SuggestionBlockObjectType!]!
+  getSuggestionsForCv(cvId: ID!): [CommentBlockObjectType!]!
   getVersioningActionsMetadata(cvId: ID!): VersioningActionsMetadataObjectType!
 }
 
@@ -205,25 +225,6 @@ type Skill {
   category: String!
   positionIndex: Int!
   skills: [String!]!
-}
-
-type SuggestionBlockObjectType {
-  blockId: String!
-  suggestions: [SuggestionObjectType!]!
-}
-
-type SuggestionObjectType {
-  _id: String!
-  authorName: String!
-  blockId: String!
-  createdAt: DateTime!
-  cvId: String!
-  cvVersionId: String!
-  endOffset: Int
-  startOffset: Int
-  status: String!
-  text: String!
-  updatedAt: DateTime!
 }
 
 type TransformCvObjectType {

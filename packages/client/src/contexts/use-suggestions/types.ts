@@ -4,6 +4,7 @@ export interface Suggestion {
   cvVersionId?: string;
   blockId: string;
   text: string;
+  suggestedText?: string;
   startOffset?: number;
   endOffset?: number;
   createdAt?: Date;

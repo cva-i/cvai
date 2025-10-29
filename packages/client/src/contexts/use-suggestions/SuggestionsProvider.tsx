@@ -56,12 +56,13 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({
           const blocks: SuggestionBlock[] = data.getSuggestionsForCv.map(
             (block) => ({
               blockId: block.blockId,
-              suggestions: block.suggestions.map((s) => ({
+              suggestions: block.comments.map((s) => ({
                 _id: s._id,
                 cvId: s.cvId,
                 cvVersionId: s.cvVersionId,
                 blockId: s.blockId,
                 text: s.text,
+                suggestedText: s.suggestedText ?? undefined,
                 startOffset: s.startOffset ?? undefined,
                 endOffset: s.endOffset ?? undefined,
                 status: s.status as 'open' | 'resolved' | 'rejected',
@@ -94,12 +95,13 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({
           const blocks: SuggestionBlock[] = data.generateSuggestionsForCv.map(
             (block) => ({
               blockId: block.blockId,
-              suggestions: block.suggestions.map((s) => ({
+              suggestions: block.comments.map((s) => ({
                 _id: s._id,
                 cvId: s.cvId,
                 cvVersionId: s.cvVersionId,
                 blockId: s.blockId,
                 text: s.text,
+                suggestedText: s.suggestedText ?? undefined,
                 startOffset: s.startOffset ?? undefined,
                 endOffset: s.endOffset ?? undefined,
                 status: s.status as 'open' | 'resolved' | 'rejected',

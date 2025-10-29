@@ -1,12 +1,13 @@
 query GetSuggestionsForCv($cvId: ID!) {
   getSuggestionsForCv(cvId: $cvId) {
     blockId
-    suggestions {
+    comments {
       _id
       cvId
       cvVersionId
       blockId
       text
+      suggestedText
       startOffset
       endOffset
       status

@@ -10,9 +10,9 @@ import { CvService } from '../cv/cv.service';
 import { LlmCommunicationService } from '../llm-communication/llm-communication.service';
 import { CvFormatter } from '../llm-integration/utils';
 import { CvManagerMethodProps } from '../cv/types';
-import { suggestionResponseSchema } from './types';
+import { commentResponseSchema } from './types';
 import { cvSuggestionsSystemPrompt } from './system-prompt';
-import { UpdateSuggestionStatusInput, SuggestionBlockObjectType } from './dto';
+import { CommentBlockObjectType, UpdateSuggestionStatusInput } from './dto';
 import { tryCatch, entries } from '@server/common/utils';
 import { createCvDataMetadata } from '../cv/metadata.utils';
 
@@ -31,7 +31,7 @@ export class SuggestionsService {
 
   private groupSuggestionsByBlock(
     suggestions: SuggestionDocument[]
-  ): SuggestionBlockObjectType[] {
+  ): CommentBlockObjectType[] {
     const groupedByBlock = suggestions.reduce(
       (acc, suggestion) => {
         const blockId = suggestion.blockId;
@@ -45,12 +45,13 @@ export class SuggestionsService {
 
     return entries(groupedByBlock).map(([blockId, suggestions]) => ({
       blockId: String(blockId),
-      suggestions: suggestions.map((s) => ({
+      comments: suggestions.map((s) => ({
         _id: s._id.toString(),
         cvId: s.cvId.toString(),
         cvVersionId: s.cvVersionId,
         blockId: s.blockId,
         text: s.text,
+        suggestedText: s.suggestedText,
         startOffset: s.startOffset,
         endOffset: s.endOffset,
         status: s.status,
@@ -145,7 +146,7 @@ export class SuggestionsService {
 
     const [response, error] = await tryCatch(
       this.llmService.createStructuredResponse(completionParams, {
-        suggestionResponseSchema,
+        commentResponseSchema,
       })
     );
 
@@ -156,17 +157,18 @@ export class SuggestionsService {
       throw new Error(`Failed to generate suggestions: ${error.message}`);
     }
 
-    this.logger.log(`Generated ${response.suggestions.length} suggestions`);
+    this.logger.log(`Generated ${response.comments.length} suggestions`);
 
     const createdSuggestions = await Promise.all(
-      response.suggestions.map((suggestionItem) =>
+      response.comments.map((commentItem) =>
         this.suggestionModel.create({
           cvId: new Types.ObjectId(cvId),
           cvVersionId: cv.versionId,
-          blockId: suggestionItem.blockId,
-          text: suggestionItem.text,
-          startOffset: suggestionItem.startOffset,
-          endOffset: suggestionItem.endOffset,
+          blockId: commentItem.blockId,
+          text: commentItem.text,
+          suggestedText: commentItem.suggestedText,
+          startOffset: commentItem.startOffset,
+          endOffset: commentItem.endOffset,
           status: 'open',
           authorName: 'AI Assistant',
         })

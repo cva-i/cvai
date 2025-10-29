@@ -5,17 +5,17 @@ import { CurrentUser } from '../../common/decorators';
 import { DecodedUserObjectType } from '../../auth/dto';
 import { SuggestionsService } from './suggestions.service';
 import {
-  SuggestionObjectType,
-  SuggestionBlockObjectType,
+  CommentObjectType,
+  CommentBlockObjectType,
   UpdateSuggestionStatusInput,
 } from './dto';
 
 @UseGuards(GqlAuthGuard)
-@Resolver(() => SuggestionObjectType)
+@Resolver(() => CommentObjectType)
 export class SuggestionsResolver {
   constructor(private readonly suggestionsService: SuggestionsService) {}
 
-  @Query(() => [SuggestionBlockObjectType])
+  @Query(() => [CommentBlockObjectType])
   async getSuggestionsForCv(
     @CurrentUser() { client_id: userId }: DecodedUserObjectType,
     @Args('cvId', { type: () => ID }) cvId: string
@@ -23,7 +23,7 @@ export class SuggestionsResolver {
     return this.suggestionsService.getSuggestionsForCv({ cvId, userId });
   }
 
-  @Mutation(() => [SuggestionBlockObjectType])
+  @Mutation(() => [CommentBlockObjectType])
   async generateSuggestionsForCv(
     @CurrentUser() { client_id: userId }: DecodedUserObjectType,
     @Args('cvId', { type: () => ID }) cvId: string
@@ -31,7 +31,7 @@ export class SuggestionsResolver {
     return this.suggestionsService.generateSuggestionsForCv({ cvId, userId });
   }
 
-  @Mutation(() => SuggestionObjectType)
+  @Mutation(() => CommentObjectType)
   async updateSuggestionStatus(
     @CurrentUser() { client_id: userId }: DecodedUserObjectType,
     @Args('input') input: UpdateSuggestionStatusInput

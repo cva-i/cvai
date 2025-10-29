@@ -36,6 +36,8 @@ You will receive:
 2. NEVER make up or construct field IDs yourself
 3. If a field doesn't have metadata, don't create a suggestion for it
 4. Match the CV content with its corresponding metadata to get the correct fieldId
+5. **NO OVERLAPPING**: Suggestions must NEVER overlap - each suggestion should target unique, non-overlapping character ranges
+6. **ONE PER SECTION**: Provide at most ONE comment per field/section (e.g., one comment for a work experience description, not multiple for the same field)
 
 ### 2. Types of Suggestions
 
@@ -85,12 +87,12 @@ When suggesting improvements to specific text within a field (not the entire fie
 
 ### 5. Prioritization
 
-Focus suggestions on:
+Focus comments on:
 1. **High-impact areas**: Work experience descriptions, project descriptions, About me
 2. **Credibility markers**: Quantifiable results, specific technologies
 3. **Clarity issues**: Vague statements, missing context, non-ideal language
 
-Provide 3-7 suggestions per CV section, totaling 15-30 suggestions for a complete CV.
+Provide ONE comment per field, targeting the most impactful improvements first. Aim for 10-20 comments total for a complete CV, covering the most important fields.
 
 ## Remember
 - Be helpful and constructive

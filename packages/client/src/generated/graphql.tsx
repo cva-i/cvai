@@ -34,6 +34,28 @@ export type AboutMe = {
   fieldName: Scalars['String']['output'];
 };
 
+export type CommentBlockObjectType = {
+  __typename?: 'CommentBlockObjectType';
+  blockId: Scalars['String']['output'];
+  comments: Array<CommentObjectType>;
+};
+
+export type CommentObjectType = {
+  __typename?: 'CommentObjectType';
+  _id: Scalars['String']['output'];
+  authorName: Scalars['String']['output'];
+  blockId: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  cvId: Scalars['String']['output'];
+  cvVersionId: Scalars['String']['output'];
+  endOffset?: Maybe<Scalars['Int']['output']>;
+  startOffset?: Maybe<Scalars['Int']['output']>;
+  status: Scalars['String']['output'];
+  suggestedText?: Maybe<Scalars['String']['output']>;
+  text: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
 export type ContactInfo = {
   __typename?: 'ContactInfo';
   _id: Scalars['ID']['output'];
@@ -166,14 +188,14 @@ export type Mutation = {
   deleteSuggestion: Scalars['Boolean']['output'];
   duplicateCv: CvObjectType;
   generateNewEntryItem: GenerateNewEntryItemObjectType;
-  generateSuggestionsForCv: Array<SuggestionBlockObjectType>;
+  generateSuggestionsForCv: Array<CommentBlockObjectType>;
   logout: Scalars['Boolean']['output'];
   redoCvVersion: CvObjectType;
   reviewCv: ReviewCvOutput;
   transformCv: TransformCvObjectType;
   undoCvVersion: CvObjectType;
   updateCv: CvObjectType;
-  updateSuggestionStatus: SuggestionObjectType;
+  updateSuggestionStatus: CommentObjectType;
 };
 
 
@@ -305,7 +327,7 @@ export type Query = {
   getCvVersionHistory: PaginatedCvVersionHistoryObjectType;
   getCvs: Array<CvObjectType>;
   getReviewStatus: ReviewStatusType;
-  getSuggestionsForCv: Array<SuggestionBlockObjectType>;
+  getSuggestionsForCv: Array<CommentBlockObjectType>;
   getVersioningActionsMetadata: VersioningActionsMetadataObjectType;
 };
 
@@ -363,27 +385,6 @@ export type Skill = {
   category: Scalars['String']['output'];
   positionIndex: Scalars['Int']['output'];
   skills: Array<Scalars['String']['output']>;
-};
-
-export type SuggestionBlockObjectType = {
-  __typename?: 'SuggestionBlockObjectType';
-  blockId: Scalars['String']['output'];
-  suggestions: Array<SuggestionObjectType>;
-};
-
-export type SuggestionObjectType = {
-  __typename?: 'SuggestionObjectType';
-  _id: Scalars['String']['output'];
-  authorName: Scalars['String']['output'];
-  blockId: Scalars['String']['output'];
-  createdAt: Scalars['DateTime']['output'];
-  cvId: Scalars['String']['output'];
-  cvVersionId: Scalars['String']['output'];
-  endOffset?: Maybe<Scalars['Int']['output']>;
-  startOffset?: Maybe<Scalars['Int']['output']>;
-  status: Scalars['String']['output'];
-  text: Scalars['String']['output'];
-  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type TransformCvObjectType = {
@@ -693,14 +694,14 @@ export type GenerateSuggestionsForCvMutationVariables = Exact<{
 }>;
 
 
-export type GenerateSuggestionsForCvMutation = { __typename?: 'Mutation', generateSuggestionsForCv: Array<{ __typename?: 'SuggestionBlockObjectType', blockId: string, suggestions: Array<{ __typename?: 'SuggestionObjectType', _id: string, cvId: string, cvVersionId: string, blockId: string, text: string, startOffset?: number | null, endOffset?: number | null, status: string, authorName: string, createdAt: any, updatedAt: any }> }> };
+export type GenerateSuggestionsForCvMutation = { __typename?: 'Mutation', generateSuggestionsForCv: Array<{ __typename?: 'CommentBlockObjectType', blockId: string, comments: Array<{ __typename?: 'CommentObjectType', _id: string, cvId: string, cvVersionId: string, blockId: string, text: string, suggestedText?: string | null, startOffset?: number | null, endOffset?: number | null, status: string, authorName: string, createdAt: any, updatedAt: any }> }> };
 
 export type UpdateSuggestionStatusMutationVariables = Exact<{
   input: UpdateSuggestionStatusInput;
 }>;
 
 
-export type UpdateSuggestionStatusMutation = { __typename?: 'Mutation', updateSuggestionStatus: { __typename?: 'SuggestionObjectType', _id: string, status: string, updatedAt: any } };
+export type UpdateSuggestionStatusMutation = { __typename?: 'Mutation', updateSuggestionStatus: { __typename?: 'CommentObjectType', _id: string, text: string, suggestedText?: string | null, status: string, updatedAt: any } };
 
 export type DeleteSuggestionMutationVariables = Exact<{
   suggestionId: Scalars['ID']['input'];
@@ -721,7 +722,7 @@ export type GetSuggestionsForCvQueryVariables = Exact<{
 }>;
 
 
-export type GetSuggestionsForCvQuery = { __typename?: 'Query', getSuggestionsForCv: Array<{ __typename?: 'SuggestionBlockObjectType', blockId: string, suggestions: Array<{ __typename?: 'SuggestionObjectType', _id: string, cvId: string, cvVersionId: string, blockId: string, text: string, startOffset?: number | null, endOffset?: number | null, status: string, authorName: string, createdAt: any, updatedAt: any }> }> };
+export type GetSuggestionsForCvQuery = { __typename?: 'Query', getSuggestionsForCv: Array<{ __typename?: 'CommentBlockObjectType', blockId: string, comments: Array<{ __typename?: 'CommentObjectType', _id: string, cvId: string, cvVersionId: string, blockId: string, text: string, suggestedText?: string | null, startOffset?: number | null, endOffset?: number | null, status: string, authorName: string, createdAt: any, updatedAt: any }> }> };
 
 export const AboutMeFragmentDoc = gql`
     fragment AboutMeFragment on AboutMe {
@@ -2029,12 +2030,13 @@ export const GenerateSuggestionsForCvDocument = gql`
     mutation GenerateSuggestionsForCv($cvId: ID!) {
   generateSuggestionsForCv(cvId: $cvId) {
     blockId
-    suggestions {
+    comments {
       _id
       cvId
       cvVersionId
       blockId
       text
+      suggestedText
       startOffset
       endOffset
       status
@@ -2081,6 +2083,8 @@ export const UpdateSuggestionStatusDocument = gql`
     mutation UpdateSuggestionStatus($input: UpdateSuggestionStatusInput!) {
   updateSuggestionStatus(input: $input) {
     _id
+    text
+    suggestedText
     status
     updatedAt
   }
@@ -2196,12 +2200,13 @@ export const GetSuggestionsForCvDocument = gql`
     query GetSuggestionsForCv($cvId: ID!) {
   getSuggestionsForCv(cvId: $cvId) {
     blockId
-    suggestions {
+    comments {
       _id
       cvId
       cvVersionId
       blockId
       text
+      suggestedText
       startOffset
       endOffset
       status

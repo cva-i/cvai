@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 
 @ObjectType()
-export class SuggestionObjectType {
+export class CommentObjectType {
   @Field()
   _id!: string;
 
@@ -16,6 +16,9 @@ export class SuggestionObjectType {
 
   @Field()
   text!: string;
+
+  @Field({ nullable: true })
+  suggestedText?: string;
 
   @Field(() => Int, { nullable: true })
   startOffset?: number;
@@ -35,3 +38,6 @@ export class SuggestionObjectType {
   @Field()
   updatedAt!: Date;
 }
+
+// Backward compatibility alias
+export const SuggestionObjectType = CommentObjectType;

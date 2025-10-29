@@ -1,11 +1,14 @@
 import { ObjectType, Field } from '@nestjs/graphql';
-import { SuggestionObjectType } from './suggestion.object-type';
+import { CommentObjectType } from './suggestion.object-type';
 
 @ObjectType()
-export class SuggestionBlockObjectType {
+export class CommentBlockObjectType {
   @Field()
   blockId!: string;
 
-  @Field(() => [SuggestionObjectType])
-  suggestions!: SuggestionObjectType[];
+  @Field(() => [CommentObjectType])
+  comments!: CommentObjectType[];
 }
+
+// Backward compatibility alias
+export const SuggestionBlockObjectType = CommentBlockObjectType;

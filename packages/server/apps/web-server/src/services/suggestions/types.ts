@@ -1,16 +1,17 @@
 import { z } from 'zod';
 
-export const suggestionItemSchema = z.object({
-  blockId: z.string().describe('The ID of the EditableTypography component this suggestion applies to'),
-  text: z.string().describe('The suggestion text explaining what should be improved'),
-  startOffset: z.number().nullable().describe('Character offset where the suggestion applies (null for whole-block suggestions)'),
-  endOffset: z.number().nullable().describe('Character offset where the suggestion ends (null for whole-block suggestions)'),
+export const commentItemSchema = z.object({
+  blockId: z.string().describe('The ID of the EditableTypography component this comment applies to'),
+  text: z.string().describe('The comment text explaining what should be improved'),
+  suggestedText: z.string().optional().nullable().describe('Optional suggested replacement text (if provided, will show as a diff with apply button)'),
+  startOffset: z.number().optional().nullable().describe('Character offset where the comment applies (null for whole-block comments)'),
+  endOffset: z.number().optional().nullable().describe('Character offset where the comment ends (null for whole-block comments)'),
 });
 
-export const suggestionResponseSchema = z.object({
-  suggestions: z.array(suggestionItemSchema).describe('Array of suggestions for improving the CV'),
-  summary: z.string().nullable().describe('Overall summary of the CV review (can be null)'),
+export const commentResponseSchema = z.object({
+  comments: z.array(commentItemSchema).describe('Array of comments for improving the CV'),
+  summary: z.string().optional().nullable().describe('Overall summary of the CV review (can be null)'),
 });
 
-export type SuggestionItem = z.infer<typeof suggestionItemSchema>;
-export type SuggestionResponse = z.infer<typeof suggestionResponseSchema>;
+export type CommentItem = z.infer<typeof commentItemSchema>;
+export type CommentResponse = z.infer<typeof commentResponseSchema>;
