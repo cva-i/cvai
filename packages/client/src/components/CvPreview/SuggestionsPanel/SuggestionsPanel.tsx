@@ -19,6 +19,7 @@ import {
 import { useSuggestions } from '../../../contexts';
 import { SuggestionCard } from './SuggestionCard';
 import { useSuggestionScroll } from '../../../hooks/use-suggestion-scroll';
+import { useGetCvQuery } from '../../../generated/graphql';
 
 interface SuggestionsPanelProps {
   cvId: string;
@@ -34,6 +35,8 @@ export const SuggestionsPanel: React.FC<SuggestionsPanelProps> = ({ cvId }) => {
     clearAllSuggestions,
     generateSuggestions,
   } = useSuggestions();
+
+  const { data: cvData } = useGetCvQuery({ variables: { cvId } });
 
   const [isExpanded, setIsExpanded] = useState(true);
   const [activeFilter, setActiveFilter] = useState<'open' | 'resolved'>('open');
@@ -302,6 +305,7 @@ export const SuggestionsPanel: React.FC<SuggestionsPanelProps> = ({ cvId }) => {
                             key={suggestion._id}
                             suggestion={suggestion}
                             blockId={block.blockId}
+                            cvData={cvData}
                             isActive={activeSuggestionId === suggestion._id}
                             onAccept={async () => {
                               await updateSuggestionStatus(suggestion._id, 'resolved');

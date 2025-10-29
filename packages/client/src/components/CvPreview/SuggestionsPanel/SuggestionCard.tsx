@@ -1,10 +1,12 @@
-import React, { useRef, useCallback, useEffect } from 'react';
+import React, { useRef, useCallback, useEffect, useMemo } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Check as CheckIcon, Close as CloseIcon } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { useSuggestions } from '../../../contexts';
 import type { Suggestion } from '../../../contexts';
 import { DiffView } from './DiffView';
+import { extractCurrentText } from './utils';
+import type { GetCvQuery } from '../../../generated/graphql';
 
 const CardContainer = styled(Box)<{ isActive?: boolean }>(
   ({ isActive }) => ({
@@ -40,6 +42,27 @@ const ActionButton = styled(Box)(() => ({
   borderRadius: 8,
   '&:hover': { color: '#111827', backgroundColor: '#f3f4f6' },
   '& svg': { fontSize: '18px' },
+}));
+
+const ApplyButton = styled(Box)(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '6px',
+  cursor: 'pointer',
+  fontSize: '14px',
+  fontWeight: 600,
+  color: 'white',
+  backgroundColor: '#8b5cf6',
+  transition: 'background-color 0.2s ease-in-out',
+  padding: '8px 16px',
+  borderRadius: 8,
+  marginTop: '8px',
+  '&:hover': { backgroundColor: '#7c3aed' },
+  '&:disabled': {
+    backgroundColor: '#d1d5db',
+    cursor: 'not-allowed',
+  },
 }));
 
 const AuthorSection = styled(Box)({
@@ -107,6 +130,7 @@ const PreviewText = styled(Typography)({
 interface SuggestionCardProps {
   suggestion: Suggestion;
   blockId: string;
+  cvData: GetCvQuery | undefined;
   isActive: boolean;
   onAccept: () => void;
   onReject: () => void;
@@ -116,6 +140,7 @@ interface SuggestionCardProps {
 export const SuggestionCard: React.FC<SuggestionCardProps> = ({
   suggestion,
   blockId,
+  cvData,
   isActive,
   onAccept,
   onReject,
@@ -123,6 +148,16 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const { setHoveredBlockId, setActiveSuggestionId } = useSuggestions();
+
+  const currentText = useMemo(() => {
+    if (!suggestion.suggestedText) return null;
+    return extractCurrentText(
+      cvData,
+      blockId,
+      suggestion.startOffset,
+      suggestion.endOffset
+    );
+  }, [cvData, blockId, suggestion.startOffset, suggestion.endOffset, suggestion.suggestedText]);
 
   const handleMouseEnter = useCallback(() => {
     setHoveredBlockId(blockId);
@@ -201,9 +236,19 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
         <>
           <PreviewLabel>Suggested Change</PreviewLabel>
           <DiffView
-            oldText="Current text"
+            oldText={currentText || 'Current text (not found)'}
             newText={suggestion.suggestedText}
           />
+          <ApplyButton
+            onClick={(e) => {
+              e.stopPropagation();
+              // TODO: implement apply logic
+              console.log('Apply suggestion:', suggestion._id);
+            }}
+          >
+            <CheckIcon />
+            <span>Apply Change</span>
+          </ApplyButton>
         </>
       )}
 
