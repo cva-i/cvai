@@ -8,12 +8,21 @@ import {
   SkillsForItemizedEntryEditor,
 } from '../../../components';
 import { LocationAndDate } from './LocationAndDate';
+import { useFieldId } from '../../../../../contexts/CvMetadataContext';
 
 export const WorkExperienceEntry = ({
   entry: we,
   updateField,
   isEditing,
 }: CvEntryItemProps<'workExperienceEntries'>) => {
+  const positionFieldId = useFieldId(`workExperienceEntries.${we._id}.position`);
+  const nameFieldId = useFieldId(`workExperienceEntries.${we._id}.name`);
+  const typeFieldId = useFieldId(`workExperienceEntries.${we._id}.type`);
+  const locationFieldId = useFieldId(`workExperienceEntries.${we._id}.location`);
+  const durationFieldId = useFieldId(`workExperienceEntries.${we._id}.duration`);
+  const descriptionFieldId = useFieldId(`workExperienceEntries.${we._id}.description`);
+  const skillsFieldId = useFieldId(`workExperienceEntries.${we._id}.skills`);
+
   return (
     <Box display="flex" flexDirection="column" gap={1} width={'100%'}>
       <Box
@@ -24,7 +33,7 @@ export const WorkExperienceEntry = ({
         <Box display={'flex'} flexDirection={'column'}>
           <RowLayout gap={1}>
             <EditableTypography
-              id={`we-position-${we._id}`}
+              id={positionFieldId || `we-position-${we._id}`}
               value={we.position}
               onSave={(value) =>
                 updateField({
@@ -42,7 +51,7 @@ export const WorkExperienceEntry = ({
             />
             <Typography variant={'h6'}>@</Typography>
             <EditableTypography
-              id={`we-name-${we._id}`}
+              id={nameFieldId || `we-name-${we._id}`}
               value={we.name}
               onSave={(value) =>
                 updateField({
@@ -61,7 +70,7 @@ export const WorkExperienceEntry = ({
           {/* </WithRemoveEntryButton>*/}
 
           <JobTypeTextSection
-            id={we._id}
+            id={typeFieldId || `we-type-${we._id}`}
             value={we.type}
             isEditing={isEditing}
             onSave={(value) =>
@@ -76,6 +85,8 @@ export const WorkExperienceEntry = ({
 
         <LocationAndDate
           id={we._id}
+          locationFieldId={locationFieldId}
+          durationFieldId={durationFieldId}
           location={we.location}
           duration={we.duration}
           updateField={updateField}
@@ -84,7 +95,7 @@ export const WorkExperienceEntry = ({
       </Box>
 
       <DescriptionTextSection
-        id={we._id}
+        id={descriptionFieldId || `we-description-${we._id}`}
         isEditing={isEditing}
         value={we.description}
         onSave={(value) =>
@@ -97,7 +108,7 @@ export const WorkExperienceEntry = ({
       />
 
       <SkillsForItemizedEntryEditor
-        id={`we-skills-${we._id}`}
+        id={skillsFieldId || `we-skills-${we._id}`}
         isEditing={isEditing}
         entries={we.skills ?? []}
         onSave={async (value) =>

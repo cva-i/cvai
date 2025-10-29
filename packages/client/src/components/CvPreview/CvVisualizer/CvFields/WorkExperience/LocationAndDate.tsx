@@ -6,6 +6,8 @@ import type { Maybe } from 'graphql/jsutils/Maybe';
 
 interface LocationAndDateProps {
   id: string;
+  locationFieldId?: string;
+  durationFieldId?: string;
   location?: Maybe<string>;
   duration?: Maybe<string>;
   updateField: (props: {
@@ -18,6 +20,8 @@ interface LocationAndDateProps {
 
 export const LocationAndDate: React.FC<LocationAndDateProps> = ({
   id,
+  locationFieldId,
+  durationFieldId,
   location,
   duration,
   updateField,
@@ -39,7 +43,7 @@ export const LocationAndDate: React.FC<LocationAndDateProps> = ({
     <Box display="flex" flexDirection="column" textAlign="right">
       {shouldShowDuration && (
         <EditableTypography
-          id={`we-duration-${id}`}
+          id={durationFieldId || `we-duration-${id}`}
           valueRender={(v) => v ?? 'Duration (empty)'}
           value={duration}
           onSave={async (value) =>
@@ -56,7 +60,7 @@ export const LocationAndDate: React.FC<LocationAndDateProps> = ({
 
       {shouldShowLocation && (
         <EditableTypography
-          id={`we-location-${id}`}
+          id={locationFieldId || `we-location-${id}`}
           valueRender={(v) => v ?? 'Location (empty)'}
           value={location}
           onSave={async (value) =>

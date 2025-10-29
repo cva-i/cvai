@@ -7,12 +7,20 @@ import {
   SkillsForItemizedEntryEditor,
 } from '../../../components';
 import { LocationAndDate } from '../WorkExperience/LocationAndDate';
+import { useFieldId } from '../../../../../contexts/CvMetadataContext';
 
 export const EducationEntry = ({
   entry: ed,
   updateField,
   isEditing,
 }: CvEntryItemProps<'educationEntries'>) => {
+  const degreeFieldId = useFieldId(`educationEntries.${ed._id}.degree`);
+  const nameFieldId = useFieldId(`educationEntries.${ed._id}.name`);
+  const descriptionFieldId = useFieldId(`educationEntries.${ed._id}.description`);
+  const locationFieldId = useFieldId(`educationEntries.${ed._id}.location`);
+  const durationFieldId = useFieldId(`educationEntries.${ed._id}.duration`);
+  const skillsFieldId = useFieldId(`educationEntries.${ed._id}.skills`);
+
   return (
     <Box display="flex" flexDirection="column" gap={1} width={'100%'}>
       <Box
@@ -23,7 +31,7 @@ export const EducationEntry = ({
         <Box display={'flex'} flexDirection={'column'}>
           <RowLayout gap={1}>
             <EditableTypography
-              id={`education-degree-${ed._id}`}
+              id={degreeFieldId || `education-degree-${ed._id}`}
               value={ed.degree || ''}
               onSave={(value) =>
                 updateField({
@@ -41,7 +49,7 @@ export const EducationEntry = ({
             />
             <Typography variant={'h6'}>@</Typography>
             <EditableTypography
-              id={`education-name-${ed._id}`}
+              id={nameFieldId || `education-name-${ed._id}`}
               value={ed.name}
               onSave={(value) =>
                 updateField({
@@ -59,7 +67,7 @@ export const EducationEntry = ({
           </RowLayout>
 
           <DescriptionTextSection
-            id={ed._id}
+            id={descriptionFieldId || `education-description-${ed._id}`}
             isEditing={isEditing}
             value={ed.description}
             onSave={(value) =>
@@ -74,6 +82,8 @@ export const EducationEntry = ({
 
         <LocationAndDate
           id={ed._id}
+          locationFieldId={locationFieldId}
+          durationFieldId={durationFieldId}
           location={ed.location}
           duration={ed.duration}
           updateField={updateField}
@@ -82,7 +92,7 @@ export const EducationEntry = ({
       </Box>
 
       <SkillsForItemizedEntryEditor
-        id={`education-skills-${ed._id}`}
+        id={skillsFieldId || `education-skills-${ed._id}`}
         isEditing={isEditing}
         entries={ed.skills ?? []}
         onSave={async (value) =>

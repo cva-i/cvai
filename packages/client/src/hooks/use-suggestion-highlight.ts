@@ -39,7 +39,7 @@ export const useSuggestionHighlight = ({
   const isActive = useMemo(() => {
     return (
       activeSuggestionId &&
-      blockSuggestions.some((s) => s.id === activeSuggestionId)
+      blockSuggestions.some((s) => s._id === activeSuggestionId)
     );
   }, [activeSuggestionId, blockSuggestions]);
 

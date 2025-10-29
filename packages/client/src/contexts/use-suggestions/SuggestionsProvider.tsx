@@ -3,7 +3,6 @@ import React, {
   useContext,
   useCallback,
   useState,
-  useEffect,
   useMemo,
 } from 'react';
 import type {
@@ -11,14 +10,15 @@ import type {
   SuggestionBlock,
   Suggestion,
 } from './types';
-import { DEMO_SUGGESTIONS } from './demo-data';
 import {
-  generateSuggestionId,
-  generateBlockId,
-  loadSuggestionsFromStorage,
-  saveSuggestionsToStorage,
-  getSuggestionsForBlock,
-} from './utils';
+  useGetSuggestionsForCvLazyQuery,
+  useGenerateSuggestionsForCvMutation,
+  useUpdateSuggestionStatusMutation,
+  useDeleteSuggestionMutation,
+  useClearAllSuggestionsForCvMutation,
+} from '../../generated/graphql';
+import { getSuggestionsForBlock } from './utils';
+import { toast } from 'react-toastify';
 
 const SuggestionsContext = createContext<SuggestionsContextType | undefined>(
   undefined
@@ -34,106 +34,169 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({
     null
   );
   const [hoveredBlockId, setHoveredBlockId] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
-  // Load suggestions from session storage on mount
-  useEffect(() => {
-    const storedSuggestions = loadSuggestionsFromStorage();
-    if (storedSuggestions.length > 0) {
-      setSuggestionBlocks(storedSuggestions);
-    } else {
-      // Initialize with demo data if no stored data
-      setSuggestionBlocks(DEMO_SUGGESTIONS);
-      saveSuggestionsToStorage(DEMO_SUGGESTIONS);
-    }
-  }, []);
+  // GraphQL hooks
+  const [getSuggestionsQuery, { loading: isLoadingQuery }] =
+    useGetSuggestionsForCvLazyQuery();
+  const [generateMutation, { loading: isGenerating }] =
+    useGenerateSuggestionsForCvMutation();
+  const [updateStatusMutation] = useUpdateSuggestionStatusMutation();
+  const [deleteMutation] = useDeleteSuggestionMutation();
+  const [clearAllMutation] = useClearAllSuggestionsForCvMutation();
 
-  // Save to session storage whenever suggestions change
-  useEffect(() => {
-    if (suggestionBlocks.length > 0) {
-      saveSuggestionsToStorage(suggestionBlocks);
-    }
-  }, [suggestionBlocks]);
+  // Fetch suggestions from backend
+  const fetchSuggestions = useCallback(
+    async (cvId: string) => {
+      try {
+        setError(null);
+        const { data } = await getSuggestionsQuery({ variables: { cvId } });
 
-  const addSuggestion = useCallback(
-    (blockId: string, suggestion: Omit<Suggestion, 'id'>) => {
-      const newSuggestion: Suggestion = {
-        ...suggestion,
-        id: generateSuggestionId(),
-        createdAt: suggestion.createdAt || new Date(),
-        status: suggestion.status || 'open',
-      };
-
-      setSuggestionBlocks((prev) => {
-        const existingBlock = prev.find((block) => block.blockId === blockId);
-        if (existingBlock) {
-          return prev.map((block) =>
-            block.blockId === blockId
-              ? { ...block, suggestions: [...block.suggestions, newSuggestion] }
-              : block
+        if (data?.getSuggestionsForCv) {
+          const blocks: SuggestionBlock[] = data.getSuggestionsForCv.map(
+            (block) => ({
+              blockId: block.blockId,
+              suggestions: block.suggestions.map((s) => ({
+                _id: s._id,
+                cvId: s.cvId,
+                cvVersionId: s.cvVersionId,
+                blockId: s.blockId,
+                text: s.text,
+                startOffset: s.startOffset ?? undefined,
+                endOffset: s.endOffset ?? undefined,
+                status: s.status as 'open' | 'resolved' | 'rejected',
+                authorName: s.authorName,
+                createdAt: s.createdAt ? new Date(s.createdAt) : undefined,
+                updatedAt: s.updatedAt ? new Date(s.updatedAt) : undefined,
+              })),
+            })
           );
-        } else {
-          return [
-            ...prev,
-            { id: generateBlockId(), blockId, suggestions: [newSuggestion] },
-          ];
+          setSuggestionBlocks(blocks);
         }
-      });
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error('Failed to fetch suggestions');
+        setError(error);
+        toast.error(error.message);
+        console.error('Failed to fetch suggestions:', err);
+      }
     },
-    []
+    [getSuggestionsQuery]
   );
 
-  const removeSuggestion = useCallback(
-    (blockId: string, suggestionId: string) => {
-      setSuggestionBlocks((prev) =>
-        prev
-          .map((block) =>
-            block.blockId === blockId
-              ? {
-                  ...block,
-                  suggestions: block.suggestions.filter(
-                    (s) => s.id !== suggestionId
-                  ),
-                }
-              : block
-          )
-          .filter((block) => block.suggestions.length > 0)
-      );
+  // Generate suggestions via AI
+  const generateSuggestions = useCallback(
+    async (cvId: string) => {
+      try {
+        setError(null);
+        const { data } = await generateMutation({ variables: { cvId } });
+
+        if (data?.generateSuggestionsForCv) {
+          const blocks: SuggestionBlock[] = data.generateSuggestionsForCv.map(
+            (block) => ({
+              blockId: block.blockId,
+              suggestions: block.suggestions.map((s) => ({
+                _id: s._id,
+                cvId: s.cvId,
+                cvVersionId: s.cvVersionId,
+                blockId: s.blockId,
+                text: s.text,
+                startOffset: s.startOffset ?? undefined,
+                endOffset: s.endOffset ?? undefined,
+                status: s.status as 'open' | 'resolved' | 'rejected',
+                authorName: s.authorName,
+                createdAt: s.createdAt ? new Date(s.createdAt) : undefined,
+                updatedAt: s.updatedAt ? new Date(s.updatedAt) : undefined,
+              })),
+            })
+          );
+
+          setSuggestionBlocks(blocks);
+        }
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error('Failed to generate suggestions');
+        setError(error);
+        toast.error(error.message);
+        console.error('Failed to generate suggestions:', err);
+      }
     },
-    []
+    [generateMutation]
   );
 
-  const acceptSuggestion = useCallback(
-    (blockId: string, suggestionId: string) => {
-      // In a real implementation, this would trigger the actual text update
-      // For now, we'll just remove the suggestion
-      removeSuggestion(blockId, suggestionId);
+  // Update suggestion status (accept/reject)
+  const updateSuggestionStatus = useCallback(
+    async (suggestionId: string, status: 'open' | 'resolved' | 'rejected') => {
+      try {
+        setError(null);
+        await updateStatusMutation({
+          variables: {
+            input: { suggestionId, status },
+          },
+        });
+
+        // Update local state
+        setSuggestionBlocks((prev) =>
+          prev.map((block) => ({
+            ...block,
+            suggestions: block.suggestions.map((s) =>
+              s._id === suggestionId ? { ...s, status } : s
+            ),
+          }))
+        );
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error('Failed to update suggestion');
+        setError(error);
+        toast.error(error.message);
+        console.error('Failed to update suggestion status:', err);
+      }
     },
-    [removeSuggestion]
+    [updateStatusMutation]
   );
 
-  const rejectSuggestion = useCallback(
-    (blockId: string, suggestionId: string) => {
-      removeSuggestion(blockId, suggestionId);
+  // Delete a single suggestion
+  const deleteSuggestion = useCallback(
+    async (suggestionId: string) => {
+      try {
+        setError(null);
+        await deleteMutation({ variables: { suggestionId } });
+
+        // Update local state
+        setSuggestionBlocks((prev) =>
+          prev
+            .map((block) => ({
+              ...block,
+              suggestions: block.suggestions.filter((s) => s._id !== suggestionId),
+            }))
+            .filter((block) => block.suggestions.length > 0)
+        );
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error('Failed to delete suggestion');
+        setError(error);
+        toast.error(error.message);
+        console.error('Failed to delete suggestion:', err);
+      }
     },
-    [removeSuggestion]
+    [deleteMutation]
+  );
+
+  // Clear all suggestions for a CV
+  const clearAllSuggestions = useCallback(
+    async (cvId: string) => {
+      try {
+        setError(null);
+        await clearAllMutation({ variables: { cvId } });
+        setSuggestionBlocks([]);
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error('Failed to clear suggestions');
+        setError(error);
+        toast.error(error.message);
+        console.error('Failed to clear suggestions:', err);
+      }
+    },
+    [clearAllMutation]
   );
 
   const clearActiveSuggestion = useCallback(() => {
     setActiveSuggestionId(null);
-  }, []);
-
-  const clearAllSuggestions = useCallback(() => {
-    setSuggestionBlocks([]);
-    try {
-      sessionStorage.removeItem('cv-suggestions');
-    } catch (error) {
-      console.error('Failed to clear suggestions from storage:', error);
-    }
-  }, []);
-
-  const loadDemoSuggestions = useCallback(() => {
-    setSuggestionBlocks(DEMO_SUGGESTIONS);
-    saveSuggestionsToStorage(DEMO_SUGGESTIONS);
   }, []);
 
   // Memoized function to get suggestions for a specific block
@@ -147,28 +210,38 @@ export const SuggestionsProvider: React.FC<{ children: React.ReactNode }> = ({
       suggestionBlocks,
       activeSuggestionId,
       hoveredBlockId,
-      addSuggestion,
-      removeSuggestion,
-      acceptSuggestion,
-      rejectSuggestion,
+      isLoading: isLoadingQuery,
+      isGenerating,
+      error,
+
+      // Actions
+      fetchSuggestions,
+      generateSuggestions,
+      updateSuggestionStatus,
+      deleteSuggestion,
+      clearAllSuggestions,
+
+      // UI State
       setActiveSuggestionId,
       setHoveredBlockId,
       clearActiveSuggestion,
-      clearAllSuggestions,
-      loadDemoSuggestions,
+
+      // Helpers
       getSuggestionsForBlock: getSuggestionsForBlockMemo,
     }),
     [
       suggestionBlocks,
       activeSuggestionId,
       hoveredBlockId,
-      addSuggestion,
-      removeSuggestion,
-      acceptSuggestion,
-      rejectSuggestion,
-      clearActiveSuggestion,
+      isLoadingQuery,
+      isGenerating,
+      error,
+      fetchSuggestions,
+      generateSuggestions,
+      updateSuggestionStatus,
+      deleteSuggestion,
       clearAllSuggestions,
-      loadDemoSuggestions,
+      clearActiveSuggestion,
       getSuggestionsForBlockMemo,
     ]
   );

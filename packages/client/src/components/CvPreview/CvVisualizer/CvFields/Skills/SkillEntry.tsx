@@ -4,6 +4,7 @@ import { EditableTypography } from '../../../../atoms';
 import type { CvEntryItemProps } from '../../types';
 import { CommaSeparatedList } from '../../../../CommaSeparatedList';
 import { usePreviewMode } from '../../../../../contexts';
+import { useFieldId } from '../../../../../contexts/CvMetadataContext';
 
 export const SkillEntry = ({
   entry: skill,
@@ -11,6 +12,8 @@ export const SkillEntry = ({
   isEditing,
 }: CvEntryItemProps<'skillEntries'>) => {
   const { isPreviewing } = usePreviewMode();
+  const categoryFieldId = useFieldId(`skillEntries.${skill._id}.category`);
+  const skillsFieldId = useFieldId(`skillEntries.${skill._id}.skills`);
 
   const handleUpdateSkills = async (newSkills: string[]) => {
     await updateField({
@@ -29,7 +32,7 @@ export const SkillEntry = ({
   return (
     <Box sx={{ width: '100%' }}>
       <EditableTypography
-        id={`skill-category-${skill._id}`}
+        id={categoryFieldId || `skill-category-${skill._id}`}
         value={skill.category}
         onSave={(value) =>
           updateField({ _id: skill._id, fieldName: 'category', value })
@@ -39,7 +42,7 @@ export const SkillEntry = ({
       />
 
       <CommaSeparatedList
-        id={`skill-items-${skill._id}`}
+        id={skillsFieldId || `skill-items-${skill._id}`}
         isEditing={isEditing}
         items={skill.skills || []}
         onSave={handleUpdateSkills}

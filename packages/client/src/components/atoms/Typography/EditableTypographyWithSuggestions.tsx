@@ -60,7 +60,7 @@ export const EditableTypographyWithSuggestions = ({
       // Activate the first suggestion for this block
       const firstSuggestion = blockSuggestions[0];
       if (firstSuggestion) {
-        setActiveSuggestionId(firstSuggestion.id);
+        setActiveSuggestionId(firstSuggestion._id);
       }
     }
   }, [hasBlockSuggestions, isActive, blockSuggestions, setActiveSuggestionId]);
@@ -123,11 +123,14 @@ export const EditableTypographyWithSuggestions = ({
 
   // If we have offset-based suggestions and we're not editing, use HighlightedText
   if (hasBlockOffsetSuggestions && !defaultIsEditing && blockSuggestions) {
+    // Only show highlights for open suggestions
+    const openSuggestions = blockSuggestions.filter(s => s.status === 'open');
+
     return (
       <HighlightedText
         id={id}
         text={value ?? ''}
-        suggestions={blockSuggestions}
+        suggestions={openSuggestions}
         activeSuggestionId={activeSuggestionId}
         onSuggestionClick={handleSuggestionClick}
         isHovered={isHighlighted}

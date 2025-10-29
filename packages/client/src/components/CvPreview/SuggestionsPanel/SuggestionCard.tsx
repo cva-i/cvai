@@ -67,6 +67,27 @@ const CommentText = styled(Typography)({
   marginBottom: '8px',
 });
 
+const PreviewLabel = styled(Typography)({
+  fontSize: '12px',
+  fontWeight: 600,
+  color: '#6b7280',
+  marginTop: '12px',
+  marginBottom: '6px',
+  textTransform: 'uppercase',
+  letterSpacing: '0.5px',
+});
+
+const PreviewText = styled(Typography)({
+  fontSize: '14px',
+  lineHeight: '1.6',
+  color: '#111827',
+  backgroundColor: '#f9fafb',
+  padding: '8px 12px',
+  borderRadius: '6px',
+  border: '1px solid #e5e7eb',
+  fontStyle: 'italic',
+});
+
 // const ReplyInput = styled(TextField)({
 //   '& .MuiOutlinedInput-root': {
 //     fontSize: '14px',
@@ -111,20 +132,20 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
   }, [setHoveredBlockId]);
 
   const handleCardClick = useCallback(() => {
-    setActiveSuggestionId(suggestion.id);
-  }, [suggestion.id, setActiveSuggestionId]);
+    setActiveSuggestionId(suggestion._id);
+  }, [suggestion._id, setActiveSuggestionId]);
 
   // Register ref for scrolling
   useEffect(() => {
     if (registerRef && cardRef.current) {
-      registerRef(suggestion.id, cardRef.current);
+      registerRef(suggestion._id, cardRef.current);
     }
     return () => {
       if (registerRef) {
-        registerRef(suggestion.id, null);
+        registerRef(suggestion._id, null);
       }
     };
-  }, [registerRef, suggestion.id]);
+  }, [registerRef, suggestion._id]);
 
   const formatTimestamp = (date?: Date) => {
     if (!date) return 'Just now';
@@ -173,6 +194,16 @@ export const SuggestionCard: React.FC<SuggestionCardProps> = ({
 
       {/* Comment Text */}
       <CommentText>{suggestion.text}</CommentText>
+
+      {/* Show preview for resolved suggestions */}
+      {suggestion.status === 'resolved' && (
+        <>
+          <PreviewLabel>Preview (Resolved)</PreviewLabel>
+          <PreviewText>
+            This suggestion has been marked as resolved. The text change is being previewed.
+          </PreviewText>
+        </>
+      )}
     </CardContainer>
   );
 };

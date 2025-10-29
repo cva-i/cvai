@@ -1,18 +1,21 @@
 import { useState } from 'react';
-import { Box, Typography, styled } from '@mui/material';
+import { Box, Typography, styled, CircularProgress } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import ChatIcon from '@mui/icons-material/Chat';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { ImportPdfDialog } from '../ImportCvDialog';
-import { useDialog } from '../../contexts';
+import { useDialog, useCurrentCv, useSuggestions } from '../../contexts';
 
-type SidebarActionsProps = {
-  onChatOpen: () => void;
-};
-
-export const SidebarActions = ({ onChatOpen }: SidebarActionsProps) => {
+export const SidebarActions = () => {
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const { open: openDialog } = useDialog();
+  const { currentCvId } = useCurrentCv();
+  const { generateSuggestions, isGenerating } = useSuggestions();
+
+  const handleGenerateSuggestions = async () => {
+    if (!currentCvId || isGenerating) return;
+    await generateSuggestions(currentCvId);
+  };
 
   return (
     <>
@@ -24,10 +27,22 @@ export const SidebarActions = ({ onChatOpen }: SidebarActionsProps) => {
           </ItemContent>
         </ActionItem>
 
-        <ActionItem onClick={onChatOpen}>
+        <ActionItem
+          onClick={handleGenerateSuggestions}
+          sx={{
+            opacity: isGenerating || !currentCvId ? 0.6 : 1,
+            cursor: isGenerating || !currentCvId ? 'not-allowed' : 'pointer',
+          }}
+        >
           <ItemContent>
-            <ChatIcon fontSize="small" sx={{ color: 'primary.dark' }} />
-            <ItemText variant="body2">Open review chat</ItemText>
+            {isGenerating ? (
+              <CircularProgress size={16} sx={{ color: 'primary.dark' }} />
+            ) : (
+              <AutoAwesomeIcon fontSize="small" sx={{ color: 'primary.dark' }} />
+            )}
+            <ItemText variant="body2">
+              {isGenerating ? 'Generating suggestions...' : 'Generate AI Suggestions'}
+            </ItemText>
           </ItemContent>
         </ActionItem>
 

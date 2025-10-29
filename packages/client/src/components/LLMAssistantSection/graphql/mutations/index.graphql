@@ -1,3 +1,0 @@
-query getReviewStatus ($cvId: ID!) {
-  getReviewStatus (cvId: $cvId)
-}

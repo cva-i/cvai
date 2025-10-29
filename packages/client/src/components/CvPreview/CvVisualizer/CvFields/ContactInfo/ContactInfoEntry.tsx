@@ -1,16 +1,20 @@
 import React from 'react';
 import { ColumnLayout, EditableTypography } from '../../../../atoms';
 import type { CvEntryItemProps } from '../../types';
+import { useFieldId } from '../../../../../contexts/CvMetadataContext';
 
 export const ContactInfoEntry = ({
   entry: contactInfo,
   updateField,
   isEditing,
 }: CvEntryItemProps<'contactInfoEntries'>) => {
+  const linkNameFieldId = useFieldId(`contactInfoEntries.${contactInfo._id}.linkName`);
+  const linkFieldId = useFieldId(`contactInfoEntries.${contactInfo._id}.link`);
+
   return (
     <ColumnLayout>
       <EditableTypography
-        id={`contactInfo-category-${contactInfo._id}`}
+        id={linkNameFieldId || `contactInfo-linkName-${contactInfo._id}`}
         value={contactInfo.linkName}
         onSave={(value) =>
           updateField({
@@ -28,7 +32,7 @@ export const ContactInfoEntry = ({
 
       {/* TODO: make it actually a link */}
       <EditableTypography
-        id={`contactInfo-category-${contactInfo._id}`}
+        id={linkFieldId || `contactInfo-link-${contactInfo._id}`}
         value={contactInfo.link}
         onSave={(value) =>
           updateField({

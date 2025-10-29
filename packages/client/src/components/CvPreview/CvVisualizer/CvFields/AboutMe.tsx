@@ -9,8 +9,11 @@ import {
 import { Typography } from '@mui/material';
 import { EditableTypography } from '../../../atoms';
 import { WithEditableSection } from '../../components';
+import { useFieldId } from '../../../../contexts/CvMetadataContext';
 
 export const AboutMe = ({ cvId }: CvEntryComponentProps) => {
+  const titleFieldId = useFieldId('aboutMe.title');
+  const descriptionFieldId = useFieldId('aboutMe.description');
   const [updateAboutMe] = useUpdateCvMutation({
     refetchQueries: [
       refetchGetAboutMeQuery({
@@ -52,7 +55,7 @@ export const AboutMe = ({ cvId }: CvEntryComponentProps) => {
         return (
           <WithEditableSection flexDirection="column">
             <EditableTypography
-              id={`about-me-fieldName`}
+              id={titleFieldId || `about-me-fieldName`}
               value={aboutMe.fieldName}
               onSave={(value) =>
                 updateField({
@@ -65,7 +68,7 @@ export const AboutMe = ({ cvId }: CvEntryComponentProps) => {
             />
 
             <EditableTypography
-              id={`about-me-description`}
+              id={descriptionFieldId || `about-me-description`}
               value={aboutMe.description}
               onSave={(value) =>
                 updateField({

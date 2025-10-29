@@ -20,39 +20,52 @@ import { useSuggestions } from '../../../contexts';
 import { SuggestionCard } from './SuggestionCard';
 import { useSuggestionScroll } from '../../../hooks/use-suggestion-scroll';
 
-export const SuggestionsPanel: React.FC = () => {
+interface SuggestionsPanelProps {
+  cvId: string;
+}
+
+export const SuggestionsPanel: React.FC<SuggestionsPanelProps> = ({ cvId }) => {
   const {
     suggestionBlocks,
     activeSuggestionId,
-    acceptSuggestion,
-    rejectSuggestion,
+    isGenerating,
+    updateSuggestionStatus,
+    deleteSuggestion,
     clearAllSuggestions,
-    loadDemoSuggestions,
+    generateSuggestions,
   } = useSuggestions();
 
   const [isExpanded, setIsExpanded] = useState(true);
+  const [activeFilter, setActiveFilter] = useState<'open' | 'resolved'>('open');
 
   const { scrollContainerRef, registerSuggestionRef } = useSuggestionScroll({
     activeSuggestionId,
     isExpanded,
   });
 
-  // Calculate total suggestions count
-  // const totalSuggestions = suggestionBlocks.reduce(
-  //   (total: number, block: any) => total + block.suggestions.length,
-  //   0
-  // );
+  const filteredSuggestionBlocks = suggestionBlocks
+    .map((block) => ({
+      ...block,
+      suggestions: block.suggestions.filter((s) =>
+        activeFilter === 'open'
+          ? s.status === 'open'
+          : s.status === 'resolved'
+      ),
+    }))
+    .filter((block) => block.suggestions.length > 0);
 
   const handleToggleExpanded = () => {
     setIsExpanded(!isExpanded);
   };
 
-  const handleClearAll = () => {
-    clearAllSuggestions();
+  const handleClearAll = async () => {
+    if (!cvId) return;
+    await clearAllSuggestions(cvId);
   };
 
-  const handleLoadDemo = () => {
-    loadDemoSuggestions();
+  const handleGenerate = async () => {
+    if (!cvId || isGenerating) return;
+    await generateSuggestions(cvId);
   };
 
   return (
@@ -64,7 +77,7 @@ export const SuggestionsPanel: React.FC = () => {
           position: 'sticky',
           top: 100,
           width: 400,
-          maxHeight: 'calc(100vh - 40px)',
+          minHeight: '297mm',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
@@ -99,10 +112,11 @@ export const SuggestionsPanel: React.FC = () => {
             </Typography>
 
             <Box display="flex" gap={0.5}>
-              <Tooltip title="Load demo suggestions">
+              <Tooltip title={isGenerating ? "Generating..." : "Generate AI suggestions"}>
                 <IconButton
                   size="small"
-                  onClick={handleLoadDemo}
+                  onClick={handleGenerate}
+                  disabled={isGenerating}
                   sx={{
                     color: 'text.secondary',
                     '&:hover': {
@@ -110,6 +124,9 @@ export const SuggestionsPanel: React.FC = () => {
                       color: 'text.primary',
                     },
                     transition: 'all 0.2s ease-in-out',
+                    '&:disabled': {
+                      color: 'text.disabled',
+                    },
                   }}
                 >
                   <RefreshIcon fontSize="small" />
@@ -156,28 +173,34 @@ export const SuggestionsPanel: React.FC = () => {
           <Box display="flex" gap={0.5}>
             <Button
               size="small"
+              onClick={() => setActiveFilter('open')}
               sx={{
                 fontSize: '0.75rem',
                 padding: '0.25rem 0.375rem',
                 borderRadius: '0.375rem',
-                backgroundColor: 'primary.main',
-                color: 'white',
+                backgroundColor: activeFilter === 'open' ? 'primary.main' : 'unset',
+                color: activeFilter === 'open' ? 'white' : 'text.secondary',
                 minWidth: 'auto',
-                '&:hover': { backgroundColor: 'primary.dark' },
+                '&:hover': {
+                  backgroundColor: activeFilter === 'open' ? 'primary.dark' : 'grey.200',
+                },
               }}
             >
               Open
             </Button>
             <Button
               size="small"
+              onClick={() => setActiveFilter('resolved')}
               sx={{
                 fontSize: '0.75rem',
                 padding: '0.25rem 0.375rem',
                 borderRadius: '0.375rem',
-                backgroundColor: 'unset',
-                color: 'text.secondary',
+                backgroundColor: activeFilter === 'resolved' ? 'primary.main' : 'unset',
+                color: activeFilter === 'resolved' ? 'white' : 'text.secondary',
                 minWidth: 'auto',
-                '&:hover': { backgroundColor: 'grey.200' },
+                '&:hover': {
+                  backgroundColor: activeFilter === 'resolved' ? 'primary.dark' : 'grey.200',
+                },
               }}
             >
               Resolved
@@ -193,11 +216,10 @@ export const SuggestionsPanel: React.FC = () => {
               overflow: 'hidden',
               p: 2,
               backgroundColor: 'white',
-              maxHeight: 'calc(100vh - 200px)',
               minHeight: 0,
             }}
           >
-            {suggestionBlocks.length === 0 ? (
+            {filteredSuggestionBlocks.length === 0 ? (
               <Box
                 sx={{
                   display: 'flex',
@@ -241,7 +263,6 @@ export const SuggestionsPanel: React.FC = () => {
                   margin: '0 -1rem',
                   overflow: 'auto',
                   padding: '0 1rem',
-                  maxHeight: 'calc(100vh - 250px)',
                   minHeight: 0,
                   overscrollBehavior: 'contain',
                   '&::-webkit-scrollbar': { width: '6px' },
@@ -255,17 +276,14 @@ export const SuggestionsPanel: React.FC = () => {
                   },
                 }}
               >
-                {suggestionBlocks.map((block) => (
+                {filteredSuggestionBlocks.map((block) => (
                   <Box
-                    key={block.id}
+                    key={block.blockId}
                     className="thread"
                     sx={{
-                      // borderRadius: '0.5rem',
-                      // boxShadow: '0px 0px 0px 1px #e5e7eb inset',
                       display: 'flex',
                       flexDirection: 'column',
                       transition: 'all 0.2s cubic-bezier(0.65, 0.05, 0.36, 1)',
-                      // '&:hover': { boxShadow: '0px 0px 0px 1px #9ca3af inset' },
                       '&.is-open': {
                         boxShadow: '0px 0px 0px 1px #8b5cf6 inset',
                       },
@@ -281,16 +299,16 @@ export const SuggestionsPanel: React.FC = () => {
                       {block.suggestions.map(
                         (suggestion)  => (
                           <SuggestionCard
-                            key={suggestion.id}
+                            key={suggestion._id}
                             suggestion={suggestion}
                             blockId={block.blockId}
-                            isActive={activeSuggestionId === suggestion.id}
-                            onAccept={() =>
-                              acceptSuggestion(block.blockId, suggestion.id)
-                            }
-                            onReject={() =>
-                              rejectSuggestion(block.blockId, suggestion.id)
-                            }
+                            isActive={activeSuggestionId === suggestion._id}
+                            onAccept={async () => {
+                              await updateSuggestionStatus(suggestion._id, 'resolved');
+                            }}
+                            onReject={async () => {
+                              await deleteSuggestion(suggestion._id);
+                            }}
                             registerRef={registerSuggestionRef}
                           />
                         )

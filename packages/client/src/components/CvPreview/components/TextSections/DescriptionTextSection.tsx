@@ -21,7 +21,7 @@ export const DescriptionTextSection = ({
   }
   return (
     <EditableTypography
-      id={`description-${id}`}
+      id={id}
       value={value}
       valueRender={(v) => v ?? 'Description (empty)'}
       onSave={onSave}

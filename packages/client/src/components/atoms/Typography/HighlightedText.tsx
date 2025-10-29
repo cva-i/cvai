@@ -1,4 +1,4 @@
-import React, { forwardRef, useMemo, memo } from 'react';
+import React, { forwardRef, useMemo, memo, useEffect, useRef } from 'react';
 import { Typography } from '@mui/material';
 import type { TypographyProps } from '@mui/material';
 import type { Suggestion } from '../../../contexts/use-suggestions';
@@ -25,7 +25,8 @@ const HighlightedSegment = memo<{
   activeSuggestionId?: string | null;
   isHovered?: boolean;
   onSuggestionClick?: (suggestionId: string) => void;
-}>(({ segment, activeSuggestionId, isHovered, onSuggestionClick }) => {
+  segmentRef?: React.RefObject<HTMLSpanElement>;
+}>(({ segment, activeSuggestionId, isHovered, onSuggestionClick, segmentRef }) => {
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (segment.suggestionId && onSuggestionClick) {
@@ -53,9 +54,11 @@ const HighlightedSegment = memo<{
 
   return (
     <span
+      ref={isActive && segment.isHighlighted ? segmentRef : undefined}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      data-suggestion-id={segment.suggestionId}
       style={{
         backgroundColor: segment.isHighlighted
           ? isActive
@@ -94,6 +97,18 @@ export const HighlightedText = forwardRef<HTMLDivElement, HighlightedTextProps>(
     },
     ref
   ) => {
+    const activeSegmentRef = useRef<HTMLSpanElement>(null);
+
+    // Scroll to active suggestion when it changes
+    useEffect(() => {
+      if (activeSuggestionId && activeSegmentRef.current) {
+        activeSegmentRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
+    }, [activeSuggestionId]);
+
     // Memoize text segments creation for better performance
     const segments = useMemo((): TextSegment[] => {
       if (!suggestions.length) {
@@ -133,7 +148,7 @@ export const HighlightedText = forwardRef<HTMLDivElement, HighlightedTextProps>(
         segments.push({
           text: text.slice(startOffset, endOffset),
           isHighlighted: true,
-          suggestionId: suggestion.id,
+          suggestionId: suggestion._id,
           startOffset,
           endOffset,
         });
@@ -178,6 +193,7 @@ export const HighlightedText = forwardRef<HTMLDivElement, HighlightedTextProps>(
             activeSuggestionId={activeSuggestionId}
             isHovered={isHovered}
             onSuggestionClick={onSuggestionClick}
+            segmentRef={activeSegmentRef}
           />
         ))}
       </Typography>

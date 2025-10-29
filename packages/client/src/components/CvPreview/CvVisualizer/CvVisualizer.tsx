@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import { Box, Divider, Skeleton } from '@mui/material';
 import {
   AboutMe,
@@ -14,9 +14,11 @@ import {
   refetchGetCvVersionHistoryQuery,
   refetchGetNameQuery,
   useUpdateCvNameMutation,
+  useGetCvQuery,
 } from '../../../generated/graphql';
 import { customPalette, shadowStyles } from '../../../theme';
-import { usePreviewMode } from '../../../contexts';
+import { usePreviewMode, useSuggestions } from '../../../contexts';
+import { CvMetadataProvider } from '../../../contexts/CvMetadataContext';
 import { SuggestionsPanel } from '../SuggestionsPanel';
 
 type CvVisualizerProps = {
@@ -25,10 +27,8 @@ type CvVisualizerProps = {
 
 export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
   const { isPreviewing } = usePreviewMode();
-
-  // fetch positions of all the sections.
-
-  // const {data: cvSections} = useGetCvSectionsPositions
+  const { fetchSuggestions } = useSuggestions();
+  const { data: cvData } = useGetCvQuery({ variables: { cvId } });
 
   const [updateNameMutation] = useUpdateCvNameMutation({
     refetchQueries: [
@@ -36,6 +36,16 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
       refetchGetNameQuery({ cvId }),
     ],
   });
+
+  // Fetch suggestions when CV loads
+  useEffect(() => {
+    function loadSuggestions() {
+      if (cvId && !isPreviewing) {
+        fetchSuggestions(cvId);
+      }
+    }
+    loadSuggestions();
+  }, [cvId, isPreviewing, fetchSuggestions]);
 
   const handleUpdateName = useCallback(
     async (name: string) => {
@@ -92,47 +102,49 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
   );
 
   const content = (
-    <Box sx={contentBoxStyles}>
-      <GetNameComponent variables={{ cvId }}>
-        {({ data }) => {
-          const name = data?.getCv.name;
-          if (!name) {
-            return <Skeleton variant="text" width={'100%'} height={40} />;
-          }
-          return (
-            <EditableTypography
-              id={'cv-name'}
-              value={name}
-              onSave={handleUpdateName}
-              variant="h3"
-              sx={{
-                textAlign: 'center',
-              }}
-            />
-          );
-        }}
-      </GetNameComponent>
+    <CvMetadataProvider metadata={cvData?.getCv?.metadata ?? null}>
+      <Box sx={contentBoxStyles}>
+        <GetNameComponent variables={{ cvId }}>
+          {({ data }) => {
+            const name = data?.getCv.name;
+            if (!name) {
+              return <Skeleton variant="text" width={'100%'} height={40} />;
+            }
+            return (
+              <EditableTypography
+                id={'cv-name'}
+                value={name}
+                onSave={handleUpdateName}
+                variant="h3"
+                sx={{
+                  textAlign: 'center',
+                }}
+              />
+            );
+          }}
+        </GetNameComponent>
 
-      <ContactInfo cvId={cvId} />
+        <ContactInfo cvId={cvId} />
 
-      <AboutMe cvId={cvId} />
+        <AboutMe cvId={cvId} />
 
-      <Divider />
+        <Divider />
 
-      <WorkExperience cvId={cvId} />
+        <WorkExperience cvId={cvId} />
 
-      <Divider />
+        <Divider />
 
-      <Projects cvId={cvId} />
+        <Projects cvId={cvId} />
 
-      <Divider />
+        <Divider />
 
-      <Education cvId={cvId} />
+        <Education cvId={cvId} />
 
-      <Divider />
+        <Divider />
 
-      <Skills cvId={cvId} />
-    </Box>
+        <Skills cvId={cvId} />
+      </Box>
+    </CvMetadataProvider>
   );
 
   return isPreviewing ? (
@@ -140,7 +152,7 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
   ) : (
     <RowLayout>
       {content}
-      <SuggestionsPanel />
+      <SuggestionsPanel cvId={cvId} />
     </RowLayout>
   );
 };
