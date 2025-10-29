@@ -1,76 +1,30 @@
-import { useCallback, useState } from 'react';
-import { Box, Button, styled } from '@mui/material';
-import { environment } from '../environment';
+import React, { useState } from 'react';
+import { Box, styled } from '@mui/material';
 import { FloatingSidebar } from './Sidebar';
 import { CurrentCvPreview } from './CvPreview';
-import { CenteredBox } from './atoms';
-import {
-  CurrentCvProvider,
-  CurrentUserProvider,
-  CvCreationFlowProvider,
-  DialogProvider,
-  PreviewModeProvider,
-  useAuth,
-} from '../contexts';
-import { SuggestionsProvider } from '../contexts/use-suggestions';
-import { CvCreationDialog } from './CreateCvFlow';
-import { ClickOutsideHandler } from './ClickOutsideHandler';
+import { usePreviewMode } from '../contexts';
 import {
   COLLAPSED_SIDEBAR_WIDTH,
   EXPANDED_SIDEBAR_WIDTH,
 } from './Sidebar/FloatingSidebar';
 
-export const LoginButton = () => {
-  const handleLogin = useCallback(() => {
-    const backendGoogleOAuthUrl = `${environment.apiUrl}/auth/google`;
-    window.location.href = backendGoogleOAuthUrl;
-  }, []);
-
-  return (
-    <Button variant={'outlined'} onClick={handleLogin}>
-      Login with Google
-    </Button>
-  );
-};
-
 export const IndexPage = () => {
-  const { user, logout } = useAuth();
+  const { isPreviewing } = usePreviewMode();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
 
-  if (!user) {
-    return (
-      <CenteredBox sx={{ height: '100vh' }}>
-        <LoginButton />
-      </CenteredBox>
-    );
-  }
-
   return (
-    <CurrentUserProvider user={user} logout={logout}>
-      <CurrentCvProvider>
-        <DialogProvider>
-          <CvCreationFlowProvider>
-            <PreviewModeProvider>
-              <SuggestionsProvider>
-                <ClickOutsideHandler>
-                  <AppContainer>
-                    <FloatingSidebar
-                      isExpanded={isSidebarExpanded}
-                      onToggle={setIsSidebarExpanded}
-                    />
-                    <MainContent isSidebarExpanded={isSidebarExpanded}>
-                      <CurrentCvPreview />
-                    </MainContent>
-                  </AppContainer>
-                </ClickOutsideHandler>
-              </SuggestionsProvider>
-            </PreviewModeProvider>
-
-            <CvCreationDialog />
-          </CvCreationFlowProvider>
-        </DialogProvider>
-      </CurrentCvProvider>
-    </CurrentUserProvider>
+    <AppContainer>
+      <FloatingSidebar
+        isExpanded={isSidebarExpanded}
+        onToggle={setIsSidebarExpanded}
+      />
+      <MainContent
+        isSidebarExpanded={isSidebarExpanded}
+        sx={isPreviewing ? { margin: '0 auto', padding: 0 } : {}}
+      >
+        <CurrentCvPreview />
+      </MainContent>
+    </AppContainer>
   );
 };
 

@@ -1742,7 +1742,7 @@ __metadata:
     react-markdown: "npm:^9.0.1"
     react-router-dom: "npm:^6.28.0"
     react-toastify: "npm:^10.0.6"
-    ts-pattern: "npm:^5.5.0"
+    ts-pattern: "npm:^5.9.0"
     tslib: "npm:^2.6.1"
     typescript: "npm:^5.6.3"
     vite: "npm:^5.4.10"
@@ -8182,6 +8182,7 @@ __metadata:
     concurrently: "npm:7.0.0"
     eslint: "npm:^9.23.0"
     globals: "npm:^15.9.0"
+    graphql-type-json: "npm:^0.3.2"
     html-webpack-plugin: "npm:^5.3.2"
     prettier: "npm:^3.3.3"
     ts-loader: "npm:^9.2.6"
@@ -10402,6 +10403,15 @@ __metadata:
   peerDependencies:
     graphql: ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
   checksum: 10/23a2bc1d3fbeae86444204e0ac08522e09dc369559ba75768e47421a7321b59f352fb5b2c9a5c37d3cf6de890dca4e5ac47e740c7cc622e728572ecaa649089e
+  languageName: node
+  linkType: hard
+
+"graphql-type-json@npm:^0.3.2":
+  version: 0.3.2
+  resolution: "graphql-type-json@npm:0.3.2"
+  peerDependencies:
+    graphql: ">=0.8.0"
+  checksum: 10/41620699637a5294937bd61d6e2696edea5a1279ef3d8f4b33716a910635595435381ccd1b74c6fae62c2bc81064c62ae27d3559c8380c0f99bdfdc8ecb249b0
   languageName: node
   linkType: hard
 
@@ -16164,10 +16174,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-pattern@npm:^5.5.0, ts-pattern@npm:^5.6.2":
+"ts-pattern@npm:^5.6.2":
   version: 5.8.0
   resolution: "ts-pattern@npm:5.8.0"
   checksum: 10/fdfa0ea99463c4bb91fee6ade4c31dd93af6760759c302c04dfacab29e556025d656a65f5e855e77015e3fcfc627dd05662d5fc89eb02df024708b2b96d6e00e
+  languageName: node
+  linkType: hard
+
+"ts-pattern@npm:^5.9.0":
+  version: 5.9.0
+  resolution: "ts-pattern@npm:5.9.0"
+  checksum: 10/0df8cc63d731a596f3541a305eff10f055c9a761d1a8b3776781dc6d6430c6bd8be8cd333fac62138c5d88e1209b4d8dccf1f40041091b634e5018908281417b
   languageName: node
   linkType: hard
 

@@ -23,7 +23,7 @@ export const JobTypeTextSection = ({
 
   return (
     <EditableTypography
-      id={`job-type-${id}`}
+      id={id}
       valueRender={(v) => v ?? 'Type (empty)'}
       value={value}
       onSave={onSave}

@@ -9,7 +9,7 @@ import { EducationEntry } from './EducationEntry';
 import {
   GenericEntriesSection,
   useCvEntries,
-  WithRemoveEntryButton,
+  WithEntryControls,
 } from '../../../components';
 
 export const Education: React.FC<CvEntryComponentProps> = ({ cvId }) => {
@@ -39,7 +39,7 @@ export const Education: React.FC<CvEntryComponentProps> = ({ cvId }) => {
       entries={entries}
       noEntriesText="No education entries available."
       renderEntry={(entry, index) => (
-        <WithRemoveEntryButton
+        <WithEntryControls
           removeEntry={() => removeEntry(entry._id)}
           onAddEntry={handleAddEntry}
           onMoveUp={index > 0 ? () => moveUp(entry._id) : undefined}
@@ -50,7 +50,7 @@ export const Education: React.FC<CvEntryComponentProps> = ({ cvId }) => {
           key={entry._id}
         >
           <EducationEntry cvId={cvId} entry={entry} updateField={updateField} />
-        </WithRemoveEntryButton>
+        </WithEntryControls>
       )}
       onAdd={() => handleAddEntry()}
     />

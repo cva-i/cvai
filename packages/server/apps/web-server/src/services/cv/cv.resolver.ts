@@ -7,6 +7,7 @@ import { CvService } from './cv.service';
 import {
   CvEntryType,
   CvObjectType,
+  CvFieldMetadataObjectType,
   GenerateNewEntryItemObjectType,
   PaginatedCvVersionHistoryObjectType,
   UpdateCvInput,
@@ -56,6 +57,24 @@ export class CvResolver {
       userId,
       cvId,
     });
+  }
+
+  @Query(() => CvFieldMetadataObjectType, { nullable: true })
+  async getCvFieldMetadata(
+    @CurrentUser() { client_id: userId }: DecodedUserObjectType,
+    @Args('cvId', { type: () => ID }) cvId: string
+  ): Promise<CvFieldMetadataObjectType | null> {
+    const metadata = await this.cvService.getCvFieldMetadata({ cvId, userId });
+    if (!metadata) return null;
+
+    return {
+      _id: metadata._id.toString(),
+      cvId: metadata.cvId.toString(),
+      userId: metadata.userId,
+      metadata: metadata.metadata,
+      createdAt: metadata.createdAt ?? new Date(),
+      updatedAt: metadata.updatedAt ?? new Date(),
+    };
   }
 
   @Mutation(() => CvObjectType)

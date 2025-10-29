@@ -3,7 +3,7 @@ import { WorkExperienceEntry } from './WorkExperienceEntry';
 import {
   GenericEntriesSection,
   useCvEntries,
-  WithRemoveEntryButton,
+  WithEntryControls,
 } from '../../../components';
 import type { CvEntryComponentProps } from '../../types';
 import type { WorkExperience as WorkExperienceGraphqlType } from '../../../../../generated/graphql';
@@ -38,7 +38,7 @@ export const WorkExperience = ({ cvId }: CvEntryComponentProps) => {
       entries={entries}
       noEntriesText="No work experience entries."
       renderEntry={(entry, index) => (
-        <WithRemoveEntryButton
+        <WithEntryControls
           removeEntry={() => removeEntry(entry._id)}
           onAddEntry={handleAddEntry}
           onMoveUp={index > 0 ? () => moveUp(entry._id) : undefined}
@@ -53,7 +53,7 @@ export const WorkExperience = ({ cvId }: CvEntryComponentProps) => {
             entry={entry}
             updateField={updateField}
           />
-        </WithRemoveEntryButton>
+        </WithEntryControls>
       )}
       onAdd={() => handleAddEntry()}
     />

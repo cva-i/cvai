@@ -1,0 +1,17 @@
+query GetSuggestionsForCv($cvId: ID!) {
+  getSuggestionsForCv(cvId: $cvId) {
+    blockId
+    comments {
+      _id
+      cvId
+      cvVersionId
+      blockId
+      text
+      suggestedText
+      status
+      authorName
+      createdAt
+      updatedAt
+    }
+  }
+}

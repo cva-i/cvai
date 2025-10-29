@@ -2,6 +2,7 @@ fragment CvFragment on CvObjectType {
   _id
   title
   name
+  metadata
   aboutMe {
     ...AboutMeFragment
   }

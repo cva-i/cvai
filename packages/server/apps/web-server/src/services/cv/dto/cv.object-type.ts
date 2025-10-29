@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
+import GraphQLJSON from 'graphql-type-json';
 import {
   AboutMe,
   ContactInfo,
@@ -53,6 +54,9 @@ export class CvObjectType {
 
   @Field(() => Date)
   versionCreatedAt!: Date;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  metadata?: any;
 }
 
 export const convertMappedEntriesToItemizedEntries = (

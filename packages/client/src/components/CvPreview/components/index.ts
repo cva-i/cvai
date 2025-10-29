@@ -1,6 +1,6 @@
 export * from './EntriesSection';
 export * from './SkillsForItemizedEntryEditor';
 export * from './TextSections';
-export * from './WithRemoveEntryButton';
+export * from './WithEntryControls';
 export * from './WithEditableSection';
 export * from './RightCvColumnEntriesContainer';

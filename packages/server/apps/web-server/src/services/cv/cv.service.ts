@@ -20,6 +20,8 @@ import {
   Cv,
   CvData,
   CvDocument,
+  CvFieldMetadata,
+  CvFieldMetadataDocument,
   CvVersion,
   Education,
   Project,
@@ -47,6 +49,11 @@ import { arrayToMap } from './utils';
 import { CreateCvParams } from './create-cv-params';
 import { entries, keys } from '@server/common/utils';
 import { ConvertOrTypeToAndType } from '@server/common/types';
+import {
+  createCvDataMetadata,
+  addEntryMetadata,
+  removeEntryMetadata,
+} from './metadata.utils';
 
 type VersionDirection = 'previous' | 'next';
 
@@ -54,7 +61,9 @@ type VersionDirection = 'previous' | 'next';
 export class CvService {
   constructor(
     @InjectModel(Cv.name)
-    private readonly cvModel: Model<CvDocument>
+    private readonly cvModel: Model<CvDocument>,
+    @InjectModel(CvFieldMetadata.name)
+    private readonly cvFieldMetadataModel: Model<CvFieldMetadataDocument>
   ) {}
 
   async getVersioningActionsMetadata({ cvId, userId }: CvManagerMethodProps) {
@@ -67,6 +76,17 @@ export class CvService {
       canUndo,
       canRedo,
     };
+  }
+
+  async getCvFieldMetadata({
+    cvId,
+    userId,
+  }: CvManagerMethodProps): Promise<CvFieldMetadataDocument | null> {
+    await this.validateUserOwnership(cvId, userId);
+
+    return this.cvFieldMetadataModel
+      .findOne({ cvId: new Types.ObjectId(cvId) })
+      .exec();
   }
 
   async getCvVersionHistory({
@@ -153,16 +173,25 @@ export class CvService {
       throw new NotFoundException('CV version not found');
     }
 
-    return createObjectType({
-      cv,
-      cvVersion: {
-        _id: version._id,
-        data: version.data,
-        versionNumber: version.versionNumber,
-        createdAt: version.createdAt,
-        // cvId: cv._id.toString(),
-      },
-    });
+    // Fetch metadata
+    const metadataDoc = await this.cvFieldMetadataModel
+      .findOne({ cvId: new Types.ObjectId(cvId) })
+      .lean()
+      .exec();
+
+    return {
+      ...createObjectType({
+        cv,
+        cvVersion: {
+          _id: version._id,
+          data: version.data,
+          versionNumber: version.versionNumber,
+          createdAt: version.createdAt,
+          // cvId: cv._id.toString(),
+        },
+      }),
+      metadata: metadataDoc?.metadata,
+    };
   }
 
   async getCvs({
@@ -244,6 +273,21 @@ export class CvService {
       })
       .exec();
 
+    // Update metadata with the new entry
+    const metadata = await this.cvFieldMetadataModel
+      .findOne({ cvId: new Types.ObjectId(cvId) })
+      .exec();
+
+    if (metadata) {
+      metadata.metadata = addEntryMetadata(
+        metadata.metadata,
+        entryMapKey,
+        newEntry._id,
+        newEntry
+      );
+      await metadata.save();
+    }
+
     return newEntry;
   }
 
@@ -266,6 +310,13 @@ export class CvService {
       userId,
       currentVersionId: versionId,
       versions: [newVersion],
+    });
+
+    // Create metadata for the CV
+    await this.cvFieldMetadataModel.create({
+      cvId: new Types.ObjectId(cvId),
+      userId,
+      metadata: createCvDataMetadata(versionData),
     });
 
     return createObjectType({
@@ -301,6 +352,11 @@ export class CvService {
     await this.validateUserOwnership(cvId, userId);
 
     const res = await this.cvModel.deleteOne({ _id: cvId }).exec();
+
+    // Also delete the associated metadata
+    await this.cvFieldMetadataModel
+      .deleteOne({ cvId: new Types.ObjectId(cvId) })
+      .exec();
 
     return res.deletedCount === 1;
   }
@@ -406,6 +462,20 @@ export class CvService {
         },
       })
       .exec();
+
+    // Update metadata by removing the deleted entry
+    const metadata = await this.cvFieldMetadataModel
+      .findOne({ cvId: new Types.ObjectId(cvId) })
+      .exec();
+
+    if (metadata) {
+      metadata.metadata = removeEntryMetadata(
+        metadata.metadata,
+        entryMapKey,
+        entryItemId
+      );
+      await metadata.save();
+    }
 
     return true;
   }

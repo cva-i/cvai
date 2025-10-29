@@ -1,7 +1,8 @@
-import React, { forwardRef, useMemo, memo } from 'react';
-import { Typography } from '@mui/material';
+import React, { forwardRef, useEffect, useRef, useMemo } from 'react';
 import type { TypographyProps } from '@mui/material';
-import type { Suggestion } from '../../../contexts/use-suggestions';
+import { Typography } from '@mui/material';
+import type { Suggestion } from '../../../contexts';
+import { usePreviewMode } from '../../../contexts';
 
 interface HighlightedTextProps extends Omit<TypographyProps, 'children'> {
   text: string;
@@ -10,77 +11,6 @@ interface HighlightedTextProps extends Omit<TypographyProps, 'children'> {
   onSuggestionClick?: (suggestionId: string) => void;
   isHovered?: boolean;
 }
-
-interface TextSegment {
-  text: string;
-  isHighlighted: boolean;
-  suggestionId?: string;
-  startOffset: number;
-  endOffset: number;
-}
-
-// Memoized segment component for better performance
-const HighlightedSegment = memo<{
-  segment: TextSegment;
-  activeSuggestionId?: string | null;
-  isHovered?: boolean;
-  onSuggestionClick?: (suggestionId: string) => void;
-}>(({ segment, activeSuggestionId, isHovered, onSuggestionClick }) => {
-  const handleClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (segment.suggestionId && onSuggestionClick) {
-      onSuggestionClick(segment.suggestionId);
-    }
-  };
-
-  const handleMouseEnter = (e: React.MouseEvent<HTMLSpanElement>) => {
-    if (segment.isHighlighted) {
-      e.currentTarget.style.boxShadow = 'inset 0 0 0 1000px #fef3c7';
-    }
-  };
-
-  const handleMouseLeave = (e: React.MouseEvent<HTMLSpanElement>) => {
-    if (segment.isHighlighted) {
-      e.currentTarget.style.boxShadow =
-        activeSuggestionId === segment.suggestionId
-          ? 'inset 0 0 0 1000px #fef3c7'
-          : 'none';
-    }
-  };
-
-  const isActive = activeSuggestionId === segment.suggestionId;
-  const shouldHighlight = segment.isHighlighted && (isActive || isHovered);
-
-  return (
-    <span
-      onClick={handleClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      style={{
-        backgroundColor: segment.isHighlighted
-          ? isActive
-            ? '#fef3c7' // yellow-100 for active
-            : 'transparent'
-          : 'transparent',
-        textDecoration: segment.isHighlighted ? 'underline' : 'none',
-        textDecorationColor: segment.isHighlighted ? '#fbbf24' : 'transparent', // yellow-400
-        textDecorationThickness: segment.isHighlighted ? '2px' : '0px',
-        textUnderlineOffset: segment.isHighlighted ? '2px' : '0px',
-        cursor: segment.isHighlighted ? 'pointer' : 'default',
-        transition: 'all 0.2s ease-in-out',
-        borderRadius: '0px',
-        padding: '0px',
-        margin: '0px',
-        display: 'inline',
-        boxShadow: shouldHighlight ? 'inset 0 0 0 1000px #fef3c7' : 'none',
-      }}
-    >
-      {segment.text}
-    </span>
-  );
-});
-
-HighlightedSegment.displayName = 'HighlightedSegment';
 
 export const HighlightedText = forwardRef<HTMLDivElement, HighlightedTextProps>(
   (
@@ -94,65 +24,47 @@ export const HighlightedText = forwardRef<HTMLDivElement, HighlightedTextProps>(
     },
     ref
   ) => {
-    // Memoize text segments creation for better performance
-    const segments = useMemo((): TextSegment[] => {
-      if (!suggestions.length) {
-        return [
-          {
-            text,
-            isHighlighted: false,
-            startOffset: 0,
-            endOffset: text.length,
-          },
-        ];
-      }
+    const textRef = useRef<HTMLDivElement>(null);
+    const { isPreviewing } = usePreviewMode();
 
-      // Sort suggestions by start offset
-      const sortedSuggestions = [...suggestions].sort(
-        (a, b) => (a.startOffset || 0) - (b.startOffset || 0)
-      );
-
-      const segments: TextSegment[] = [];
-      let currentOffset = 0;
-
-      for (const suggestion of sortedSuggestions) {
-        const startOffset = suggestion.startOffset || 0;
-        const endOffset = suggestion.endOffset || text.length;
-
-        // Add non-highlighted segment before this suggestion
-        if (currentOffset < startOffset) {
-          segments.push({
-            text: text.slice(currentOffset, startOffset),
-            isHighlighted: false,
-            startOffset: currentOffset,
-            endOffset: startOffset,
-          });
-        }
-
-        // Add highlighted segment for this suggestion
-        segments.push({
-          text: text.slice(startOffset, endOffset),
-          isHighlighted: true,
-          suggestionId: suggestion.id,
-          startOffset,
-          endOffset,
-        });
-
-        currentOffset = Math.max(currentOffset, endOffset);
-      }
-
-      // Add remaining non-highlighted text
-      if (currentOffset < text.length) {
-        segments.push({
-          text: text.slice(currentOffset),
-          isHighlighted: false,
-          startOffset: currentOffset,
-          endOffset: text.length,
+    // Scroll to active suggestion when it changes
+    useEffect(() => {
+      if (activeSuggestionId && textRef.current) {
+        textRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
         });
       }
+    }, [activeSuggestionId]);
 
-      return segments;
-    }, [text, suggestions]);
+    // Check if this text has any suggestions
+    const hasSuggestions = suggestions.length > 0;
+    const activeSuggestion = suggestions.find(
+      (s) => s._id === activeSuggestionId
+    );
+    const isActive = !!activeSuggestion;
+    const shouldHighlight = hasSuggestions && (isActive || isHovered);
+
+    const handleClick = (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (hasSuggestions && suggestions[0] && onSuggestionClick) {
+        onSuggestionClick(suggestions[0]._id);
+      }
+    };
+
+    const handleMouseEnter = (e: React.MouseEvent<HTMLSpanElement>) => {
+      if (hasSuggestions) {
+        e.currentTarget.style.boxShadow = 'inset 0 0 0 1000px #fef3c7';
+      }
+    };
+
+    const handleMouseLeave = (e: React.MouseEvent<HTMLSpanElement>) => {
+      if (hasSuggestions) {
+        e.currentTarget.style.boxShadow = isActive
+          ? 'inset 0 0 0 1000px #fef3c7'
+          : 'none';
+      }
+    };
 
     // Extract textAlign from sx props
     const textAlignFromSx = useMemo(() => {
@@ -163,6 +75,19 @@ export const HighlightedText = forwardRef<HTMLDivElement, HighlightedTextProps>(
         : 'inherit';
     }, [typographyProps.sx]);
 
+    const highlightedTextStyles = {
+      textDecoration: 'underline',
+      textDecorationColor: '#fbbf24', // yellow-400
+      textDecorationThickness: '2px',
+      textUnderlineOffset: '2px',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease-in-out',
+      backgroundColor: isActive
+        ? '#fef3c7' // yellow-100 for active
+        : 'transparent',
+      boxShadow: shouldHighlight ? 'inset 0 0 0 1000px #fef3c7' : 'none',
+    };
+
     return (
       <Typography
         ref={ref}
@@ -171,16 +96,29 @@ export const HighlightedText = forwardRef<HTMLDivElement, HighlightedTextProps>(
         sx={{ ...typographyProps.sx, width: '100%' }}
         style={{ textAlign: textAlignFromSx }}
       >
-        {segments.map((segment, index) => (
-          <HighlightedSegment
-            key={index}
-            segment={segment}
-            activeSuggestionId={activeSuggestionId}
-            isHovered={isHovered}
-            onSuggestionClick={onSuggestionClick}
-          />
-        ))}
+        {hasSuggestions ? (
+          <span
+            ref={isActive ? textRef : undefined}
+            onClick={!isPreviewing ? handleClick : undefined}
+            onMouseEnter={!isPreviewing ? handleMouseEnter : undefined}
+            onMouseLeave={!isPreviewing ? handleMouseLeave : undefined}
+            data-suggestion-id={suggestions[0]?._id}
+            style={{
+              borderRadius: '0px',
+              padding: '0px',
+              margin: '0px',
+              display: 'inline',
+              ...(!isPreviewing ? highlightedTextStyles : {}),
+            }}
+          >
+            {text}
+          </span>
+        ) : (
+          text
+        )}
       </Typography>
     );
   }
 );
+
+HighlightedText.displayName = 'HighlightedText';

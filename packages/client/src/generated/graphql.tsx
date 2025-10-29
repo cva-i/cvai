@@ -33,6 +33,10 @@ export type Scalars = {
   Float: { input: number; output: number };
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: any; output: any };
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSON: { input: any; output: any };
+  /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSONObject: { input: any; output: any };
   /** The `Upload` scalar type represents a file upload. */
   Upload: { input: any; output: any };
 };
@@ -41,6 +45,26 @@ export type AboutMe = {
   __typename?: 'AboutMe';
   description: Scalars['String']['output'];
   fieldName: Scalars['String']['output'];
+};
+
+export type CommentBlockObjectType = {
+  __typename?: 'CommentBlockObjectType';
+  blockId: Scalars['String']['output'];
+  comments: Array<CommentObjectType>;
+};
+
+export type CommentObjectType = {
+  __typename?: 'CommentObjectType';
+  _id: Scalars['String']['output'];
+  authorName: Scalars['String']['output'];
+  blockId: Scalars['String']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  cvId: Scalars['String']['output'];
+  cvVersionId: Scalars['String']['output'];
+  status: Scalars['String']['output'];
+  suggestedText?: Maybe<Scalars['String']['output']>;
+  text: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
 };
 
 export type ContactInfo = {
@@ -105,12 +129,23 @@ export enum CvEntryType {
   WorkExperience = 'WORK_EXPERIENCE',
 }
 
+export type CvFieldMetadataObjectType = {
+  __typename?: 'CvFieldMetadataObjectType';
+  _id: Scalars['ID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  cvId: Scalars['ID']['output'];
+  metadata: Scalars['JSONObject']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+  userId: Scalars['String']['output'];
+};
+
 export type CvObjectType = {
   __typename?: 'CvObjectType';
   _id: Scalars['ID']['output'];
   aboutMe?: Maybe<AboutMe>;
   contactInfoEntries?: Maybe<Array<ContactInfo>>;
   educationEntries?: Maybe<Array<Education>>;
+  metadata?: Maybe<Scalars['JSON']['output']>;
   name: Scalars['String']['output'];
   projectEntries?: Maybe<Array<Project>>;
   skillEntries?: Maybe<Array<Skill>>;
@@ -154,20 +189,28 @@ export type GenerateNewEntryItemObjectType = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  clearAllSuggestionsForCv: Scalars['Boolean']['output'];
   convertPdfToCv: ConvertPdfToCvObjectType;
   createCvFromVersion: CvObjectType;
   createNewCv: CvObjectType;
   deleteCv: Scalars['Boolean']['output'];
   deleteCvEntryItem: Scalars['Boolean']['output'];
   deleteEntryItem: Scalars['Boolean']['output'];
+  deleteSuggestion: Scalars['Boolean']['output'];
   duplicateCv: CvObjectType;
   generateNewEntryItem: GenerateNewEntryItemObjectType;
+  generateSuggestionsForCv: Array<CommentBlockObjectType>;
   logout: Scalars['Boolean']['output'];
   redoCvVersion: CvObjectType;
   reviewCv: ReviewCvOutput;
   transformCv: TransformCvObjectType;
   undoCvVersion: CvObjectType;
   updateCv: CvObjectType;
+  updateSuggestionStatus: CommentObjectType;
+};
+
+export type MutationClearAllSuggestionsForCvArgs = {
+  cvId: Scalars['ID']['input'];
 };
 
 export type MutationConvertPdfToCvArgs = {
@@ -199,6 +242,10 @@ export type MutationDeleteEntryItemArgs = {
   entryItemId: Scalars['ID']['input'];
 };
 
+export type MutationDeleteSuggestionArgs = {
+  suggestionId: Scalars['ID']['input'];
+};
+
 export type MutationDuplicateCvArgs = {
   cvId: Scalars['ID']['input'];
 };
@@ -211,6 +258,10 @@ export type MutationGenerateNewEntryItemArgs = {
   projectData?: InputMaybe<CreateProjectInput>;
   skillData?: InputMaybe<CreateSkillInput>;
   workExperienceData?: InputMaybe<CreateWorkExperienceInput>;
+};
+
+export type MutationGenerateSuggestionsForCvArgs = {
+  cvId: Scalars['ID']['input'];
 };
 
 export type MutationRedoCvVersionArgs = {
@@ -233,6 +284,10 @@ export type MutationUndoCvVersionArgs = {
 export type MutationUpdateCvArgs = {
   cvId: Scalars['ID']['input'];
   data: UpdateCvInput;
+};
+
+export type MutationUpdateSuggestionStatusArgs = {
+  input: UpdateSuggestionStatusInput;
 };
 
 export type PaginatedCvVersionHistoryObjectType = {
@@ -262,9 +317,11 @@ export type Query = {
   __typename?: 'Query';
   currentUser: User;
   getCv: CvObjectType;
+  getCvFieldMetadata?: Maybe<CvFieldMetadataObjectType>;
   getCvVersionHistory: PaginatedCvVersionHistoryObjectType;
   getCvs: Array<CvObjectType>;
   getReviewStatus: ReviewStatusType;
+  getSuggestionsForCv: Array<CommentBlockObjectType>;
   getVersioningActionsMetadata: VersioningActionsMetadataObjectType;
 };
 
@@ -273,11 +330,19 @@ export type QueryGetCvArgs = {
   versionId?: InputMaybe<Scalars['ID']['input']>;
 };
 
+export type QueryGetCvFieldMetadataArgs = {
+  cvId: Scalars['ID']['input'];
+};
+
 export type QueryGetCvVersionHistoryArgs = {
   cvId: Scalars['ID']['input'];
 };
 
 export type QueryGetReviewStatusArgs = {
+  cvId: Scalars['ID']['input'];
+};
+
+export type QueryGetSuggestionsForCvArgs = {
   cvId: Scalars['ID']['input'];
 };
 
@@ -363,6 +428,11 @@ export type UpdateSkillInput = {
   skills?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
+export type UpdateSuggestionStatusInput = {
+  status: Scalars['String']['input'];
+  suggestionId: Scalars['String']['input'];
+};
+
 export type UpdateWorkExperienceInput = {
   _id?: InputMaybe<Scalars['ID']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -409,6 +479,7 @@ export type CvFragment = {
   _id: string;
   title: string;
   name: string;
+  metadata?: any | null;
   aboutMe?: {
     __typename?: 'AboutMe';
     fieldName: string;
@@ -529,6 +600,7 @@ export type UpdateCvMutation = {
     _id: string;
     title: string;
     name: string;
+    metadata?: any | null;
     aboutMe?: {
       __typename?: 'AboutMe';
       fieldName: string;
@@ -726,6 +798,7 @@ export type GetCvQuery = {
     _id: string;
     title: string;
     name: string;
+    metadata?: any | null;
     aboutMe?: {
       __typename?: 'AboutMe';
       fieldName: string;
@@ -873,24 +946,6 @@ export type ConvertPdfToCvMutation = {
   convertPdfToCv: { __typename?: 'ConvertPdfToCvObjectType'; comment: string };
 };
 
-export type GetReviewStatusQueryVariables = Exact<{
-  cvId: Scalars['ID']['input'];
-}>;
-
-export type GetReviewStatusQuery = {
-  __typename?: 'Query';
-  getReviewStatus: ReviewStatusType;
-};
-
-export type ReviewCvMutationVariables = Exact<{
-  cvId: Scalars['ID']['input'];
-}>;
-
-export type ReviewCvMutation = {
-  __typename?: 'Mutation';
-  reviewCv: { __typename?: 'ReviewCvOutput'; messages: Array<string> };
-};
-
 export type UndoCvVersionMutationVariables = Exact<{
   cvId: Scalars['ID']['input'];
 }>;
@@ -902,6 +957,7 @@ export type UndoCvVersionMutation = {
     _id: string;
     title: string;
     name: string;
+    metadata?: any | null;
     aboutMe?: {
       __typename?: 'AboutMe';
       fieldName: string;
@@ -966,6 +1022,7 @@ export type RedoCvVersionMutation = {
     _id: string;
     title: string;
     name: string;
+    metadata?: any | null;
     aboutMe?: {
       __typename?: 'AboutMe';
       fieldName: string;
@@ -1031,6 +1088,7 @@ export type CreateCvFromVersionMutation = {
     _id: string;
     title: string;
     name: string;
+    metadata?: any | null;
     aboutMe?: {
       __typename?: 'AboutMe';
       fieldName: string;
@@ -1187,6 +1245,90 @@ export type TransformCvMutation = {
   };
 };
 
+export type GenerateSuggestionsForCvMutationVariables = Exact<{
+  cvId: Scalars['ID']['input'];
+}>;
+
+export type GenerateSuggestionsForCvMutation = {
+  __typename?: 'Mutation';
+  generateSuggestionsForCv: Array<{
+    __typename?: 'CommentBlockObjectType';
+    blockId: string;
+    comments: Array<{
+      __typename?: 'CommentObjectType';
+      _id: string;
+      cvId: string;
+      cvVersionId: string;
+      blockId: string;
+      text: string;
+      suggestedText?: string | null;
+      status: string;
+      authorName: string;
+      createdAt: any;
+      updatedAt: any;
+    }>;
+  }>;
+};
+
+export type UpdateSuggestionStatusMutationVariables = Exact<{
+  input: UpdateSuggestionStatusInput;
+}>;
+
+export type UpdateSuggestionStatusMutation = {
+  __typename?: 'Mutation';
+  updateSuggestionStatus: {
+    __typename?: 'CommentObjectType';
+    _id: string;
+    text: string;
+    suggestedText?: string | null;
+    status: string;
+    updatedAt: any;
+  };
+};
+
+export type DeleteSuggestionMutationVariables = Exact<{
+  suggestionId: Scalars['ID']['input'];
+}>;
+
+export type DeleteSuggestionMutation = {
+  __typename?: 'Mutation';
+  deleteSuggestion: boolean;
+};
+
+export type ClearAllSuggestionsForCvMutationVariables = Exact<{
+  cvId: Scalars['ID']['input'];
+}>;
+
+export type ClearAllSuggestionsForCvMutation = {
+  __typename?: 'Mutation';
+  clearAllSuggestionsForCv: boolean;
+};
+
+export type GetSuggestionsForCvQueryVariables = Exact<{
+  cvId: Scalars['ID']['input'];
+}>;
+
+export type GetSuggestionsForCvQuery = {
+  __typename?: 'Query';
+  getSuggestionsForCv: Array<{
+    __typename?: 'CommentBlockObjectType';
+    blockId: string;
+    comments: Array<{
+      __typename?: 'CommentObjectType';
+      _id: string;
+      cvId: string;
+      cvVersionId: string;
+      blockId: string;
+      text: string;
+      suggestedText?: string | null;
+      status: string;
+      authorName: string;
+      createdAt: any;
+      updatedAt: any;
+    }>;
+  }>;
+};
+
 export const AboutMeFragmentDoc = gql`
   fragment AboutMeFragment on AboutMe {
     fieldName
@@ -1248,6 +1390,7 @@ export const CvFragmentDoc = gql`
     _id
     title
     name
+    metadata
     aboutMe {
       ...AboutMeFragment
     }
@@ -2576,175 +2719,6 @@ export type ConvertPdfToCvMutationOptions = Apollo.BaseMutationOptions<
   ConvertPdfToCvMutation,
   ConvertPdfToCvMutationVariables
 >;
-export const GetReviewStatusDocument = gql`
-  query getReviewStatus($cvId: ID!) {
-    getReviewStatus(cvId: $cvId)
-  }
-`;
-export type GetReviewStatusComponentProps = Omit<
-  ApolloReactComponents.QueryComponentOptions<
-    GetReviewStatusQuery,
-    GetReviewStatusQueryVariables
-  >,
-  'query'
-> &
-  (
-    | { variables: GetReviewStatusQueryVariables; skip?: boolean }
-    | { skip: boolean }
-  );
-
-export const GetReviewStatusComponent = (
-  props: GetReviewStatusComponentProps
-) => (
-  <ApolloReactComponents.Query<
-    GetReviewStatusQuery,
-    GetReviewStatusQueryVariables
-  >
-    query={GetReviewStatusDocument}
-    {...props}
-  />
-);
-
-/**
- * __useGetReviewStatusQuery__
- *
- * To run a query within a React component, call `useGetReviewStatusQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetReviewStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetReviewStatusQuery({
- *   variables: {
- *      cvId: // value for 'cvId'
- *   },
- * });
- */
-export function useGetReviewStatusQuery(
-  baseOptions: Apollo.QueryHookOptions<
-    GetReviewStatusQuery,
-    GetReviewStatusQueryVariables
-  > &
-    (
-      | { variables: GetReviewStatusQueryVariables; skip?: boolean }
-      | { skip: boolean }
-    )
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetReviewStatusQuery, GetReviewStatusQueryVariables>(
-    GetReviewStatusDocument,
-    options
-  );
-}
-export function useGetReviewStatusLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetReviewStatusQuery,
-    GetReviewStatusQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetReviewStatusQuery,
-    GetReviewStatusQueryVariables
-  >(GetReviewStatusDocument, options);
-}
-export function useGetReviewStatusSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
-        GetReviewStatusQuery,
-        GetReviewStatusQueryVariables
-      >
-) {
-  const options =
-    baseOptions === Apollo.skipToken
-      ? baseOptions
-      : { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    GetReviewStatusQuery,
-    GetReviewStatusQueryVariables
-  >(GetReviewStatusDocument, options);
-}
-export type GetReviewStatusQueryHookResult = ReturnType<
-  typeof useGetReviewStatusQuery
->;
-export type GetReviewStatusLazyQueryHookResult = ReturnType<
-  typeof useGetReviewStatusLazyQuery
->;
-export type GetReviewStatusSuspenseQueryHookResult = ReturnType<
-  typeof useGetReviewStatusSuspenseQuery
->;
-export type GetReviewStatusQueryResult = Apollo.QueryResult<
-  GetReviewStatusQuery,
-  GetReviewStatusQueryVariables
->;
-export function refetchGetReviewStatusQuery(
-  variables: GetReviewStatusQueryVariables
-) {
-  return { query: GetReviewStatusDocument, variables: variables };
-}
-export const ReviewCvDocument = gql`
-  mutation ReviewCv($cvId: ID!) {
-    reviewCv(cvId: $cvId) {
-      messages
-    }
-  }
-`;
-export type ReviewCvMutationFn = Apollo.MutationFunction<
-  ReviewCvMutation,
-  ReviewCvMutationVariables
->;
-export type ReviewCvComponentProps = Omit<
-  ApolloReactComponents.MutationComponentOptions<
-    ReviewCvMutation,
-    ReviewCvMutationVariables
-  >,
-  'mutation'
->;
-
-export const ReviewCvComponent = (props: ReviewCvComponentProps) => (
-  <ApolloReactComponents.Mutation<ReviewCvMutation, ReviewCvMutationVariables>
-    mutation={ReviewCvDocument}
-    {...props}
-  />
-);
-
-/**
- * __useReviewCvMutation__
- *
- * To run a mutation, you first call `useReviewCvMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useReviewCvMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [reviewCvMutation, { data, loading, error }] = useReviewCvMutation({
- *   variables: {
- *      cvId: // value for 'cvId'
- *   },
- * });
- */
-export function useReviewCvMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    ReviewCvMutation,
-    ReviewCvMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<ReviewCvMutation, ReviewCvMutationVariables>(
-    ReviewCvDocument,
-    options
-  );
-}
-export type ReviewCvMutationHookResult = ReturnType<typeof useReviewCvMutation>;
-export type ReviewCvMutationResult = Apollo.MutationResult<ReviewCvMutation>;
-export type ReviewCvMutationOptions = Apollo.BaseMutationOptions<
-  ReviewCvMutation,
-  ReviewCvMutationVariables
->;
 export const UndoCvVersionDocument = gql`
   mutation UndoCvVersion($cvId: ID!) {
     undoCvVersion(cvId: $cvId) {
@@ -3694,3 +3668,415 @@ export type TransformCvMutationOptions = Apollo.BaseMutationOptions<
   TransformCvMutation,
   TransformCvMutationVariables
 >;
+export const GenerateSuggestionsForCvDocument = gql`
+  mutation GenerateSuggestionsForCv($cvId: ID!) {
+    generateSuggestionsForCv(cvId: $cvId) {
+      blockId
+      comments {
+        _id
+        cvId
+        cvVersionId
+        blockId
+        text
+        suggestedText
+        status
+        authorName
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+export type GenerateSuggestionsForCvMutationFn = Apollo.MutationFunction<
+  GenerateSuggestionsForCvMutation,
+  GenerateSuggestionsForCvMutationVariables
+>;
+export type GenerateSuggestionsForCvComponentProps = Omit<
+  ApolloReactComponents.MutationComponentOptions<
+    GenerateSuggestionsForCvMutation,
+    GenerateSuggestionsForCvMutationVariables
+  >,
+  'mutation'
+>;
+
+export const GenerateSuggestionsForCvComponent = (
+  props: GenerateSuggestionsForCvComponentProps
+) => (
+  <ApolloReactComponents.Mutation<
+    GenerateSuggestionsForCvMutation,
+    GenerateSuggestionsForCvMutationVariables
+  >
+    mutation={GenerateSuggestionsForCvDocument}
+    {...props}
+  />
+);
+
+/**
+ * __useGenerateSuggestionsForCvMutation__
+ *
+ * To run a mutation, you first call `useGenerateSuggestionsForCvMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateSuggestionsForCvMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [generateSuggestionsForCvMutation, { data, loading, error }] = useGenerateSuggestionsForCvMutation({
+ *   variables: {
+ *      cvId: // value for 'cvId'
+ *   },
+ * });
+ */
+export function useGenerateSuggestionsForCvMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    GenerateSuggestionsForCvMutation,
+    GenerateSuggestionsForCvMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    GenerateSuggestionsForCvMutation,
+    GenerateSuggestionsForCvMutationVariables
+  >(GenerateSuggestionsForCvDocument, options);
+}
+export type GenerateSuggestionsForCvMutationHookResult = ReturnType<
+  typeof useGenerateSuggestionsForCvMutation
+>;
+export type GenerateSuggestionsForCvMutationResult =
+  Apollo.MutationResult<GenerateSuggestionsForCvMutation>;
+export type GenerateSuggestionsForCvMutationOptions =
+  Apollo.BaseMutationOptions<
+    GenerateSuggestionsForCvMutation,
+    GenerateSuggestionsForCvMutationVariables
+  >;
+export const UpdateSuggestionStatusDocument = gql`
+  mutation UpdateSuggestionStatus($input: UpdateSuggestionStatusInput!) {
+    updateSuggestionStatus(input: $input) {
+      _id
+      text
+      suggestedText
+      status
+      updatedAt
+    }
+  }
+`;
+export type UpdateSuggestionStatusMutationFn = Apollo.MutationFunction<
+  UpdateSuggestionStatusMutation,
+  UpdateSuggestionStatusMutationVariables
+>;
+export type UpdateSuggestionStatusComponentProps = Omit<
+  ApolloReactComponents.MutationComponentOptions<
+    UpdateSuggestionStatusMutation,
+    UpdateSuggestionStatusMutationVariables
+  >,
+  'mutation'
+>;
+
+export const UpdateSuggestionStatusComponent = (
+  props: UpdateSuggestionStatusComponentProps
+) => (
+  <ApolloReactComponents.Mutation<
+    UpdateSuggestionStatusMutation,
+    UpdateSuggestionStatusMutationVariables
+  >
+    mutation={UpdateSuggestionStatusDocument}
+    {...props}
+  />
+);
+
+/**
+ * __useUpdateSuggestionStatusMutation__
+ *
+ * To run a mutation, you first call `useUpdateSuggestionStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateSuggestionStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateSuggestionStatusMutation, { data, loading, error }] = useUpdateSuggestionStatusMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateSuggestionStatusMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateSuggestionStatusMutation,
+    UpdateSuggestionStatusMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateSuggestionStatusMutation,
+    UpdateSuggestionStatusMutationVariables
+  >(UpdateSuggestionStatusDocument, options);
+}
+export type UpdateSuggestionStatusMutationHookResult = ReturnType<
+  typeof useUpdateSuggestionStatusMutation
+>;
+export type UpdateSuggestionStatusMutationResult =
+  Apollo.MutationResult<UpdateSuggestionStatusMutation>;
+export type UpdateSuggestionStatusMutationOptions = Apollo.BaseMutationOptions<
+  UpdateSuggestionStatusMutation,
+  UpdateSuggestionStatusMutationVariables
+>;
+export const DeleteSuggestionDocument = gql`
+  mutation DeleteSuggestion($suggestionId: ID!) {
+    deleteSuggestion(suggestionId: $suggestionId)
+  }
+`;
+export type DeleteSuggestionMutationFn = Apollo.MutationFunction<
+  DeleteSuggestionMutation,
+  DeleteSuggestionMutationVariables
+>;
+export type DeleteSuggestionComponentProps = Omit<
+  ApolloReactComponents.MutationComponentOptions<
+    DeleteSuggestionMutation,
+    DeleteSuggestionMutationVariables
+  >,
+  'mutation'
+>;
+
+export const DeleteSuggestionComponent = (
+  props: DeleteSuggestionComponentProps
+) => (
+  <ApolloReactComponents.Mutation<
+    DeleteSuggestionMutation,
+    DeleteSuggestionMutationVariables
+  >
+    mutation={DeleteSuggestionDocument}
+    {...props}
+  />
+);
+
+/**
+ * __useDeleteSuggestionMutation__
+ *
+ * To run a mutation, you first call `useDeleteSuggestionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteSuggestionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteSuggestionMutation, { data, loading, error }] = useDeleteSuggestionMutation({
+ *   variables: {
+ *      suggestionId: // value for 'suggestionId'
+ *   },
+ * });
+ */
+export function useDeleteSuggestionMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteSuggestionMutation,
+    DeleteSuggestionMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteSuggestionMutation,
+    DeleteSuggestionMutationVariables
+  >(DeleteSuggestionDocument, options);
+}
+export type DeleteSuggestionMutationHookResult = ReturnType<
+  typeof useDeleteSuggestionMutation
+>;
+export type DeleteSuggestionMutationResult =
+  Apollo.MutationResult<DeleteSuggestionMutation>;
+export type DeleteSuggestionMutationOptions = Apollo.BaseMutationOptions<
+  DeleteSuggestionMutation,
+  DeleteSuggestionMutationVariables
+>;
+export const ClearAllSuggestionsForCvDocument = gql`
+  mutation ClearAllSuggestionsForCv($cvId: ID!) {
+    clearAllSuggestionsForCv(cvId: $cvId)
+  }
+`;
+export type ClearAllSuggestionsForCvMutationFn = Apollo.MutationFunction<
+  ClearAllSuggestionsForCvMutation,
+  ClearAllSuggestionsForCvMutationVariables
+>;
+export type ClearAllSuggestionsForCvComponentProps = Omit<
+  ApolloReactComponents.MutationComponentOptions<
+    ClearAllSuggestionsForCvMutation,
+    ClearAllSuggestionsForCvMutationVariables
+  >,
+  'mutation'
+>;
+
+export const ClearAllSuggestionsForCvComponent = (
+  props: ClearAllSuggestionsForCvComponentProps
+) => (
+  <ApolloReactComponents.Mutation<
+    ClearAllSuggestionsForCvMutation,
+    ClearAllSuggestionsForCvMutationVariables
+  >
+    mutation={ClearAllSuggestionsForCvDocument}
+    {...props}
+  />
+);
+
+/**
+ * __useClearAllSuggestionsForCvMutation__
+ *
+ * To run a mutation, you first call `useClearAllSuggestionsForCvMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useClearAllSuggestionsForCvMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [clearAllSuggestionsForCvMutation, { data, loading, error }] = useClearAllSuggestionsForCvMutation({
+ *   variables: {
+ *      cvId: // value for 'cvId'
+ *   },
+ * });
+ */
+export function useClearAllSuggestionsForCvMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ClearAllSuggestionsForCvMutation,
+    ClearAllSuggestionsForCvMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ClearAllSuggestionsForCvMutation,
+    ClearAllSuggestionsForCvMutationVariables
+  >(ClearAllSuggestionsForCvDocument, options);
+}
+export type ClearAllSuggestionsForCvMutationHookResult = ReturnType<
+  typeof useClearAllSuggestionsForCvMutation
+>;
+export type ClearAllSuggestionsForCvMutationResult =
+  Apollo.MutationResult<ClearAllSuggestionsForCvMutation>;
+export type ClearAllSuggestionsForCvMutationOptions =
+  Apollo.BaseMutationOptions<
+    ClearAllSuggestionsForCvMutation,
+    ClearAllSuggestionsForCvMutationVariables
+  >;
+export const GetSuggestionsForCvDocument = gql`
+  query GetSuggestionsForCv($cvId: ID!) {
+    getSuggestionsForCv(cvId: $cvId) {
+      blockId
+      comments {
+        _id
+        cvId
+        cvVersionId
+        blockId
+        text
+        suggestedText
+        status
+        authorName
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
+export type GetSuggestionsForCvComponentProps = Omit<
+  ApolloReactComponents.QueryComponentOptions<
+    GetSuggestionsForCvQuery,
+    GetSuggestionsForCvQueryVariables
+  >,
+  'query'
+> &
+  (
+    | { variables: GetSuggestionsForCvQueryVariables; skip?: boolean }
+    | { skip: boolean }
+  );
+
+export const GetSuggestionsForCvComponent = (
+  props: GetSuggestionsForCvComponentProps
+) => (
+  <ApolloReactComponents.Query<
+    GetSuggestionsForCvQuery,
+    GetSuggestionsForCvQueryVariables
+  >
+    query={GetSuggestionsForCvDocument}
+    {...props}
+  />
+);
+
+/**
+ * __useGetSuggestionsForCvQuery__
+ *
+ * To run a query within a React component, call `useGetSuggestionsForCvQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetSuggestionsForCvQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetSuggestionsForCvQuery({
+ *   variables: {
+ *      cvId: // value for 'cvId'
+ *   },
+ * });
+ */
+export function useGetSuggestionsForCvQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetSuggestionsForCvQuery,
+    GetSuggestionsForCvQueryVariables
+  > &
+    (
+      | { variables: GetSuggestionsForCvQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    )
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetSuggestionsForCvQuery,
+    GetSuggestionsForCvQueryVariables
+  >(GetSuggestionsForCvDocument, options);
+}
+export function useGetSuggestionsForCvLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetSuggestionsForCvQuery,
+    GetSuggestionsForCvQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetSuggestionsForCvQuery,
+    GetSuggestionsForCvQueryVariables
+  >(GetSuggestionsForCvDocument, options);
+}
+export function useGetSuggestionsForCvSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetSuggestionsForCvQuery,
+        GetSuggestionsForCvQueryVariables
+      >
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetSuggestionsForCvQuery,
+    GetSuggestionsForCvQueryVariables
+  >(GetSuggestionsForCvDocument, options);
+}
+export type GetSuggestionsForCvQueryHookResult = ReturnType<
+  typeof useGetSuggestionsForCvQuery
+>;
+export type GetSuggestionsForCvLazyQueryHookResult = ReturnType<
+  typeof useGetSuggestionsForCvLazyQuery
+>;
+export type GetSuggestionsForCvSuspenseQueryHookResult = ReturnType<
+  typeof useGetSuggestionsForCvSuspenseQuery
+>;
+export type GetSuggestionsForCvQueryResult = Apollo.QueryResult<
+  GetSuggestionsForCvQuery,
+  GetSuggestionsForCvQueryVariables
+>;
+export function refetchGetSuggestionsForCvQuery(
+  variables: GetSuggestionsForCvQueryVariables
+) {
+  return { query: GetSuggestionsForCvDocument, variables: variables };
+}

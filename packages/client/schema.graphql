@@ -5,6 +5,24 @@ type AboutMe {
   fieldName: String!
 }
 
+type CommentBlockObjectType {
+  blockId: String!
+  comments: [CommentObjectType!]!
+}
+
+type CommentObjectType {
+  _id: String!
+  authorName: String!
+  blockId: String!
+  createdAt: DateTime!
+  cvId: String!
+  cvVersionId: String!
+  status: String!
+  suggestedText: String
+  text: String!
+  updatedAt: DateTime!
+}
+
 type ContactInfo {
   _id: ID!
   link: String!
@@ -65,11 +83,21 @@ enum CvEntryType {
   WORK_EXPERIENCE
 }
 
+type CvFieldMetadataObjectType {
+  _id: ID!
+  createdAt: DateTime!
+  cvId: ID!
+  metadata: JSONObject!
+  updatedAt: DateTime!
+  userId: String!
+}
+
 type CvObjectType {
   _id: ID!
   aboutMe: AboutMe
   contactInfoEntries: [ContactInfo!]
   educationEntries: [Education!]
+  metadata: JSON
   name: String!
   projectEntries: [Project!]
   skillEntries: [Skill!]
@@ -113,21 +141,35 @@ type GenerateNewEntryItemObjectType {
   workExperienceEntries: [WorkExperience!]
 }
 
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+"""
+The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSONObject
+
 type Mutation {
+  clearAllSuggestionsForCv(cvId: ID!): Boolean!
   convertPdfToCv(file: Upload!): ConvertPdfToCvObjectType!
   createCvFromVersion(cvId: ID!, versionId: ID!): CvObjectType!
   createNewCv(templateId: ID!): CvObjectType!
   deleteCv(cvId: ID!): Boolean!
   deleteCvEntryItem(cvId: ID!, entryFieldName: CvEntryType!, entryItemId: ID!): Boolean!
   deleteEntryItem(cvId: ID!, entryFieldName: CvEntryType!, entryItemId: ID!): Boolean!
+  deleteSuggestion(suggestionId: ID!): Boolean!
   duplicateCv(cvId: ID!): CvObjectType!
   generateNewEntryItem(contactInfoData: CreateContactInfoInput, cvId: ID!, educationData: CreateEducationInput, entryFieldName: CvEntryType!, projectData: CreateProjectInput, skillData: CreateSkillInput, workExperienceData: CreateWorkExperienceInput): GenerateNewEntryItemObjectType!
+  generateSuggestionsForCv(cvId: ID!): [CommentBlockObjectType!]!
   logout: Boolean!
   redoCvVersion(cvId: ID!): CvObjectType!
   reviewCv(cvId: ID!): ReviewCvOutput!
   transformCv(message: String!, templateId: String!): TransformCvObjectType!
   undoCvVersion(cvId: ID!): CvObjectType!
   updateCv(cvId: ID!, data: UpdateCvInput!): CvObjectType!
+  updateSuggestionStatus(input: UpdateSuggestionStatusInput!): CommentObjectType!
 }
 
 type PaginatedCvVersionHistoryObjectType {
@@ -153,9 +195,11 @@ type Project {
 type Query {
   currentUser: User!
   getCv(cvId: ID!, versionId: ID): CvObjectType!
+  getCvFieldMetadata(cvId: ID!): CvFieldMetadataObjectType
   getCvVersionHistory(cvId: ID!): PaginatedCvVersionHistoryObjectType!
   getCvs: [CvObjectType!]!
   getReviewStatus(cvId: ID!): ReviewStatusType!
+  getSuggestionsForCv(cvId: ID!): [CommentBlockObjectType!]!
   getVersioningActionsMetadata(cvId: ID!): VersioningActionsMetadataObjectType!
 }
 
@@ -231,6 +275,11 @@ input UpdateSkillInput {
   category: String
   positionIndex: Int
   skills: [String!]
+}
+
+input UpdateSuggestionStatusInput {
+  status: String!
+  suggestionId: String!
 }
 
 input UpdateWorkExperienceInput {

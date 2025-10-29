@@ -1,0 +1,35 @@
+mutation GenerateSuggestionsForCv($cvId: ID!) {
+  generateSuggestionsForCv(cvId: $cvId) {
+    blockId
+    comments {
+      _id
+      cvId
+      cvVersionId
+      blockId
+      text
+      suggestedText
+      status
+      authorName
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+mutation UpdateSuggestionStatus($input: UpdateSuggestionStatusInput!) {
+  updateSuggestionStatus(input: $input) {
+    _id
+    text
+    suggestedText
+    status
+    updatedAt
+  }
+}
+
+mutation DeleteSuggestion($suggestionId: ID!) {
+  deleteSuggestion(suggestionId: $suggestionId)
+}
+
+mutation ClearAllSuggestionsForCv($cvId: ID!) {
+  clearAllSuggestionsForCv(cvId: $cvId)
+}

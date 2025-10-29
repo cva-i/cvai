@@ -9,6 +9,7 @@ import { UserModule } from './entity-modules/user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CvModule } from './services/cv/cv.module';
 import { LlmIntegrationModule } from './services/llm-integration/llm-integration.module';
+import { SuggestionsModule } from './services/suggestions/suggestions.module';
 import { SentryModule } from '@sentry/nestjs/setup';
 
 @Module({
@@ -32,6 +33,7 @@ import { SentryModule } from '@sentry/nestjs/setup';
     UserModule,
     CvModule,
     LlmIntegrationModule,
+    SuggestionsModule,
   ],
   providers: [],
 })

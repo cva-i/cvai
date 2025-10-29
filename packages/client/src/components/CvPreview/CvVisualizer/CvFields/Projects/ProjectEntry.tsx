@@ -6,16 +6,23 @@ import {
   SkillsForItemizedEntryEditor,
 } from '../../../components';
 import React from 'react';
+import { useFieldId } from '../../../../../contexts/CvMetadataContext';
 
 export const ProjectEntry = ({
   entry: project,
   updateField,
   isEditing,
 }: CvEntryItemProps<'projectEntries'>) => {
+  const nameFieldId = useFieldId(`projectEntries.${project._id}.name`);
+  const descriptionFieldId = useFieldId(
+    `projectEntries.${project._id}.description`
+  );
+  const skillsFieldId = useFieldId(`projectEntries.${project._id}.skills`);
+
   return (
     <Box display={'flex'} flexDirection={'column'}>
       <EditableTypography
-        id={`project-name-${project._id}`}
+        id={nameFieldId || `project-name-${project._id}`}
         value={project.name}
         onSave={(value) =>
           updateField({
@@ -29,7 +36,7 @@ export const ProjectEntry = ({
       />
 
       <DescriptionTextSection
-        id={project._id}
+        id={descriptionFieldId || `project-description-${project._id}`}
         isEditing={isEditing}
         value={project.description}
         onSave={(value) =>
@@ -42,7 +49,7 @@ export const ProjectEntry = ({
       />
 
       <SkillsForItemizedEntryEditor
-        id={`project-skills-${project._id}`}
+        id={skillsFieldId || `project-skills-${project._id}`}
         isEditing={isEditing}
         entries={project.skills ?? []}
         onSave={async (value) =>

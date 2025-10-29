@@ -2,14 +2,23 @@ import React, { useEffect } from 'react';
 import { Box, styled, Typography } from '@mui/material';
 import { useCurrentCv, usePreviewMode } from '../../contexts';
 import { CvVisualizer } from './CvVisualizer';
-import { CenteredBox } from '../atoms';
+import { ActionButtonsContainer, CenteredBox, RowLayout } from '../atoms';
 import { useCheckCvLazyQuery } from '../../generated/graphql';
 import { PreviewModeButton } from '../PreviewButtonSection';
 import { VersionControlButtons } from '../PreviewButtonSection/VersionControlButtons';
 import { ClosePreviewButton } from '../PreviewButtonSection/ClosePreviewButton';
 import { usePreviewEffects } from '../../hooks';
+import { SuggestionsPanel } from './SuggestionsPanel';
 
-export const CurrentCvPreview: React.FC = () => {
+const RightSideContainer = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+  height: 'calc(100vh - 32px)',
+  gap: 8,
+  justifyContent: 'space-between',
+});
+
+export const CurrentCvPreview = () => {
   const { currentCvId } = useCurrentCv();
   const { isPreviewing } = usePreviewMode();
 
@@ -55,30 +64,27 @@ export const CurrentCvPreview: React.FC = () => {
   if (!data) {
     return <CenteredBox>No CV selected</CenteredBox>;
   }
+  const cvId = data.getCv._id;
   return (
     <Box
       sx={{
         padding: 2,
       }}
     >
-      <CvVisualizer cvId={data.getCv._id} />
+      <RowLayout sx={{ alignItems: 'flex-start', overflow: 'visible' }}>
+        <CvVisualizer cvId={cvId} />
+        {!isPreviewing && (
+          <RightSideContainer>
+            <SuggestionsPanel cvId={cvId} />
+            <ActionButtonsContainer>
+              <VersionControlButtons />
+              <PreviewModeButton />
+            </ActionButtonsContainer>
+          </RightSideContainer>
+        )}
+      </RowLayout>
 
-      {!isPreviewing && (
-        <ActionButtonsContainer>
-          <VersionControlButtons />
-          <PreviewModeButton />
-        </ActionButtonsContainer>
-      )}
       <ClosePreviewButton />
     </Box>
   );
 };
-
-const ActionButtonsContainer = styled(Box)(() => ({
-  display: 'flex',
-  flexDirection: 'row',
-  position: 'fixed',
-  right: '48px',
-  top: '48px',
-  zIndex: 1000,
-}));
