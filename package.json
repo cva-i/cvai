@@ -52,8 +52,5 @@
     "prod:client": "yarn workspaces focus --production @cvai/client",
     "tsc:check": "yarn client tsc:check && yarn server tsc:check"
   },
-  "packageManager": "yarn@4.8.1",
-  "dependencies": {
-    "graphql-type-json": "^0.3.2"
-  }
+  "packageManager": "yarn@4.8.1"
 }

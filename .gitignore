@@ -55,3 +55,9 @@ notes.md/
 *.pdf
 
 packages/client/.env
+
+# SSL Certificates (keep these private!)
+.certificates-and-keys/*.crt
+.certificates-and-keys/*.key
+.certificates-and-keys/*.pem
+letsencrypt/
