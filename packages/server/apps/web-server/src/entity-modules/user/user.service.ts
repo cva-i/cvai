@@ -43,4 +43,12 @@ export class UserService {
       throw error;
     }
   }
+
+  async update(
+    userId: string,
+    updates: Partial<User>
+  ): Promise<User | null> {
+    await this.userRepository.update({ id: userId }, updates);
+    return this.findOneBy({ id: userId });
+  }
 }

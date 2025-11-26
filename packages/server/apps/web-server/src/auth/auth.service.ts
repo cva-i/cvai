@@ -3,6 +3,7 @@ import {
   Inject,
   Logger,
   UnauthorizedException,
+  BadRequestException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../entity-modules/user/user.service';
@@ -14,6 +15,8 @@ import { refreshJwtConfig } from './config/refresh-jwt.config';
 import { JwtPayload } from './types';
 import { Request } from 'express';
 import { tryCatch } from '@server/common/utils';
+import * as argon2 from 'argon2';
+import { AuthResponse } from './dto/auth-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -139,5 +142,105 @@ export class AuthService {
       return;
     }
     this.logger.debug(`Refresh token blacklisted: ${refreshToken}`);
+  }
+
+  async login(email: string, password: string): Promise<AuthResponse> {
+    const user = await this.userService.findByEmail(email);
+
+    if (!user || !user.passwordHash) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const isPasswordValid = await argon2.verify(user.passwordHash, password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid email or password');
+    }
+
+    const payload = await this.generateTokenPayload(user);
+    const accessToken = this.signAccessToken(payload);
+    const refreshToken = this.signRefreshToken(payload);
+
+    await this.refreshTokenService.save({
+      token: refreshToken,
+      userId: user.id,
+      validSince: new Date(),
+      validUntil: new Date(Date.now() + 1000 * 60 * 60 * 24 * 90), // 90 days
+    });
+
+    return {
+      user,
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async register(
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string
+  ): Promise<AuthResponse> {
+    const existingUser = await this.userService.findByEmail(email);
+
+    if (existingUser) {
+      throw new BadRequestException('User with this email already exists');
+    }
+
+    const passwordHash = await argon2.hash(password);
+
+    const user = await this.userService.create({
+      email,
+      firstName,
+      lastName,
+      googleId: undefined,
+    });
+
+    await this.userService.update(user.id, { passwordHash });
+
+    const payload = await this.generateTokenPayload(user);
+    const accessToken = this.signAccessToken(payload);
+    const refreshToken = this.signRefreshToken(payload);
+
+    await this.refreshTokenService.save({
+      token: refreshToken,
+      userId: user.id,
+      validSince: new Date(),
+      validUntil: new Date(Date.now() + 1000 * 60 * 60 * 24 * 90), // 90 days
+    });
+
+    return {
+      user,
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async setPassword(userId: string, password: string): Promise<AuthResponse> {
+    const user = await this.userService.findOneBy({ id: userId });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const passwordHash = await argon2.hash(password);
+    await this.userService.update(userId, { passwordHash });
+
+    const payload = await this.generateTokenPayload(user);
+    const accessToken = this.signAccessToken(payload);
+    const refreshToken = this.signRefreshToken(payload);
+
+    await this.refreshTokenService.save({
+      token: refreshToken,
+      userId: user.id,
+      validSince: new Date(),
+      validUntil: new Date(Date.now() + 1000 * 60 * 60 * 24 * 90), // 90 days
+    });
+
+    return {
+      user,
+      accessToken,
+      refreshToken,
+    };
   }
 }

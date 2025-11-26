@@ -34,6 +34,7 @@ export const ContactInfo = ({ cvId }: CvEntryComponentProps) => {
   return (
     <GenericEntriesSection<ContactInfoGraphqlType>
       flexDirection="row"
+      gap='8px'
       loading={loading}
       entries={entries}
       noEntriesText="No contact info entries available."

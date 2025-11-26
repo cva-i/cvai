@@ -13,6 +13,7 @@ export class CreateUserDto {
   @IsEmail()
   email!: string;
 
+  @IsOptional()
   @IsString()
-  googleId!: string;
+  googleId?: string | null;
 }
