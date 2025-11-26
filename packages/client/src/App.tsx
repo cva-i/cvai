@@ -17,20 +17,22 @@ import {
 import { useCallback } from 'react';
 import { environment } from './environment';
 import { Button, CssBaseline } from '@mui/material';
-import { CenteredBox } from './components';
-import { ClickOutsideHandler } from './components';
-import { CvCreationDialog } from './components';
+import {
+  CenteredBox,
+  ClickOutsideHandler,
+  CvCreationDialog,
+} from './components';
 import { ApolloProvider } from '@apollo/client';
 import { BrowserRouter } from 'react-router-dom';
 
 export const LoginButton = () => {
-  const handleLogin = useCallback(() => {
+  const handleGoogleLogin = useCallback(() => {
     const backendGoogleOAuthUrl = `${environment.apiUrl}/auth/google`;
     window.location.href = backendGoogleOAuthUrl;
   }, []);
 
   return (
-    <Button variant={'outlined'} onClick={handleLogin}>
+    <Button variant={'outlined'} onClick={handleGoogleLogin}>
       Login with Google
     </Button>
   );
@@ -40,7 +42,8 @@ const AppInternal = () => {
   const { user, logout } = useAuth();
   if (!user) {
     return (
-      <CenteredBox sx={{ height: '100vh' }}>
+      <CenteredBox sx={{ height: '100vh', flexDirection: 'column', gap: 2 }}>
+        {/*<LoginForm />*/}
         <LoginButton />
       </CenteredBox>
     );

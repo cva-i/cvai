@@ -15,6 +15,7 @@ type GenericEntriesSectionProps<TEntry extends CvEntryItem> = {
   titleStyles?: TypographyProps['sx'];
   flexDirection?: 'row' | 'column';
   sx?: BoxProps['sx'];
+  gap?: BoxProps['gap'];
 };
 
 export function GenericEntriesSection<TEntry extends CvEntryItem>({
@@ -27,6 +28,7 @@ export function GenericEntriesSection<TEntry extends CvEntryItem>({
   titleStyles,
   flexDirection = 'column',
   sx,
+  gap
 }: GenericEntriesSectionProps<TEntry>) {
   const { isPreviewing } = usePreviewMode();
 
@@ -42,7 +44,7 @@ export function GenericEntriesSection<TEntry extends CvEntryItem>({
         </Typography>
       )}
 
-      <Box display="flex" flexDirection={flexDirection} flexWrap="wrap">
+      <Box display="flex" flexDirection={flexDirection} flexWrap="wrap" gap={gap}>
         {entries.map((entry, index) => renderEntry(entry, index))}
         {!entries.length && (
           <Box display="flex" alignItems="center" gap={1} width="100%">

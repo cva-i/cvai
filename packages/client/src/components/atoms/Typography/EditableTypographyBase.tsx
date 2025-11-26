@@ -110,10 +110,19 @@ export const EditableTypographyBase = ({
   const handleContentEditableKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Enter' && !multiline) {
-        // Prevent line break in single-line fields, but don't save
+        // For single-line fields: Save on Enter
         e.preventDefault();
+        if (saveTimeoutRef.current) {
+          clearTimeout(saveTimeoutRef.current);
+        }
+        if (contentEditableRef.current) {
+          const currentContent = contentEditableRef.current.textContent ?? '';
+          handleSave(currentContent);
+          contentEditableRef.current.blur();
+        }
+        deactivate?.();
       } else if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-        // Cmd+Enter: Save and deactivate
+        // Cmd+Enter: Save and deactivate (for multiline fields)
         e.preventDefault();
         if (saveTimeoutRef.current) {
           clearTimeout(saveTimeoutRef.current);
@@ -179,7 +188,9 @@ export const EditableTypographyBase = ({
           value={tempValue ?? ''}
           onChange={(e) => setTempValue(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
+            if (e.key === 'Enter' && (!multiline || e.metaKey || e.ctrlKey)) {
+              // Save on Enter for single-line fields, or Cmd/Ctrl+Enter for multiline
+              e.preventDefault();
               handleSave();
             } else if (e.key === 'Escape') {
               handleCancel();

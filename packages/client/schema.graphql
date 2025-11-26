@@ -5,6 +5,12 @@ type AboutMe {
   fieldName: String!
 }
 
+type AuthResponse {
+  accessToken: String!
+  refreshToken: String!
+  user: User!
+}
+
 type CommentBlockObjectType {
   blockId: String!
   comments: [CommentObjectType!]!
@@ -151,6 +157,11 @@ The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](
 """
 scalar JSONObject
 
+input LoginInput {
+  email: String!
+  password: String!
+}
+
 type Mutation {
   clearAllSuggestionsForCv(cvId: ID!): Boolean!
   convertPdfToCv(file: Upload!): ConvertPdfToCvObjectType!
@@ -163,9 +174,16 @@ type Mutation {
   duplicateCv(cvId: ID!): CvObjectType!
   generateNewEntryItem(contactInfoData: CreateContactInfoInput, cvId: ID!, educationData: CreateEducationInput, entryFieldName: CvEntryType!, projectData: CreateProjectInput, skillData: CreateSkillInput, workExperienceData: CreateWorkExperienceInput): GenerateNewEntryItemObjectType!
   generateSuggestionsForCv(cvId: ID!): [CommentBlockObjectType!]!
+  login(input: LoginInput!): AuthResponse!
   logout: Boolean!
   redoCvVersion(cvId: ID!): CvObjectType!
+  register(input: RegisterInput!): AuthResponse!
   reviewCv(cvId: ID!): ReviewCvOutput!
+
+  """
+  Set password for users in FRESHLY_CREATED_REQUIRES_PASSWORD status and return auth tokens
+  """
+  setPassword(input: SetPasswordInput!): AuthResponse!
   transformCv(message: String!, templateId: String!): TransformCvObjectType!
   undoCvVersion(cvId: ID!): CvObjectType!
   updateCv(cvId: ID!, data: UpdateCvInput!): CvObjectType!
@@ -203,6 +221,13 @@ type Query {
   getVersioningActionsMetadata(cvId: ID!): VersioningActionsMetadataObjectType!
 }
 
+input RegisterInput {
+  email: String!
+  firstName: String!
+  lastName: String!
+  password: String!
+}
+
 type ReviewCvOutput {
   messages: [String!]!
 }
@@ -215,7 +240,12 @@ enum ReviewStatusType {
 }
 
 type ScopeObjectType {
-  googleId: String!
+  googleId: String
+}
+
+input SetPasswordInput {
+  password: String!
+  userId: String!
 }
 
 type Skill {

@@ -13,8 +13,11 @@ export class User extends BaseEntity {
   email!: string;
 
   @Field(() => String)
-  @Column({ nullable: false, ...VAR_CHAR, unique: true })
-  googleId!: string;
+  @Column({ nullable: true, ...VAR_CHAR, unique: true })
+  googleId?: string | null;
+
+  @Column({ nullable: true, ...VAR_CHAR })
+  passwordHash?: string | null;
 
   @Field(() => String)
   @Column({ nullable: true, ...VAR_CHAR })
