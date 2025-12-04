@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, memo } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 import type { Suggestion } from '../../../../contexts';
 import { useSuggestions } from '../../../../contexts';
 import type { GetCvQuery } from '../../../../generated/graphql';
@@ -10,7 +10,7 @@ import { ResolvedContent } from './ResolvedContent';
 import { SuggestedChangeContent } from './SuggestedChangeContent';
 import { CardContainer, CommentText } from './styled';
 
-export interface SuggestionCardProps {
+export type SuggestionCardProps = {
   suggestion: Suggestion;
   blockId: string;
   cvData: GetCvQuery | undefined;
@@ -18,9 +18,9 @@ export interface SuggestionCardProps {
   onAccept: () => void;
   onReject: () => void;
   registerRef?: (suggestionId: string, element: HTMLDivElement | null) => void;
-}
+};
 
-const SuggestionCardComponent: React.FC<SuggestionCardProps> = ({
+const SuggestionCardComponent = ({
   suggestion,
   blockId,
   cvData,
@@ -28,16 +28,16 @@ const SuggestionCardComponent: React.FC<SuggestionCardProps> = ({
   onAccept,
   onReject,
   registerRef,
-}) => {
+}: SuggestionCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const { setHoveredBlockId, setActiveSuggestionId } = useSuggestions();
   const { applySuggestion, loading: applyLoading } = useApplySuggestion();
+  console.log('Suggestion: ', suggestion);
 
   // Extract current text for diff view
   const currentText = useMemo(
-    () =>
-      suggestion.suggestedText ? extractCurrentText(cvData, blockId) : null,
-    [cvData, blockId, suggestion.suggestedText]
+    () => extractCurrentText(cvData, blockId),
+    [cvData, blockId]
   );
 
   // Mouse event handlers
