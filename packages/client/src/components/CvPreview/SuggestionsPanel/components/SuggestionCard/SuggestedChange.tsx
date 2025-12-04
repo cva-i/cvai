@@ -13,20 +13,20 @@ const PreviewLabel = styled(Typography)({
   letterSpacing: '0.5px',
 });
 
-interface SuggestedChangeProps {
+type SuggestedChangeProps = {
   currentText: string | null;
   suggestedText: string;
 }
 
-export const SuggestedChange: React.FC<SuggestedChangeProps> = ({
+export const SuggestedChange = ({
   currentText,
   suggestedText,
-}) => {
+}: SuggestedChangeProps) => {
   return (
     <>
       <PreviewLabel>Suggested Change</PreviewLabel>
       <DiffView
-        oldText={currentText || 'Current text (not found)'}
+        oldText={currentText ?? 'Current text (not found)'}
         newText={suggestedText}
       />
     </>

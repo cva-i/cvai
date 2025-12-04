@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const commentItemSchema = z.object({
   blockId: z.string().describe('The ID of the EditableTypography component this comment applies to'),
   text: z.string().describe('The comment text explaining what should be improved'),
-  suggestedText: z.string().nullable().describe('Optional suggested replacement text (if provided, will show as a diff with apply button). Set to null if not providing a replacement.'),
+  suggestedText: z.string().describe('Suggested replacement text (if provided, will show as a diff with apply button).'),
 });
 
 export const commentResponseSchema = z.object({

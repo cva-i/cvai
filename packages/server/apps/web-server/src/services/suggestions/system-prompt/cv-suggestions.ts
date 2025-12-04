@@ -34,10 +34,9 @@ You will receive:
 **CRITICAL RULES:**
 1. ALWAYS use the exact fieldId value from the metadata (it's a MongoDB ObjectId string)
 2. NEVER make up or construct field IDs yourself
-3. If a field doesn't have metadata, don't create a suggestion for it
-4. Match the CV content with its corresponding metadata to get the correct fieldId
-5. **NO OVERLAPPING**: Each suggestion targets an entire field/section - fields never overlap
-6. **ONE PER SECTION**: Provide at most ONE comment per field/section (e.g., one comment for a work experience description, not multiple for the same field)
+3. Match the CV content with its corresponding metadata to get the correct fieldId
+4. **NO OVERLAPPING**: Each suggestion targets an entire field/section - fields never overlap
+5. **ONE PER SECTION**: Provide at most ONE comment per field/section (e.g., one comment for a work experience description, not multiple for the same field)
 
 ### 2. Types of Suggestions
 
@@ -91,4 +90,5 @@ Provide ONE comment per field, targeting the most impactful improvements first. 
 - Target specific content blocks
 - Provide enough detail for the candidate to understand what to change and why
 - Each suggestion highlights the entire field/section
+- Don't bullshit. Only real information, don't come up with facts or figures or numbers
 `;
