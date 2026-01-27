@@ -41,7 +41,7 @@ export const appConfig = registerAs('app', (): AppConfig => {
 
   return {
     environment,
-    port: parseInt(process.env.PORT ?? '4002', 10),
+    port: parseInt(process.env.PORT ?? '4000', 10),
     host: '0.0.0.0',
     frontendUrl: process.env.FRONTEND_URL ?? '/',
     isProduction,
