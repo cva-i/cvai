@@ -11,7 +11,7 @@ import {
   Skill,
   WorkExperience,
 } from '../../../../../../libs/schemas';
-import { mapToArray } from '../utils';
+import { mapToArray, mapToArrayNormalized } from '../utils';
 import { cvKeys } from './types';
 
 @ObjectType()
@@ -62,10 +62,10 @@ export class CvObjectType {
 export const convertMappedEntriesToItemizedEntries = (
   mappedEntries: Pick<CvData, (typeof cvKeys.mappedEntries)[number]>
 ) => ({
-  educationEntries: mapToArray(mappedEntries.educationEntries),
-  workExperienceEntries: mapToArray(mappedEntries.workExperienceEntries),
-  projectEntries: mapToArray(mappedEntries.projectEntries),
-  skillEntries: mapToArray(mappedEntries.skillEntries),
+  educationEntries: mapToArrayNormalized(mappedEntries.educationEntries),
+  workExperienceEntries: mapToArrayNormalized(mappedEntries.workExperienceEntries),
+  projectEntries: mapToArrayNormalized(mappedEntries.projectEntries),
+  skillEntries: mapToArrayNormalized(mappedEntries.skillEntries),
   contactInfoEntries: mapToArray(mappedEntries.contactInfoEntries),
 });
 
