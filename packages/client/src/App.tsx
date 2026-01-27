@@ -1,8 +1,6 @@
-import { ThemeProvider } from '@emotion/react';
 import { IndexPage } from './components/IndexPage';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { theme } from './theme';
 import { apolloClient } from './clients';
 import {
   AuthProvider,
@@ -14,9 +12,10 @@ import {
   SuggestionsProvider,
   useAuth,
 } from './contexts';
+import { ChatProvider } from './contexts/use-chat';
 import { useCallback } from 'react';
 import { environment } from './environment';
-import { Button, CssBaseline } from '@mui/material';
+import { Button } from '@ui/components/ui/button';
 import {
   CenteredBox,
   ClickOutsideHandler,
@@ -32,7 +31,7 @@ export const LoginButton = () => {
   }, []);
 
   return (
-    <Button variant={'outlined'} onClick={handleGoogleLogin}>
+    <Button variant="outline" onClick={handleGoogleLogin}>
       Login with Google
     </Button>
   );
@@ -42,7 +41,7 @@ const AppInternal = () => {
   const { user, logout } = useAuth();
   if (!user) {
     return (
-      <CenteredBox sx={{ height: '100vh', flexDirection: 'column', gap: 2 }}>
+      <CenteredBox className="h-screen flex-col gap-8">
         {/*<LoginForm />*/}
         <LoginButton />
       </CenteredBox>
@@ -56,15 +55,17 @@ const AppInternal = () => {
           <CvCreationFlowProvider>
             <PreviewModeProvider>
               <SuggestionsProvider>
-                <ClickOutsideHandler>
-                  <IndexPage />
-                  <ToastContainer
-                    position={'bottom-left'}
-                    toastStyle={{
-                      height: '24px',
-                    }}
-                  />
-                </ClickOutsideHandler>
+                <ChatProvider>
+                  <ClickOutsideHandler>
+                    <IndexPage />
+                    <ToastContainer
+                      position={'bottom-left'}
+                      toastStyle={{
+                        height: '24px',
+                      }}
+                    />
+                  </ClickOutsideHandler>
+                </ChatProvider>
               </SuggestionsProvider>
             </PreviewModeProvider>
             <CvCreationDialog />
@@ -77,16 +78,13 @@ const AppInternal = () => {
 
 const App = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <ApolloProvider client={apolloClient}>
-        <AuthProvider>
-          <BrowserRouter>
-            <AppInternal />
-          </BrowserRouter>
-        </AuthProvider>
-      </ApolloProvider>
-    </ThemeProvider>
+    <ApolloProvider client={apolloClient}>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppInternal />
+        </BrowserRouter>
+      </AuthProvider>
+    </ApolloProvider>
   );
 };
 

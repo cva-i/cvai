@@ -34,12 +34,38 @@ export type AboutMe = {
   fieldName: Scalars['String']['output'];
 };
 
+export type ActionResponseInput = {
+  accept: Scalars['Boolean']['input'];
+  actionId: Scalars['ID']['input'];
+  messageId: Scalars['ID']['input'];
+};
+
 export type AuthResponse = {
   __typename?: 'AuthResponse';
   accessToken: Scalars['String']['output'];
   refreshToken: Scalars['String']['output'];
   user: User;
 };
+
+export type ChatMessageObjectType = {
+  __typename?: 'ChatMessageObjectType';
+  _id: Scalars['ID']['output'];
+  content: Scalars['String']['output'];
+  conversationId: Scalars['ID']['output'];
+  createdAt: Scalars['DateTime']['output'];
+  cvId: Scalars['ID']['output'];
+  cvVersionIdAtCreation?: Maybe<Scalars['String']['output']>;
+  proposedActions: Array<ProposedActionObjectType>;
+  role: ChatMessageRole;
+  updatedAt: Scalars['DateTime']['output'];
+  userId: Scalars['String']['output'];
+};
+
+/** Role of the message sender */
+export enum ChatMessageRole {
+  Assistant = 'ASSISTANT',
+  User = 'USER'
+}
 
 export type CommentBlockObjectType = {
   __typename?: 'CommentBlockObjectType';
@@ -189,6 +215,7 @@ export type LoginInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   clearAllSuggestionsForCv: Scalars['Boolean']['output'];
+  clearChatConversation: Scalars['Boolean']['output'];
   convertPdfToCv: ConvertPdfToCvObjectType;
   createCvFromVersion: CvObjectType;
   createNewCv: CvObjectType;
@@ -203,7 +230,9 @@ export type Mutation = {
   logout: Scalars['Boolean']['output'];
   redoCvVersion: CvObjectType;
   register: AuthResponse;
+  respondToProposedAction: ProposedActionObjectType;
   reviewCv: ReviewCvOutput;
+  sendChatMessage: ChatMessageObjectType;
   /** Set password for users in FRESHLY_CREATED_REQUIRES_PASSWORD status and return auth tokens */
   setPassword: AuthResponse;
   transformCv: TransformCvObjectType;
@@ -215,6 +244,11 @@ export type Mutation = {
 
 export type MutationClearAllSuggestionsForCvArgs = {
   cvId: Scalars['ID']['input'];
+};
+
+
+export type MutationClearChatConversationArgs = {
+  conversationId: Scalars['ID']['input'];
 };
 
 
@@ -294,8 +328,18 @@ export type MutationRegisterArgs = {
 };
 
 
+export type MutationRespondToProposedActionArgs = {
+  input: ActionResponseInput;
+};
+
+
 export type MutationReviewCvArgs = {
   cvId: Scalars['ID']['input'];
+};
+
+
+export type MutationSendChatMessageArgs = {
+  input: SendChatMessageInput;
 };
 
 
@@ -348,9 +392,44 @@ export type Project = {
   skills?: Maybe<Array<Scalars['String']['output']>>;
 };
 
+export type ProposedAction = {
+  __typename?: 'ProposedAction';
+  _id: Scalars['ID']['output'];
+  description: Scalars['String']['output'];
+  payload: Scalars['JSON']['output'];
+  status: ProposedActionStatus;
+  type: ProposedActionType;
+};
+
+export type ProposedActionObjectType = {
+  __typename?: 'ProposedActionObjectType';
+  _id: Scalars['ID']['output'];
+  description: Scalars['String']['output'];
+  payload: Scalars['JSON']['output'];
+  status: ProposedActionStatus;
+  type: ProposedActionType;
+};
+
+/** Status of a proposed action */
+export enum ProposedActionStatus {
+  Accepted = 'ACCEPTED',
+  Pending = 'PENDING',
+  Rejected = 'REJECTED'
+}
+
+/** Type of proposed action from AI */
+export enum ProposedActionType {
+  AddEntry = 'ADD_ENTRY',
+  ClarifyingQuestion = 'CLARIFYING_QUESTION',
+  DeleteEntry = 'DELETE_ENTRY',
+  ReorderEntries = 'REORDER_ENTRIES',
+  UpdateField = 'UPDATE_FIELD'
+}
+
 export type Query = {
   __typename?: 'Query';
   currentUser: User;
+  getChatMessages: Array<ChatMessageObjectType>;
   getCv: CvObjectType;
   getCvFieldMetadata?: Maybe<CvFieldMetadataObjectType>;
   getCvVersionHistory: PaginatedCvVersionHistoryObjectType;
@@ -358,6 +437,12 @@ export type Query = {
   getReviewStatus: ReviewStatusType;
   getSuggestionsForCv: Array<CommentBlockObjectType>;
   getVersioningActionsMetadata: VersioningActionsMetadataObjectType;
+};
+
+
+export type QueryGetChatMessagesArgs = {
+  conversationId?: InputMaybe<Scalars['ID']['input']>;
+  cvId: Scalars['ID']['input'];
 };
 
 
@@ -415,6 +500,12 @@ export type ScopeObjectType = {
   googleId?: Maybe<Scalars['String']['output']>;
 };
 
+export type SendChatMessageInput = {
+  content: Scalars['String']['input'];
+  conversationId?: InputMaybe<Scalars['ID']['input']>;
+  cvId: Scalars['ID']['input'];
+};
+
 export type SetPasswordInput = {
   password: Scalars['String']['input'];
   userId: Scalars['String']['input'];
@@ -443,6 +534,7 @@ export type UpdateContactInfoInput = {
   _id?: InputMaybe<Scalars['ID']['input']>;
   link?: InputMaybe<Scalars['String']['input']>;
   linkName?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Float']['input']>;
 };
 
 export type UpdateCvInput = {
@@ -463,6 +555,7 @@ export type UpdateEducationInput = {
   duration?: InputMaybe<Scalars['String']['input']>;
   location?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Int']['input']>;
   skills?: InputMaybe<Array<Scalars['String']['input']>>;
   type?: InputMaybe<Scalars['String']['input']>;
 };
@@ -471,6 +564,7 @@ export type UpdateProjectInput = {
   _id?: InputMaybe<Scalars['ID']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Int']['input']>;
   skills?: InputMaybe<Array<Scalars['String']['input']>>;
 };
 
@@ -493,6 +587,7 @@ export type UpdateWorkExperienceInput = {
   location?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   position?: InputMaybe<Scalars['String']['input']>;
+  positionIndex?: InputMaybe<Scalars['Int']['input']>;
   skills?: InputMaybe<Array<Scalars['String']['input']>>;
   type?: InputMaybe<Scalars['String']['input']>;
 };
@@ -735,6 +830,35 @@ export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, email: string, firstName: string, lastName: string, googleId: string, createdAt: any, deletedAt?: any | null } };
+
+export type SendChatMessageMutationVariables = Exact<{
+  input: SendChatMessageInput;
+}>;
+
+
+export type SendChatMessageMutation = { __typename?: 'Mutation', sendChatMessage: { __typename?: 'ChatMessageObjectType', _id: string, conversationId: string, cvId: string, userId: string, role: ChatMessageRole, content: string, cvVersionIdAtCreation?: string | null, createdAt: any, updatedAt: any, proposedActions: Array<{ __typename?: 'ProposedActionObjectType', _id: string, type: ProposedActionType, description: string, payload: any, status: ProposedActionStatus }> } };
+
+export type RespondToProposedActionMutationVariables = Exact<{
+  input: ActionResponseInput;
+}>;
+
+
+export type RespondToProposedActionMutation = { __typename?: 'Mutation', respondToProposedAction: { __typename?: 'ProposedActionObjectType', _id: string, type: ProposedActionType, description: string, payload: any, status: ProposedActionStatus } };
+
+export type ClearChatConversationMutationVariables = Exact<{
+  conversationId: Scalars['ID']['input'];
+}>;
+
+
+export type ClearChatConversationMutation = { __typename?: 'Mutation', clearChatConversation: boolean };
+
+export type GetChatMessagesQueryVariables = Exact<{
+  cvId: Scalars['ID']['input'];
+  conversationId?: InputMaybe<Scalars['ID']['input']>;
+}>;
+
+
+export type GetChatMessagesQuery = { __typename?: 'Query', getChatMessages: Array<{ __typename?: 'ChatMessageObjectType', _id: string, conversationId: string, cvId: string, userId: string, role: ChatMessageRole, content: string, cvVersionIdAtCreation?: string | null, createdAt: any, updatedAt: any, proposedActions: Array<{ __typename?: 'ProposedActionObjectType', _id: string, type: ProposedActionType, description: string, payload: any, status: ProposedActionStatus }> }> };
 
 export type TransformCvMutationVariables = Exact<{
   templateId: Scalars['String']['input'];
@@ -2129,6 +2253,205 @@ export type GetCurrentUserSuspenseQueryHookResult = ReturnType<typeof useGetCurr
 export type GetCurrentUserQueryResult = Apollo.QueryResult<GetCurrentUserQuery, GetCurrentUserQueryVariables>;
 export function refetchGetCurrentUserQuery(variables?: GetCurrentUserQueryVariables) {
       return { query: GetCurrentUserDocument, variables: variables }
+    }
+export const SendChatMessageDocument = gql`
+    mutation SendChatMessage($input: SendChatMessageInput!) {
+  sendChatMessage(input: $input) {
+    _id
+    conversationId
+    cvId
+    userId
+    role
+    content
+    proposedActions {
+      _id
+      type
+      description
+      payload
+      status
+    }
+    cvVersionIdAtCreation
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type SendChatMessageMutationFn = Apollo.MutationFunction<SendChatMessageMutation, SendChatMessageMutationVariables>;
+export type SendChatMessageComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<SendChatMessageMutation, SendChatMessageMutationVariables>, 'mutation'>;
+
+    export const SendChatMessageComponent = (props: SendChatMessageComponentProps) => (
+      <ApolloReactComponents.Mutation<SendChatMessageMutation, SendChatMessageMutationVariables> mutation={SendChatMessageDocument} {...props} />
+    );
+    
+
+/**
+ * __useSendChatMessageMutation__
+ *
+ * To run a mutation, you first call `useSendChatMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendChatMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendChatMessageMutation, { data, loading, error }] = useSendChatMessageMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useSendChatMessageMutation(baseOptions?: Apollo.MutationHookOptions<SendChatMessageMutation, SendChatMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendChatMessageMutation, SendChatMessageMutationVariables>(SendChatMessageDocument, options);
+      }
+export type SendChatMessageMutationHookResult = ReturnType<typeof useSendChatMessageMutation>;
+export type SendChatMessageMutationResult = Apollo.MutationResult<SendChatMessageMutation>;
+export type SendChatMessageMutationOptions = Apollo.BaseMutationOptions<SendChatMessageMutation, SendChatMessageMutationVariables>;
+export const RespondToProposedActionDocument = gql`
+    mutation RespondToProposedAction($input: ActionResponseInput!) {
+  respondToProposedAction(input: $input) {
+    _id
+    type
+    description
+    payload
+    status
+  }
+}
+    `;
+export type RespondToProposedActionMutationFn = Apollo.MutationFunction<RespondToProposedActionMutation, RespondToProposedActionMutationVariables>;
+export type RespondToProposedActionComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<RespondToProposedActionMutation, RespondToProposedActionMutationVariables>, 'mutation'>;
+
+    export const RespondToProposedActionComponent = (props: RespondToProposedActionComponentProps) => (
+      <ApolloReactComponents.Mutation<RespondToProposedActionMutation, RespondToProposedActionMutationVariables> mutation={RespondToProposedActionDocument} {...props} />
+    );
+    
+
+/**
+ * __useRespondToProposedActionMutation__
+ *
+ * To run a mutation, you first call `useRespondToProposedActionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRespondToProposedActionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [respondToProposedActionMutation, { data, loading, error }] = useRespondToProposedActionMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useRespondToProposedActionMutation(baseOptions?: Apollo.MutationHookOptions<RespondToProposedActionMutation, RespondToProposedActionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RespondToProposedActionMutation, RespondToProposedActionMutationVariables>(RespondToProposedActionDocument, options);
+      }
+export type RespondToProposedActionMutationHookResult = ReturnType<typeof useRespondToProposedActionMutation>;
+export type RespondToProposedActionMutationResult = Apollo.MutationResult<RespondToProposedActionMutation>;
+export type RespondToProposedActionMutationOptions = Apollo.BaseMutationOptions<RespondToProposedActionMutation, RespondToProposedActionMutationVariables>;
+export const ClearChatConversationDocument = gql`
+    mutation ClearChatConversation($conversationId: ID!) {
+  clearChatConversation(conversationId: $conversationId)
+}
+    `;
+export type ClearChatConversationMutationFn = Apollo.MutationFunction<ClearChatConversationMutation, ClearChatConversationMutationVariables>;
+export type ClearChatConversationComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<ClearChatConversationMutation, ClearChatConversationMutationVariables>, 'mutation'>;
+
+    export const ClearChatConversationComponent = (props: ClearChatConversationComponentProps) => (
+      <ApolloReactComponents.Mutation<ClearChatConversationMutation, ClearChatConversationMutationVariables> mutation={ClearChatConversationDocument} {...props} />
+    );
+    
+
+/**
+ * __useClearChatConversationMutation__
+ *
+ * To run a mutation, you first call `useClearChatConversationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useClearChatConversationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [clearChatConversationMutation, { data, loading, error }] = useClearChatConversationMutation({
+ *   variables: {
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useClearChatConversationMutation(baseOptions?: Apollo.MutationHookOptions<ClearChatConversationMutation, ClearChatConversationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ClearChatConversationMutation, ClearChatConversationMutationVariables>(ClearChatConversationDocument, options);
+      }
+export type ClearChatConversationMutationHookResult = ReturnType<typeof useClearChatConversationMutation>;
+export type ClearChatConversationMutationResult = Apollo.MutationResult<ClearChatConversationMutation>;
+export type ClearChatConversationMutationOptions = Apollo.BaseMutationOptions<ClearChatConversationMutation, ClearChatConversationMutationVariables>;
+export const GetChatMessagesDocument = gql`
+    query GetChatMessages($cvId: ID!, $conversationId: ID) {
+  getChatMessages(cvId: $cvId, conversationId: $conversationId) {
+    _id
+    conversationId
+    cvId
+    userId
+    role
+    content
+    proposedActions {
+      _id
+      type
+      description
+      payload
+      status
+    }
+    cvVersionIdAtCreation
+    createdAt
+    updatedAt
+  }
+}
+    `;
+export type GetChatMessagesComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetChatMessagesQuery, GetChatMessagesQueryVariables>, 'query'> & ({ variables: GetChatMessagesQueryVariables; skip?: boolean; } | { skip: boolean; });
+
+    export const GetChatMessagesComponent = (props: GetChatMessagesComponentProps) => (
+      <ApolloReactComponents.Query<GetChatMessagesQuery, GetChatMessagesQueryVariables> query={GetChatMessagesDocument} {...props} />
+    );
+    
+
+/**
+ * __useGetChatMessagesQuery__
+ *
+ * To run a query within a React component, call `useGetChatMessagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChatMessagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetChatMessagesQuery({
+ *   variables: {
+ *      cvId: // value for 'cvId'
+ *      conversationId: // value for 'conversationId'
+ *   },
+ * });
+ */
+export function useGetChatMessagesQuery(baseOptions: Apollo.QueryHookOptions<GetChatMessagesQuery, GetChatMessagesQueryVariables> & ({ variables: GetChatMessagesQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetChatMessagesQuery, GetChatMessagesQueryVariables>(GetChatMessagesDocument, options);
+      }
+export function useGetChatMessagesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatMessagesQuery, GetChatMessagesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetChatMessagesQuery, GetChatMessagesQueryVariables>(GetChatMessagesDocument, options);
+        }
+export function useGetChatMessagesSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetChatMessagesQuery, GetChatMessagesQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetChatMessagesQuery, GetChatMessagesQueryVariables>(GetChatMessagesDocument, options);
+        }
+export type GetChatMessagesQueryHookResult = ReturnType<typeof useGetChatMessagesQuery>;
+export type GetChatMessagesLazyQueryHookResult = ReturnType<typeof useGetChatMessagesLazyQuery>;
+export type GetChatMessagesSuspenseQueryHookResult = ReturnType<typeof useGetChatMessagesSuspenseQuery>;
+export type GetChatMessagesQueryResult = Apollo.QueryResult<GetChatMessagesQuery, GetChatMessagesQueryVariables>;
+export function refetchGetChatMessagesQuery(variables: GetChatMessagesQueryVariables) {
+      return { query: GetChatMessagesDocument, variables: variables }
     }
 export const TransformCvDocument = gql`
     mutation transformCv($templateId: String!, $message: String!) {

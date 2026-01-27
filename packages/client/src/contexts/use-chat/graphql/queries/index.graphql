@@ -1,0 +1,20 @@
+query GetChatMessages($cvId: ID!, $conversationId: ID) {
+  getChatMessages(cvId: $cvId, conversationId: $conversationId) {
+    _id
+    conversationId
+    cvId
+    userId
+    role
+    content
+    proposedActions {
+      _id
+      type
+      description
+      payload
+      status
+    }
+    cvVersionIdAtCreation
+    createdAt
+    updatedAt
+  }
+}

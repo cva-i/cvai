@@ -5,10 +5,35 @@ type AboutMe {
   fieldName: String!
 }
 
+input ActionResponseInput {
+  accept: Boolean!
+  actionId: ID!
+  messageId: ID!
+}
+
 type AuthResponse {
   accessToken: String!
   refreshToken: String!
   user: User!
+}
+
+type ChatMessageObjectType {
+  _id: ID!
+  content: String!
+  conversationId: ID!
+  createdAt: DateTime!
+  cvId: ID!
+  cvVersionIdAtCreation: String
+  proposedActions: [ProposedActionObjectType!]!
+  role: ChatMessageRole!
+  updatedAt: DateTime!
+  userId: String!
+}
+
+"""Role of the message sender"""
+enum ChatMessageRole {
+  ASSISTANT
+  USER
 }
 
 type CommentBlockObjectType {
@@ -164,6 +189,7 @@ input LoginInput {
 
 type Mutation {
   clearAllSuggestionsForCv(cvId: ID!): Boolean!
+  clearChatConversation(conversationId: ID!): Boolean!
   convertPdfToCv(file: Upload!): ConvertPdfToCvObjectType!
   createCvFromVersion(cvId: ID!, versionId: ID!): CvObjectType!
   createNewCv(templateId: ID!): CvObjectType!
@@ -178,7 +204,9 @@ type Mutation {
   logout: Boolean!
   redoCvVersion(cvId: ID!): CvObjectType!
   register(input: RegisterInput!): AuthResponse!
+  respondToProposedAction(input: ActionResponseInput!): ProposedActionObjectType!
   reviewCv(cvId: ID!): ReviewCvOutput!
+  sendChatMessage(input: SendChatMessageInput!): ChatMessageObjectType!
 
   """
   Set password for users in FRESHLY_CREATED_REQUIRES_PASSWORD status and return auth tokens
@@ -210,8 +238,41 @@ type Project {
   skills: [String!]
 }
 
+type ProposedAction {
+  _id: ID!
+  description: String!
+  payload: JSON!
+  status: ProposedActionStatus!
+  type: ProposedActionType!
+}
+
+type ProposedActionObjectType {
+  _id: ID!
+  description: String!
+  payload: JSON!
+  status: ProposedActionStatus!
+  type: ProposedActionType!
+}
+
+"""Status of a proposed action"""
+enum ProposedActionStatus {
+  ACCEPTED
+  PENDING
+  REJECTED
+}
+
+"""Type of proposed action from AI"""
+enum ProposedActionType {
+  ADD_ENTRY
+  CLARIFYING_QUESTION
+  DELETE_ENTRY
+  REORDER_ENTRIES
+  UPDATE_FIELD
+}
+
 type Query {
   currentUser: User!
+  getChatMessages(conversationId: ID, cvId: ID!): [ChatMessageObjectType!]!
   getCv(cvId: ID!, versionId: ID): CvObjectType!
   getCvFieldMetadata(cvId: ID!): CvFieldMetadataObjectType
   getCvVersionHistory(cvId: ID!): PaginatedCvVersionHistoryObjectType!
@@ -243,6 +304,12 @@ type ScopeObjectType {
   googleId: String
 }
 
+input SendChatMessageInput {
+  content: String!
+  conversationId: ID
+  cvId: ID!
+}
+
 input SetPasswordInput {
   password: String!
   userId: String!
@@ -269,6 +336,7 @@ input UpdateContactInfoInput {
   _id: ID
   link: String
   linkName: String
+  positionIndex: Float
 }
 
 input UpdateCvInput {
@@ -289,6 +357,7 @@ input UpdateEducationInput {
   duration: String
   location: String
   name: String
+  positionIndex: Int
   skills: [String!]
   type: String
 }
@@ -297,6 +366,7 @@ input UpdateProjectInput {
   _id: ID
   description: String
   name: String
+  positionIndex: Int
   skills: [String!]
 }
 
@@ -319,6 +389,7 @@ input UpdateWorkExperienceInput {
   location: String
   name: String
   position: String
+  positionIndex: Int
   skills: [String!]
   type: String
 }

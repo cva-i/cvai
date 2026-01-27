@@ -1,4 +1,5 @@
 export * from './use-auth';
+export * from './use-chat';
 export * from './use-current-cv';
 export * from './use-preview-mode';
 export * from './use-user';

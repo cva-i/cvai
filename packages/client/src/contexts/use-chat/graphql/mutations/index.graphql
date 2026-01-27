@@ -1,0 +1,34 @@
+mutation SendChatMessage($input: SendChatMessageInput!) {
+  sendChatMessage(input: $input) {
+    _id
+    conversationId
+    cvId
+    userId
+    role
+    content
+    proposedActions {
+      _id
+      type
+      description
+      payload
+      status
+    }
+    cvVersionIdAtCreation
+    createdAt
+    updatedAt
+  }
+}
+
+mutation RespondToProposedAction($input: ActionResponseInput!) {
+  respondToProposedAction(input: $input) {
+    _id
+    type
+    description
+    payload
+    status
+  }
+}
+
+mutation ClearChatConversation($conversationId: ID!) {
+  clearChatConversation(conversationId: $conversationId)
+}
