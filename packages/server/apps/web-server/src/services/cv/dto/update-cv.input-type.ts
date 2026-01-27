@@ -3,7 +3,6 @@ import {
   ID,
   InputType,
   IntersectionType,
-  OmitType,
   PartialType,
 } from '@nestjs/graphql';
 import {
@@ -27,28 +26,28 @@ export class UpdateAboutMeInput extends PartialType(AboutMe, InputType) {}
 @InputType()
 export class UpdateContactInfoInput extends IntersectionType(
   BaseUpdateInput,
-  PartialType(OmitType(ContactInfo, ['positionIndex'])),
+  PartialType(ContactInfo),
   InputType
 ) {}
 
 @InputType()
 export class UpdateEducationInput extends IntersectionType(
   BaseUpdateInput,
-  PartialType(OmitType(Education, ['positionIndex'])),
+  PartialType(Education),
   InputType
 ) {}
 
 @InputType()
 export class UpdateWorkExperienceInput extends IntersectionType(
   BaseUpdateInput,
-  PartialType(OmitType(WorkExperience, ['positionIndex'])),
+  PartialType(WorkExperience),
   InputType
 ) {}
 
 @InputType()
 export class UpdateProjectInput extends IntersectionType(
   BaseUpdateInput,
-  PartialType(OmitType(Project, ['positionIndex'])),
+  PartialType(Project),
   InputType
 ) {}
 
