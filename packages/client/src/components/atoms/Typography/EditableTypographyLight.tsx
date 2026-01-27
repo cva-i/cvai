@@ -1,5 +1,5 @@
 import { useEditableTypographyBase } from '../../../hooks';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { EditableTypographyBase } from './EditableTypographyBase';
 import type { EditableTypographyProps } from './types';
 
@@ -10,6 +10,7 @@ export const EditableTypographyLight = ({
   onAiEdit,
   multiline,
   isEditing: defaultIsEditing,
+  className,
   ...typographyProps
 }: EditableTypographyProps) => {
   const {
@@ -33,15 +34,9 @@ export const EditableTypographyLight = ({
   return (
     <EditableTypographyBase
       typographyProps={{
-        ...typographyProps,
-        sx: {
-          borderRadius: '10px',
-          width: 'fit-content',
-
-          // background: alpha(pink[300], 0.1),
-
-          ...(typographyProps.sx ?? {}),
-        },
+        variant: typographyProps.variant,
+        color: typographyProps.color,
+        className: 'rounded-[10px] w-fit',
       }}
       id={id}
       isEditing={isEditing}
@@ -52,6 +47,7 @@ export const EditableTypographyLight = ({
       multiline={multiline}
       value={value}
       variant={typographyProps.variant}
+      className={className}
     />
   );
 };

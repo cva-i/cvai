@@ -1,5 +1,4 @@
 import { EditableTypography } from '../../../atoms';
-import { grey } from '@mui/material/colors';
 import React, { useMemo } from 'react';
 import type { TextSectionProps } from './types';
 import { usePreviewMode } from '../../../../contexts';
@@ -28,9 +27,7 @@ export const JobTypeTextSection = ({
       value={value}
       onSave={onSave}
       variant="body2"
-      sx={{
-        color: grey[700],
-      }}
+      className="text-muted-foreground"
       isEditing={isEditing}
     />
   );

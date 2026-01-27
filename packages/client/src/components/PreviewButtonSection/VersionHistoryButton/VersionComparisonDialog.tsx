@@ -1,15 +1,16 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import {
-  Button,
   Dialog,
-  DialogActions,
   DialogContent,
+  DialogHeader,
   DialogTitle,
-  Typography,
-} from '@mui/material';
+  DialogFooter,
+} from '@ui/components/ui/dialog';
+import { Button } from '@ui/components/ui/button';
 import { useGetCvQuery } from '../../../generated/graphql';
 import { ColumnLayout } from '../../atoms';
 import { VersionComparisonContent } from '../../VersionComparisonContent';
+import { Typography } from '../../atoms/Typography/Typography';
 
 interface VersionComparisonDialogProps {
   open: boolean;
@@ -56,35 +57,49 @@ export const VersionComparisonDialog = ({
     [leftCvLoading, rightCvLoading]
   );
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="md"
-      fullWidth
-      aria-labelledby="version-comparison-dialog-title"
-    >
-      <DialogTitle id="version-comparison-dialog-title">
-        Version Comparison
-      </DialogTitle>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent
+        className="sm:max-w-3xl"
+        aria-labelledby="version-comparison-dialog-title"
+      >
+        <DialogHeader>
+          <DialogTitle id="version-comparison-dialog-title">
+            Version Comparison
+          </DialogTitle>
+        </DialogHeader>
 
-      <DialogContent>
-        {isError && (
-          <ColumnLayout>
-            <Typography color={'error'}>{leftCvError?.message}</Typography>
-            <Typography color={'error'}>{rightCvError?.message}</Typography>
-          </ColumnLayout>
-        )}
+        <div className="py-4">
+          {isError && (
+            <ColumnLayout>
+              <Typography className="text-destructive">
+                {leftCvError?.message}
+              </Typography>
+              <Typography className="text-destructive">
+                {rightCvError?.message}
+              </Typography>
+            </ColumnLayout>
+          )}
 
-        {isLoading && !isError && <Typography>Loading...</Typography>}
+          {isLoading && !isError && <Typography>Loading...</Typography>}
 
-        {!!leftCvData && !!rightCvData && (
-          <VersionComparisonContent left={leftCvData} right={rightCvData} />
-        )}
+          {!!leftCvData && !!rightCvData && (
+            <VersionComparisonContent left={leftCvData} right={rightCvData} />
+          )}
+        </div>
+
+        <DialogFooter>
+          <Button variant="ghost" onClick={onClose}>
+            Close
+          </Button>
+        </DialogFooter>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Close</Button>
-      </DialogActions>
     </Dialog>
   );
 };

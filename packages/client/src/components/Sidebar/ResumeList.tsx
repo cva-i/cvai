@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Box, Typography, styled } from '@mui/material';
+import { ScrollArea } from '@ui/components/ui/scroll-area';
+import { Typography } from '../atoms/Typography/Typography';
 import {
   useGetCvsQuery,
   useDeleteCvMutation,
@@ -43,7 +44,9 @@ export const ResumeList = () => {
   }, []);
 
   const handleConfirmDelete = useCallback(() => {
-    if (!selectedItemId) return;
+    if (!selectedItemId) {
+      return;
+    }
 
     void deleteCv({
       variables: { cvId: selectedItemId },
@@ -54,35 +57,37 @@ export const ResumeList = () => {
 
   if (cvsQueryError) {
     return (
-      <ErrorContainer>
+      <div className="p-4">
         <Typography color="error">Failed to load resumes</Typography>
-      </ErrorContainer>
+      </div>
     );
   }
 
   if (cvQueryLoading) {
     return (
-      <LoadingContainer>
-        <Typography color="text.secondary">Loading...</Typography>
-      </LoadingContainer>
+      <div className="p-4">
+        <Typography color="secondary">Loading...</Typography>
+      </div>
     );
   }
 
   return (
     <>
-      <ListHeader>
-        <Typography variant="overline" color="text.secondary">
+      {/* List Header */}
+      <div className="mt-4 shrink-0 border-t border-border pb-2 pt-4">
+        <Typography variant="overline" color="secondary">
           Resumes
         </Typography>
-      </ListHeader>
+      </div>
 
-      <ListScrollContainer>
+      {/* List Scroll Container */}
+      <ScrollArea className="flex-1">
         {items.length === 0 ? (
-          <EmptyState>
-            <Typography variant="body2" color="text.secondary">
+          <div className="px-4 py-8 text-center">
+            <Typography variant="body2" color="secondary">
               No resumes yet. Create your first one!
             </Typography>
-          </EmptyState>
+          </div>
         ) : (
           items.map((item) => (
             <ResumeListItem
@@ -93,7 +98,7 @@ export const ResumeList = () => {
             />
           ))
         )}
-      </ListScrollContainer>
+      </ScrollArea>
 
       <DeleteConfirmationDialog
         open={deleteDialogOpen}
@@ -106,30 +111,3 @@ export const ResumeList = () => {
     </>
   );
 };
-
-const ListHeader = styled(Box)(({ theme }) => ({
-  paddingBottom: theme.spacing(1),
-  paddingTop: theme.spacing(2),
-  marginTop: theme.spacing(2),
-  borderTop: `1px solid ${theme.palette.divider}`,
-  flexShrink: 0,
-}));
-
-const ListScrollContainer = styled(Box)({
-  flex: 1,
-  overflowY: 'auto',
-  overflowX: 'hidden',
-});
-
-const EmptyState = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(4, 2),
-  textAlign: 'center',
-}));
-
-const ErrorContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
-}));
-
-const LoadingContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
-}));

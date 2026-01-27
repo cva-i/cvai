@@ -1,16 +1,15 @@
 import React, { useCallback, useState } from 'react';
-import { Popover, styled, Typography } from '@mui/material';
 import type { CvVersionHistoryEntryObjectType } from '../../../generated/graphql';
 import {
   useCreateCvFromVersionMutation,
   useGetCvVersionHistoryQuery,
 } from '../../../generated/graphql';
 import { toast } from 'react-toastify';
-import { Box } from '../../atoms';
-import { backgroundWithBackdrop } from '../../../theme';
+import { Typography } from '../../atoms';
 import { BaseList, ListContainer } from '../../atoms/List';
 import { VersionHistoryItem } from './VersionHistoryItem';
 import { VersionComparisonDialog } from './VersionComparisonDialog';
+import { Popover, PopoverContent, PopoverAnchor } from '../../ui/popover';
 
 interface VersionHistoryPopoverProps {
   open: boolean;
@@ -20,7 +19,7 @@ interface VersionHistoryPopoverProps {
 }
 
 const VersionHistoryHeader = () => (
-  <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 1, px: 1 }}>
+  <Typography variant="subtitle1" className="font-bold mb-1 px-1">
     Version History
   </Typography>
 );
@@ -85,22 +84,21 @@ export const VersionHistoryPopover: React.FC<VersionHistoryPopoverProps> = ({
     [handleCompareClick, handleCreateFromClick]
   );
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      onClose();
+    }
+  };
+
   return (
     <>
-      <Popover
-        open={open}
-        anchorEl={anchorEl}
-        onClose={onClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-      >
-        <VersionHistoryPopoverContainer>
+      <Popover open={open} onOpenChange={handleOpenChange}>
+        {anchorEl && <PopoverAnchor virtualRef={{ current: anchorEl }} />}
+        <PopoverContent
+          align="center"
+          side="bottom"
+          className="flex flex-col w-80 p-2 bg-background-paper/90 backdrop-blur-sm"
+        >
           <ListContainer headerComponent={<VersionHistoryHeader />}>
             <BaseList
               items={data?.getCvVersionHistory?.items ?? []}
@@ -110,7 +108,7 @@ export const VersionHistoryPopover: React.FC<VersionHistoryPopoverProps> = ({
               emptyMessage="No version history available"
             />
           </ListContainer>
-        </VersionHistoryPopoverContainer>
+        </PopoverContent>
       </Popover>
 
       {selectedVersionId && (
@@ -124,12 +122,3 @@ export const VersionHistoryPopover: React.FC<VersionHistoryPopoverProps> = ({
     </>
   );
 };
-
-const VersionHistoryPopoverContainer = styled(Box)(() => ({
-  display: 'flex',
-  flexDirection: 'column',
-  width: 320,
-  padding: 8,
-  ...backgroundWithBackdrop,
-  backgroundColor: 'transparent',
-}));

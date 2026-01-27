@@ -4,7 +4,6 @@ import type {
   QueryDataOptions,
 } from '@apollo/client/react';
 import { useQuery } from '@apollo/client/react';
-import { Box } from '@mui/material';
 import { Navigate } from 'react-router-dom';
 import { LoaderElement } from './common';
 import type { BaseGqlComponentProps } from './common';
@@ -27,6 +26,10 @@ export interface QueryProps<
   children: (result: ChildrenProps<TData, TVariables>) => ReactElement;
 }
 
+interface GraphQLResponseExtension {
+  statusCode?: number;
+}
+
 const Query = <
   TData,
   TVariables extends OperationVariables = OperationVariables,
@@ -36,14 +39,9 @@ const Query = <
   children,
   variables,
   loader = (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      flexGrow={1}
-    >
+    <div className="flex flex-grow items-center justify-center">
       <LoaderElement />
-    </Box>
+    </div>
   ),
   redirectOnErrorUrl,
   disableLoader,
@@ -65,8 +63,10 @@ const Query = <
     const graphqlException = error.graphQLErrors[0]?.extensions?.response;
     console.error(error);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const authError = (graphqlException as any)?.statusCode === 401;
+    const responseExtension = graphqlException as
+      | GraphQLResponseExtension
+      | undefined;
+    const authError = responseExtension?.statusCode === 401;
     if (authError) {
       console.error('Auth error');
       return null;

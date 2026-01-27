@@ -24,6 +24,9 @@ export default defineConfig({
       },
     }),
   ],
+  css: {
+    postcss: './postcss.config.mjs',
+  },
   resolve: {
     alias: {
       '@ui': path.resolve(__dirname, './src'),
@@ -32,7 +35,7 @@ export default defineConfig({
   },
   base: '/',
   server: {
-    port: 3000,
+    port: 3003,
     watch: {
       usePolling: true,
       interval: 300,

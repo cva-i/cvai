@@ -1,17 +1,14 @@
 import { useState, useCallback } from 'react';
+import { MoreHorizontal, Trash2, Pencil, Copy, FileText } from 'lucide-react';
+import { cn } from '@ui/lib/utils';
 import {
-  Box,
-  IconButton,
-  Typography,
-  styled,
-  Menu,
-  MenuItem,
-} from '@mui/material';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@ui/components/ui/dropdown-menu';
+import { Typography } from '../atoms/Typography/Typography';
+import { IconButton } from '../atoms/IconButton';
 import { useCurrentCv, useCvCreationFlow, useDialog } from '../../contexts';
 import {
   useUpdateCvMutation,
@@ -36,29 +33,19 @@ export const ResumeListItem = ({ id, name, onDelete }: ResumeListItemProps) => {
   });
 
   const [isHovered, setIsHovered] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
 
   const isSelected = currentCvId === id;
-  const menuOpen = Boolean(anchorEl);
 
   const handleClick = useCallback(() => {
     setCurrentCvId(id);
   }, [id, setCurrentCvId]);
 
-  const handleMenuOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
-    event.stopPropagation();
-    setAnchorEl(event.currentTarget);
-  }, []);
-
-  const handleMenuClose = useCallback(() => {
-    setAnchorEl(null);
-  }, []);
-
   const handleRename = useCallback(() => {
-    handleMenuClose();
+    setMenuOpen(false);
     setRenameDialogOpen(true);
-  }, [handleMenuClose]);
+  }, []);
 
   const handleRenameSubmit = useCallback(
     (newName: string) => {
@@ -73,87 +60,86 @@ export const ResumeListItem = ({ id, name, onDelete }: ResumeListItemProps) => {
   );
 
   const handleUseAsTemplate = useCallback(() => {
-    handleMenuClose();
+    setMenuOpen(false);
     setTemplateId(id);
     openDialog();
-  }, [handleMenuClose, id, setTemplateId, openDialog]);
+  }, [id, setTemplateId, openDialog]);
 
   const handleDuplicate = useCallback(async () => {
-    handleMenuClose();
+    setMenuOpen(false);
     const result = await duplicateCv({
       variables: { cvId: id },
     });
     if (result.data?.duplicateCv) {
       setCurrentCvId(result.data.duplicateCv._id);
     }
-  }, [handleMenuClose, id, duplicateCv, setCurrentCvId]);
+  }, [id, duplicateCv, setCurrentCvId]);
 
   const handleDelete = useCallback(() => {
-    handleMenuClose();
+    setMenuOpen(false);
     onDelete(id);
-  }, [handleMenuClose, id, onDelete]);
+  }, [id, onDelete]);
 
   return (
     <>
-      <ItemContainer
+      <div
         onClick={handleClick}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        isSelected={isSelected}
+        className={cn(
+          'flex cursor-pointer items-center justify-between rounded-xl px-2 py-3 transition-colors duration-150',
+          isSelected ? 'bg-accent' : 'hover:bg-accent/50'
+        )}
       >
-        <ItemContent>
-          <DotSpace>{isSelected && <ActiveDot />}</DotSpace>
-          <ItemText variant="body2" noWrap>
+        {/* Item Content */}
+        <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
+          {/* Dot Space */}
+          <div className="flex h-1.5 w-1.5 shrink-0 items-center justify-center">
+            {isSelected && (
+              <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+            )}
+          </div>
+          <Typography variant="body2" className="min-w-0 flex-1 truncate">
             {name}
-          </ItemText>
-        </ItemContent>
+          </Typography>
+        </div>
 
-        <ActionSpace>
+        {/* Action Space */}
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center">
           {(isHovered || menuOpen) && (
-            <ActionsButton size="small" onClick={handleMenuOpen}>
-              <MoreHorizIcon fontSize="small" />
-            </ActionsButton>
+            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+              <DropdownMenuTrigger asChild>
+                <IconButton
+                  size="sm"
+                  title="More options"
+                  className="p-1 opacity-70 hover:opacity-100"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </IconButton>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem onClick={handleRename}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Rename
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDuplicate}>
+                  <FileText className="mr-2 h-4 w-4" />
+                  Duplicate
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleUseAsTemplate}>
+                  <Copy className="mr-2 h-4 w-4" />
+                  Use as template
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDelete}>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           )}
-        </ActionSpace>
-      </ItemContainer>
-
-      <Menu
-        anchorEl={anchorEl}
-        open={menuOpen}
-        onClose={handleMenuClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        slotProps={{
-          backdrop: {
-            sx: {
-              backgroundColor: 'rgba(0, 0, 0, 0.3)',
-            },
-          },
-        }}
-      >
-        <MenuItem onClick={handleRename}>
-          <EditIcon fontSize="small" sx={{ mr: 1 }} />
-          Rename
-        </MenuItem>
-        <MenuItem onClick={handleDuplicate}>
-          <FileCopyIcon fontSize="small" sx={{ mr: 1 }} />
-          Duplicate
-        </MenuItem>
-        <MenuItem onClick={handleUseAsTemplate}>
-          <ContentCopyIcon fontSize="small" sx={{ mr: 1 }} />
-          Use as template
-        </MenuItem>
-        <MenuItem onClick={handleDelete}>
-          <DeleteIcon fontSize="small" sx={{ mr: 1 }} />
-          Delete
-        </MenuItem>
-      </Menu>
+        </div>
+      </div>
 
       <RenameDialog
         open={renameDialogOpen}
@@ -164,72 +150,3 @@ export const ResumeListItem = ({ id, name, onDelete }: ResumeListItemProps) => {
     </>
   );
 };
-
-const ItemContainer = styled(Box)<{ isSelected: boolean }>(
-  ({ theme, isSelected }) => ({
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: theme.spacing(1.5, 1),
-    cursor: 'pointer',
-    backgroundColor: isSelected ? theme.palette.action.selected : 'transparent',
-    borderRadius: '12px',
-    '&:hover': {
-      backgroundColor: isSelected
-        ? theme.palette.action.selected
-        : theme.palette.action.hover,
-    },
-    transition: theme.transitions.create(['background-color'], {
-      duration: theme.transitions.duration.short,
-    }),
-  })
-);
-
-const ItemContent = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  flex: 1,
-  overflow: 'hidden',
-  minWidth: 0,
-});
-
-const DotSpace = styled(Box)({
-  width: '6px',
-  height: '6px',
-  flexShrink: 0,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-});
-
-const ActiveDot = styled(Box)(({ theme }) => ({
-  width: '6px',
-  height: '6px',
-  borderRadius: '50%',
-  backgroundColor: theme.palette.primary.main,
-}));
-
-const ActionSpace = styled(Box)({
-  width: '32px',
-  height: '32px',
-  flexShrink: 0,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-});
-
-const ItemText = styled(Typography)({
-  flex: 1,
-  overflow: 'hidden',
-  minWidth: 0,
-});
-
-const ActionsButton = styled(IconButton)(({ theme }) => ({
-  padding: theme.spacing(0.5),
-  opacity: 0.7,
-  '&:hover': {
-    opacity: 1,
-    backgroundColor: theme.palette.action.hover,
-  },
-}));

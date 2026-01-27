@@ -1,11 +1,12 @@
-import React from 'react';
-import { Box } from '@mui/material';
+import type { FC } from 'react';
+import { cn } from '@ui/lib/utils';
 import type { GetCvQuery } from '../../../../generated/graphql';
+import type { Suggestion } from '../../../../contexts/use-suggestions/types';
 import { SuggestionCard } from '../SuggestionCard';
 
 interface SuggestionBlockProps {
   blockId: string;
-  suggestions: any[];
+  suggestions: Suggestion[];
   cvData: GetCvQuery | undefined;
   activeSuggestionId: string | null;
   onAccept: (suggestionId: string) => void;
@@ -13,7 +14,7 @@ interface SuggestionBlockProps {
   registerRef?: (suggestionId: string, element: HTMLDivElement | null) => void;
 }
 
-export const SuggestionBlock: React.FC<SuggestionBlockProps> = ({
+export const SuggestionBlock: FC<SuggestionBlockProps> = ({
   blockId,
   suggestions,
   cvData,
@@ -23,24 +24,14 @@ export const SuggestionBlock: React.FC<SuggestionBlockProps> = ({
   registerRef,
 }) => {
   return (
-    <Box
-      className="thread"
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        transition: 'all 0.2s cubic-bezier(0.65, 0.05, 0.36, 1)',
-        '&.is-open': {
-          boxShadow: '0px 0px 0px 1px #8b5cf6 inset',
-        },
-      }}
+    <div
+      className={cn(
+        'thread flex flex-col',
+        'transition-all duration-200 ease-[cubic-bezier(0.65,0.05,0.36,1)]',
+        '[&.is-open]:shadow-[inset_0_0_0_1px_#8b5cf6]'
+      )}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.5rem',
-        }}
-      >
+      <div className="flex flex-col gap-2">
         {suggestions.map((suggestion) => (
           <SuggestionCard
             key={suggestion._id}
@@ -53,7 +44,7 @@ export const SuggestionBlock: React.FC<SuggestionBlockProps> = ({
             registerRef={registerRef}
           />
         ))}
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };

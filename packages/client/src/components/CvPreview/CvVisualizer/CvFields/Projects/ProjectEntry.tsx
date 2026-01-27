@@ -1,11 +1,9 @@
-import { Box } from '@mui/material';
-import { EditableTypography } from '../../../../atoms';
+import { Box, EditableTypography } from '../../../../atoms';
 import type { CvEntryItemProps } from '../../types';
 import {
   DescriptionTextSection,
   SkillsForItemizedEntryEditor,
 } from '../../../components';
-import React from 'react';
 import { useFieldId } from '../../../../../contexts/CvMetadataContext';
 
 export const ProjectEntry = ({
@@ -20,7 +18,7 @@ export const ProjectEntry = ({
   const skillsFieldId = useFieldId(`projectEntries.${project._id}.skills`);
 
   return (
-    <Box display={'flex'} flexDirection={'column'}>
+    <Box display="flex" flexDirection="column" gap={0.5}>
       <EditableTypography
         id={nameFieldId || `project-name-${project._id}`}
         value={project.name}

@@ -38,6 +38,7 @@ export const Education: React.FC<CvEntryComponentProps> = ({ cvId }) => {
       loading={loading}
       entries={entries}
       noEntriesText="No education entries available."
+      gap={2}
       renderEntry={(entry, index) => (
         <WithEntryControls
           removeEntry={() => removeEntry(entry._id)}

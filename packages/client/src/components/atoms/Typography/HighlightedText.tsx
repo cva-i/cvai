@@ -1,10 +1,11 @@
-import React, { forwardRef, useEffect, useRef, useMemo } from 'react';
-import type { TypographyProps } from '@mui/material';
-import { Typography } from '@mui/material';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import type { Suggestion } from '../../../contexts';
 import { usePreviewMode } from '../../../contexts';
+import { cn } from '@ui/lib/utils';
+import { Typography, type TypographyProps } from './Typography';
 
 interface HighlightedTextProps extends Omit<TypographyProps, 'children'> {
+  id?: string;
   text: string;
   suggestions: Suggestion[];
   activeSuggestionId?: string | null;
@@ -15,11 +16,13 @@ interface HighlightedTextProps extends Omit<TypographyProps, 'children'> {
 export const HighlightedText = forwardRef<HTMLDivElement, HighlightedTextProps>(
   (
     {
+      id,
       text,
       suggestions,
       activeSuggestionId,
       onSuggestionClick,
       isHovered = false,
+      className,
       ...typographyProps
     },
     ref
@@ -66,35 +69,16 @@ export const HighlightedText = forwardRef<HTMLDivElement, HighlightedTextProps>(
       }
     };
 
-    // Extract textAlign from sx props
-    const textAlignFromSx = useMemo(() => {
-      return typographyProps.sx &&
-        typeof typographyProps.sx === 'object' &&
-        'textAlign' in typographyProps.sx
-        ? (typographyProps.sx as any).textAlign
-        : 'inherit';
-    }, [typographyProps.sx]);
-
-    const highlightedTextStyles = {
-      textDecoration: 'underline',
-      textDecorationColor: '#fbbf24', // yellow-400
-      textDecorationThickness: '2px',
-      textUnderlineOffset: '2px',
-      cursor: 'pointer',
-      transition: 'all 0.2s ease-in-out',
-      backgroundColor: isActive
-        ? '#fef3c7' // yellow-100 for active
-        : 'transparent',
-      boxShadow: shouldHighlight ? 'inset 0 0 0 1000px #fef3c7' : 'none',
-    };
+    // Extract textAlign from className
+    const textAlignMatch = className?.match(/text-(left|center|right|justify)/);
+    const textAlign = textAlignMatch ? textAlignMatch[0] : 'text-inherit';
 
     return (
       <Typography
         ref={ref}
         {...typographyProps}
         data-highlighted-text
-        sx={{ ...typographyProps.sx, width: '100%' }}
-        style={{ textAlign: textAlignFromSx }}
+        className={cn('w-full', textAlign, className)}
       >
         {hasSuggestions ? (
           <span
@@ -103,13 +87,15 @@ export const HighlightedText = forwardRef<HTMLDivElement, HighlightedTextProps>(
             onMouseEnter={!isPreviewing ? handleMouseEnter : undefined}
             onMouseLeave={!isPreviewing ? handleMouseLeave : undefined}
             data-suggestion-id={suggestions[0]?._id}
-            style={{
-              borderRadius: '0px',
-              padding: '0px',
-              margin: '0px',
-              display: 'inline',
-              ...(!isPreviewing ? highlightedTextStyles : {}),
-            }}
+            className={cn(
+              'rounded-none p-0 m-0 inline',
+              !isPreviewing && hasSuggestions && [
+                'underline decoration-yellow-400 decoration-2 underline-offset-2',
+                'cursor-pointer transition-all duration-200',
+                isActive && 'bg-yellow-100',
+                shouldHighlight && 'shadow-[inset_0_0_0_1000px_#fef3c7]',
+              ]
+            )}
           >
             {text}
           </span>

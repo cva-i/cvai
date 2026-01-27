@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Typography } from '../atoms/Typography/Typography';
 import type { FieldChange } from './types';
 
 type FieldChangeDisplayProps = {
@@ -8,50 +8,43 @@ type FieldChangeDisplayProps = {
 export const FieldChangeDisplay = ({ field }: FieldChangeDisplayProps) => {
   const renderContent = () => {
     switch (field.action) {
-      case 'added':
+      case 'added': {
         return (
-          <Box
-            sx={{ pl: 2, borderLeft: '2px solid', borderColor: 'success.main' }}
-          >
-            <Typography sx={{ color: 'success.main' }}>
+          <div className="pl-4 border-l-2 border-green-500">
+            <Typography className="text-green-600">
               {field.newValue ?? '(empty)'}
             </Typography>
-          </Box>
+          </div>
         );
-      case 'removed':
+      }
+      case 'removed': {
         return (
-          <Box
-            sx={{ pl: 2, borderLeft: '2px solid', borderColor: 'error.main' }}
-          >
-            <Typography
-              sx={{ color: 'error.main', textDecoration: 'line-through' }}
-            >
+          <div className="pl-4 border-l-2 border-red-500">
+            <Typography className="text-red-600 line-through">
               {field.oldValue ?? '(empty)'}
             </Typography>
-          </Box>
+          </div>
         );
-      case 'changed':
+      }
+      case 'changed': {
         return (
-          <Box
-            sx={{ pl: 2, borderLeft: '2px solid', borderColor: 'warning.main' }}
-          >
-            <Typography
-              sx={{ color: 'text.secondary', textDecoration: 'line-through' }}
-            >
+          <div className="pl-4 border-l-2 border-amber-500">
+            <Typography className="text-muted-foreground line-through">
               {field.oldValue ?? '(empty)'}
             </Typography>
-            <Typography sx={{ color: 'warning.dark' }}>
+            <Typography className="text-amber-700">
               {field.newValue ?? '(empty)'}
             </Typography>
-          </Box>
+          </div>
         );
+      }
     }
   };
 
   return (
-    <Box sx={{ mb: 1 }}>
+    <div className="mb-2">
       <Typography variant="subtitle2">{field.label}</Typography>
       {renderContent()}
-    </Box>
+    </div>
   );
 };

@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
-import type { IconButtonProps } from '@mui/material';
-import { Menu, MenuItem, IconButton } from '@mui/material';
-import { MoreVert as MoreVertIcon } from '@mui/icons-material';
+import React from 'react';
+import { MoreVertical } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@ui/components/ui/dropdown-menu';
+import { cn } from '@ui/lib/utils';
 
-export type OptionsMenuProps = IconButtonProps & {
+export type OptionsMenuProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   id: string;
   options: { label: string; action: (id: string) => void }[];
 };
@@ -11,51 +16,37 @@ export type OptionsMenuProps = IconButtonProps & {
 export const PopupMenu: React.FC<OptionsMenuProps> = ({
   options,
   id,
+  className,
   ...props
 }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleOptionClick = (action: () => void) => {
-    handleMenuClose();
-    action();
+  const handleOptionClick = (action: (id: string) => void) => {
+    action(id);
   };
 
   return (
-    <>
-      <IconButton
-        edge="end"
-        aria-label="options"
-        onClick={handleMenuOpen}
-        {...props}
-      >
-        <MoreVertIcon />
-      </IconButton>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-        // PaperProps={{
-        //   elevation: 2,
-        //   sx: { minWidth: 150 },
-        // }}
-      >
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className={cn(
+            'inline-flex items-center justify-center rounded-lg h-9 w-9 hover:bg-accent hover:text-accent-foreground transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
+            className
+          )}
+          aria-label="options"
+          {...props}
+        >
+          <MoreVertical className="h-5 w-5 text-primary-dark" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
         {options.map((option, index) => (
-          <MenuItem
+          <DropdownMenuItem
             key={index}
-            onClick={() => handleOptionClick(() => option.action(id))}
+            onClick={() => handleOptionClick(option.action)}
           >
             {option.label}
-          </MenuItem>
+          </DropdownMenuItem>
         ))}
-      </Menu>
-    </>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

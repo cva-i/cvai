@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
-import React, { useCallback } from 'react';
-import type { SxProps, Theme, TypographyProps } from '@mui/material';
-import { Box } from '@mui/material';
-import { EditableTypography } from './atoms';
+import { useCallback } from 'react';
+import { Box, EditableTypography } from './atoms';
+import { cn } from '@ui/lib/utils';
+import type { TypographyVariant } from './atoms/Typography/types';
 
 export interface CommaSeparatedListProps {
   id: string;
@@ -10,9 +10,9 @@ export interface CommaSeparatedListProps {
   items?: string[];
   onSave: (items: string[]) => Promise<void>;
   labelPrefix?: ReactNode;
-  sx?: SxProps<Theme>;
-  textSx?: SxProps<Theme>;
-  variant?: TypographyProps['variant'];
+  className?: string;
+  textClassName?: string;
+  variant?: TypographyVariant;
   emptyText?: string;
 }
 
@@ -22,8 +22,8 @@ export const CommaSeparatedList = ({
   items = [],
   onSave,
   labelPrefix,
-  sx,
-  textSx,
+  className,
+  textClassName,
   variant = 'body2',
   emptyText,
 }: CommaSeparatedListProps) => {
@@ -42,8 +42,13 @@ export const CommaSeparatedList = ({
   );
 
   return (
-    <Box sx={sx} display="flex" alignItems="baseline" gap={0.5}>
-      {labelPrefix && <Box component="span">{labelPrefix}</Box>}
+    <Box
+      display="flex"
+      alignItems="baseline"
+      gap={0.5}
+      className={cn(className)}
+    >
+      {labelPrefix && <span>{labelPrefix}</span>}
       <EditableTypography
         id={id}
         variant={variant}
@@ -52,11 +57,9 @@ export const CommaSeparatedList = ({
         multiline
         onSave={handleSave}
         valueRender={(v) => v ?? emptyText ?? ''}
-        sx={textSx}
+        className={cn('w-full', textClassName)}
         textFieldProps={{
-          sx: {
-            width: '100%',
-          },
+          className: 'w-full',
         }}
       />
     </Box>

@@ -1,4 +1,5 @@
 import { useCallback, useState } from 'react';
+import { cn } from '@ui/lib/utils';
 import { usePreviewMode } from '../contexts';
 
 export function useEditableSection() {
@@ -35,17 +36,13 @@ export function useEditableSection() {
 
   const contextValue = { isEntryActive: isActive, deactivate };
 
-  const containerStyles = () => ({
-    border: isHovered ? '2px solid' : '2px solid transparent',
-    borderColor: isHovered ? 'primary.main' : 'transparent',
-    borderRadius: (theme: any) => theme.shape.borderRadius,
-    transition: 'border-color 0.2s',
-    padding: 1,
-    cursor: isHovered && !isActive ? 'pointer' : 'default',
-    position: 'relative' as const,
-    zIndex: isActive ? (theme: any) => theme.zIndex.modal + 1 : 'auto',
-    backgroundColor: isActive ? 'background.paper' : 'transparent',
-  });
+  const getContainerClassName = () =>
+    cn(
+      'rounded p-1 transition-all duration-200 relative',
+      isHovered ? 'bg-primary/5' : 'bg-transparent',
+      isHovered && !isActive ? 'cursor-pointer' : 'cursor-default',
+      isActive ? 'z-[1301] bg-background shadow-sm' : 'z-auto'
+    );
 
   return {
     isHovered,
@@ -56,6 +53,6 @@ export function useEditableSection() {
     handleClick,
     deactivate,
     contextValue,
-    containerStyles,
+    getContainerClassName,
   };
 }

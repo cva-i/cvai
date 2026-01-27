@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { EditableTypography, RowLayout } from '../../../../atoms';
+import { Box, EditableTypography, RowLayout } from '../../../../atoms';
+import { Typography } from '../../../../atoms/Typography/Typography';
 import type { CvEntryItemProps } from '../../types';
 import {
   DescriptionTextSection,
@@ -32,14 +32,10 @@ export const WorkExperienceEntry = ({
   const skillsFieldId = useFieldId(`workExperienceEntries.${we._id}.skills`);
 
   return (
-    <Box display="flex" flexDirection="column" gap={1} width={'100%'}>
-      <Box
-        display={'flex'}
-        justifyContent={'space-between'}
-        alignItems={'start'}
-      >
-        <Box display={'flex'} flexDirection={'column'}>
-          <RowLayout gap={1}>
+    <Box display="flex" flexDirection="column" gap={0.5} width="100%">
+      <Box display="flex" justifyContent="between" alignItems="start" gap={4}>
+        <Box display="flex" flexDirection="column" className="min-w-0 flex-1">
+          <RowLayout className="gap-1">
             <EditableTypography
               id={positionFieldId ?? `we-position-${we._id}`}
               value={we.position}
@@ -52,12 +48,9 @@ export const WorkExperienceEntry = ({
               }
               variant="h6"
               isEditing={isEditing}
-              sx={{
-                textWrap: 'nowrap',
-                alignItems: 'center',
-              }}
+              className="whitespace-nowrap items-center"
             />
-            <Typography variant={'h6'}>@</Typography>
+            <Typography variant="h6">@</Typography>
             <EditableTypography
               id={nameFieldId ?? `we-name-${we._id}`}
               value={we.name}
@@ -70,9 +63,7 @@ export const WorkExperienceEntry = ({
               }
               variant="h6"
               isEditing={isEditing}
-              sx={{
-                textWrap: 'nowrap',
-              }}
+              className="whitespace-nowrap"
             />
           </RowLayout>
 

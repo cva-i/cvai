@@ -1,9 +1,10 @@
 import React from 'react';
-import { Box, Avatar, IconButton, Divider } from '@mui/material';
-import LogoutIcon from '@mui/icons-material/Logout';
+import { LogOut } from 'lucide-react';
 import type { User } from '../../generated/graphql';
-import { TypographyWithOverflow } from '../atoms';
+import { TypographyWithOverflow, IconButton } from '../atoms';
 import { useUser } from '../../contexts';
+import { Avatar, AvatarFallback } from '@ui/components/ui/avatar';
+import { Separator } from '@ui/components/ui/separator';
 
 type MenuHeaderProps = {
   user: Pick<User, 'firstName' | 'lastName' | 'email'>;
@@ -15,27 +16,23 @@ export const MenuHeader: React.FC<MenuHeaderProps> = React.memo(({ user }) => {
 
   return (
     <>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: 2,
-        }}
-      >
-        <Avatar>{user.firstName.charAt(0)}</Avatar>
-        <Box sx={{ marginLeft: 2, flexGrow: 1 }}>
+      <div className="flex items-center p-4">
+        <Avatar>
+          <AvatarFallback>{user.firstName.charAt(0)}</AvatarFallback>
+        </Avatar>
+        <div className="ml-4 flex-grow">
           <TypographyWithOverflow variant="h6">
             {user.firstName} {user.lastName}
           </TypographyWithOverflow>
           <TypographyWithOverflow variant="body2">
             {user.email}
           </TypographyWithOverflow>
-        </Box>
-        <IconButton onClick={logout}>
-          <LogoutIcon />
+        </div>
+        <IconButton title="Logout" onClick={logout}>
+          <LogOut />
         </IconButton>
-      </Box>
-      <Divider />
+      </div>
+      <Separator />
     </>
   );
 });

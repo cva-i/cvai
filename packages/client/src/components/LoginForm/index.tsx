@@ -1,6 +1,38 @@
 import { useState } from 'react';
-import { Button, TextField, Box, Typography, Alert } from '@mui/material';
+import { Button } from '@ui/components/ui/button';
+import { Input } from '@ui/components/ui/input';
+import { Label } from '@ui/components/ui/label';
+import { Typography } from '../atoms/Typography';
+import { cn } from '@ui/lib/utils';
 import { useLoginMutation, useRegisterMutation } from '../../generated/graphql';
+
+interface AlertProps {
+  severity: 'error' | 'success' | 'warning' | 'info';
+  children: React.ReactNode;
+  className?: string;
+}
+
+const Alert = ({ severity, children, className }: AlertProps) => {
+  const severityClasses: Record<AlertProps['severity'], string> = {
+    error: 'bg-destructive/10 text-destructive border-destructive/20',
+    success: 'bg-green-100 text-green-800 border-green-200',
+    warning: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    info: 'bg-blue-100 text-blue-800 border-blue-200',
+  };
+
+  return (
+    <div
+      className={cn(
+        'px-4 py-3 rounded-md border text-sm',
+        severityClasses[severity],
+        className
+      )}
+      role="alert"
+    >
+      {children}
+    </div>
+  );
+};
 
 export const LoginForm = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -53,22 +85,11 @@ export const LoginForm = () => {
   const error = loginError ?? registerError;
 
   return (
-    <Box
-      component="form"
+    <form
       onSubmit={handleSubmit}
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 2,
-        width: '100%',
-        maxWidth: 400,
-        p: 3,
-        boxShadow: 3,
-        borderRadius: 2,
-        bgcolor: 'background.paper',
-      }}
+      className="flex flex-col gap-4 w-full max-w-[400px] p-6 shadow-lg rounded-lg bg-background"
     >
-      <Typography variant="h5" textAlign="center">
+      <Typography variant="h5" className="text-center">
         {isRegister ? 'Create Account' : 'Login'}
       </Typography>
 
@@ -78,47 +99,58 @@ export const LoginForm = () => {
         </Alert>
       )}
 
-      <TextField
-        label="Email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        fullWidth
-      />
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          placeholder="Enter your email"
+        />
+      </div>
 
-      <TextField
-        label="Password"
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-        fullWidth
-      />
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="password">Password</Label>
+        <Input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+          placeholder="Enter your password"
+        />
+      </div>
 
       {isRegister && (
         <>
-          <TextField
-            label="First Name"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            required
-            fullWidth
-          />
-          <TextField
-            label="Last Name"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            required
-            fullWidth
-          />
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="firstName">First Name</Label>
+            <Input
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              placeholder="Enter your first name"
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="lastName">Last Name</Label>
+            <Input
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+              placeholder="Enter your last name"
+            />
+          </div>
         </>
       )}
 
       <Button
         type="submit"
-        variant="contained"
-        fullWidth
+        className="w-full"
         disabled={loading}
       >
         {loading
@@ -129,7 +161,8 @@ export const LoginForm = () => {
       </Button>
 
       <Button
-        variant="text"
+        type="button"
+        variant="link"
         onClick={() => setIsRegister(!isRegister)}
         disabled={loading}
       >
@@ -137,6 +170,6 @@ export const LoginForm = () => {
           ? 'Already have an account? Login'
           : "Don't have an account? Register"}
       </Button>
-    </Box>
+    </form>
   );
 };

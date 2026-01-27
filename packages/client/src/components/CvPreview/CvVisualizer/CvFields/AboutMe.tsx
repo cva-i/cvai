@@ -1,4 +1,3 @@
-import React from 'react';
 import type { CvEntryComponentProps, UpdateFieldProps } from '../types';
 import {
   GetAboutMeComponent,
@@ -6,13 +5,12 @@ import {
   refetchGetCvVersionHistoryQuery,
   useUpdateCvMutation,
 } from '../../../../generated/graphql';
-import { Typography } from '@mui/material';
 import { EditableTypography } from '../../../atoms';
+import { Typography } from '../../../atoms/Typography/Typography';
 import { WithEditableSection } from '../../components';
 import { useFieldId } from '../../../../contexts/CvMetadataContext';
 
 export const AboutMe = ({ cvId }: CvEntryComponentProps) => {
-  const titleFieldId = useFieldId('aboutMe.title');
   const descriptionFieldId = useFieldId('aboutMe.description');
   const [updateAboutMe] = useUpdateCvMutation({
     refetchQueries: [

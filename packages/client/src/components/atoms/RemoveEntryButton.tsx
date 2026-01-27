@@ -1,25 +1,20 @@
-import type { IconButtonProps } from '@mui/material';
 import React from 'react';
-import RemoveIcon from '@mui/icons-material/Remove';
+import { Minus } from 'lucide-react';
 import { IconButton } from './IconButton';
 
-export const RemoveEntryButton = ({ onClick }: IconButtonProps) => {
+interface RemoveEntryButtonProps {
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+}
+
+export const RemoveEntryButton = ({ onClick }: RemoveEntryButtonProps) => {
   return (
     <IconButton
-      title={'Remove entry'}
+      title="Remove entry"
       onClick={onClick}
-      sx={(theme) => ({
-        color: theme.palette.error.light,
-        height: '100%',
-        borderRadius: '8px',
-        display: 'flex',
-        justifyContent: 'start',
-        alignItems: 'start',
-        flexDirection: 'column',
-        alignContent: 'center',
-      })}
+      variant="destructive"
+      className="h-full rounded-lg flex flex-col justify-start items-start content-center"
     >
-      <RemoveIcon />
+      <Minus className="text-destructive" />
     </IconButton>
   );
 };

@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { Box, Divider, Skeleton } from '@mui/material';
+import { useCallback, useEffect } from 'react';
+import { Separator } from '@ui/components/ui/separator';
 import {
   AboutMe,
   ContactInfo,
@@ -16,13 +16,22 @@ import {
   useGetCvQuery,
   useUpdateCvNameMutation,
 } from '../../../generated/graphql';
-import { customPalette, shadowStyles } from '../../../theme';
 import { usePreviewMode, useSuggestions } from '../../../contexts';
 import { CvMetadataProvider } from '../../../contexts/CvMetadataContext';
+import { cn } from '@ui/lib/utils';
 
 type CvVisualizerProps = {
   cvId: string;
 };
+
+const Skeleton = ({ className }: { className?: string }) => (
+  <div
+    className={cn(
+      'animate-pulse bg-gray-200 rounded',
+      className
+    )}
+  />
+);
 
 export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
   const { isPreviewing } = usePreviewMode();
@@ -53,43 +62,21 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
     [cvId, updateNameMutation]
   );
 
-  const contentBoxStyles = useMemo(() => {
-    const baseStyles = {
-      gap: '12px',
-      display: 'flex',
-      flexDirection: 'column' as const,
-      justifyContent: 'flex-start' as const,
-      fontSize: '1.15em',
-      margin: '0 auto',
-      padding: '20px 15px',
-    };
-
-    return isPreviewing
-      ? {
-          ...baseStyles,
-          height: 'fit-content',
-          width: '100%',
-          maxWidth: '1200px',
-        }
-      : {
-          ...baseStyles,
-          height: '100vh',
-          overflowY: 'auto',
-          width: '300mm',
-          minHeight: '297mm',
-          backgroundColor: customPalette.background.surface,
-          boxShadow: shadowStyles.section.boxShadow,
-        };
-  }, [isPreviewing]);
-
   return (
     <CvMetadataProvider metadata={cvData?.getCv?.metadata ?? null}>
-      <Box sx={contentBoxStyles}>
+      <div
+        className={cn(
+          'flex flex-col gap-3 mx-auto text-[1.15em]',
+          isPreviewing
+            ? 'h-fit w-full max-w-[1200px] py-5 px-4'
+            : 'cv-paper w-[210mm] min-h-[297mm] h-fit py-8 px-6'
+        )}
+      >
         <GetNameComponent variables={{ cvId }}>
           {({ data }) => {
             const name = data?.getCv.name;
             if (!name) {
-              return <Skeleton variant="text" width={'100%'} height={40} />;
+              return <Skeleton className="w-full h-10" />;
             }
             return (
               <EditableTypography
@@ -97,9 +84,7 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
                 value={name}
                 onSave={handleUpdateName}
                 variant="h3"
-                sx={{
-                  textAlign: 'center',
-                }}
+                className="text-center"
               />
             );
           }}
@@ -109,22 +94,22 @@ export const CvVisualizer = ({ cvId }: CvVisualizerProps) => {
 
         <AboutMe cvId={cvId} />
 
-        <Divider />
+        <Separator />
 
         <WorkExperience cvId={cvId} />
 
-        <Divider />
+        <Separator />
 
         <Projects cvId={cvId} />
 
-        <Divider />
+        <Separator />
 
         <Education cvId={cvId} />
 
-        <Divider />
+        <Separator />
 
         <Skills cvId={cvId} />
-      </Box>
+      </div>
     </CvMetadataProvider>
   );
 };

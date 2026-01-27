@@ -1,17 +1,15 @@
 import React from 'react';
-import {
-  Box,
-  Chip,
-  IconButton,
-  Menu,
-  MenuItem,
-  Typography,
-} from '@mui/material';
 import { format } from 'date-fns';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import DifferenceIcon from '@mui/icons-material/Difference';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { MoreVertical, GitCompare, Copy } from 'lucide-react';
 import { StandardListItem } from '../../atoms/List';
+import { Typography, IconButton } from '../../atoms';
+import { Badge } from '../../ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../../ui/dropdown-menu';
 import type { CvVersionHistoryEntryObjectType } from '../../../generated/graphql';
 
 interface VersionHistoryItemProps {
@@ -27,90 +25,58 @@ export const VersionHistoryItem: React.FC<VersionHistoryItemProps> = ({
   onCreateFromClick,
   onClick,
 }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    event.stopPropagation();
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const handleCompareClick = () => {
     if (onCompareClick) {
       onCompareClick(version._id);
     }
-    handleClose();
   };
 
   const handleCreateFromClick = () => {
     onCreateFromClick(version._id);
-    handleClose();
   };
 
   const renderVersionLabel = () => (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
-    >
-      <Typography variant="body1">
+    <div className="flex items-center justify-between">
+      <Typography variant="body1" className="flex items-center gap-2">
         Version {version.versionNumber}
         {version.isCurrentVersion && (
-          <Chip
-            size="small"
-            label="Current"
-            color="primary"
-            sx={{ ml: 1, height: 18, fontSize: 10 }}
-          />
+          <Badge className="h-[18px] text-[10px] px-1.5">Current</Badge>
         )}
       </Typography>
-      <IconButton
-        size="small"
-        onClick={handleMenuClick}
-        aria-label="more"
-        aria-controls={open ? 'version-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-      >
-        <MoreVertIcon fontSize="small" />
-      </IconButton>
-    </Box>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <IconButton
+            size="sm"
+            title="More actions"
+            aria-label="more"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <MoreVertical className="h-4 w-4" />
+          </IconButton>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="end"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {onCompareClick && (
+            <DropdownMenuItem onClick={handleCompareClick}>
+              <GitCompare className="mr-2 h-4 w-4" />
+              Compare with current
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuItem onClick={handleCreateFromClick}>
+            <Copy className="mr-2 h-4 w-4" />
+            Create new CV from this version
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 
   const formattedDate = `Created: ${format(
     new Date(version.createdAt),
     'MMM d, yyyy HH:mm'
   )}`;
-
-  const renderActions = () => (
-    <Menu
-      id="version-menu"
-      anchorEl={anchorEl}
-      open={open}
-      onClose={handleClose}
-      onClick={(e) => e.stopPropagation()}
-      MenuListProps={{
-        'aria-labelledby': 'version-actions-button',
-      }}
-    >
-      {onCompareClick && (
-        <MenuItem onClick={handleCompareClick}>
-          <DifferenceIcon fontSize="small" sx={{ mr: 1 }} />
-          Compare with current
-        </MenuItem>
-      )}
-      <MenuItem onClick={handleCreateFromClick}>
-        <ContentCopyIcon fontSize="small" sx={{ mr: 1 }} />
-        Create new CV from this version
-      </MenuItem>
-    </Menu>
-  );
 
   return (
     <StandardListItem
@@ -120,7 +86,6 @@ export const VersionHistoryItem: React.FC<VersionHistoryItemProps> = ({
       secondary={formattedDate}
       highlight={version.isCurrentVersion}
       onClick={onClick}
-      actions={renderActions()}
     />
   );
 };

@@ -1,11 +1,12 @@
 import React from 'react';
-import { Box, IconButton, Tooltip } from '@mui/material';
 import {
-  ExpandMore as ExpandIcon,
-  ExpandLess as CollapseIcon,
-  ClearAll as ClearIcon,
-  Refresh as RefreshIcon,
-} from '@mui/icons-material';
+  ChevronDown,
+  ChevronUp,
+  ListX,
+  RefreshCw,
+} from 'lucide-react';
+import { Tooltip } from '../../../../atoms/Tooltip';
+import { cn } from '@ui/lib/utils';
 
 interface HeaderActionsProps {
   isExpanded: boolean;
@@ -22,6 +23,13 @@ interface ActionButtonConfig {
   disabled?: boolean;
 }
 
+const iconButtonClasses = cn(
+  'inline-flex items-center justify-center rounded-lg w-8 h-8',
+  'transition-all duration-200',
+  'text-gray-500 hover:bg-gray-200 hover:text-gray-900',
+  'disabled:text-gray-300 disabled:cursor-not-allowed disabled:hover:bg-transparent'
+);
+
 export const HeaderActions: React.FC<HeaderActionsProps> = ({
   isExpanded,
   isGenerating,
@@ -32,46 +40,51 @@ export const HeaderActions: React.FC<HeaderActionsProps> = ({
   const actions: ActionButtonConfig[] = [
     {
       tooltip: isGenerating ? 'Generating...' : 'Generate AI suggestions',
-      icon: <RefreshIcon fontSize="small" />,
+      icon: <RefreshCw className="w-4 h-4" />,
       onClick: onGenerate,
       disabled: isGenerating,
     },
     {
       tooltip: 'Clear all suggestions',
-      icon: <ClearIcon fontSize="small" />,
+      icon: <ListX className="w-4 h-4" />,
       onClick: onClearAll,
     },
     {
       tooltip: isExpanded ? 'Collapse' : 'Expand',
-      icon: isExpanded ? <CollapseIcon /> : <ExpandIcon />,
+      icon: isExpanded ? (
+        <ChevronUp className="w-5 h-5" />
+      ) : (
+        <ChevronDown className="w-5 h-5" />
+      ),
       onClick: onToggleExpanded,
     },
   ];
 
   return (
-    <Box display="flex" gap={0.5}>
-      {actions.map((action, index) => (
-        <Tooltip key={index} title={action.tooltip}>
-          <IconButton
-            size="small"
+    <div className="flex gap-0.5">
+      {actions.map((action, index) => {
+        const button = (
+          <button
+            key={index}
+            type="button"
+            className={iconButtonClasses}
             onClick={action.onClick}
             disabled={action.disabled}
-            sx={{
-              color: 'text.secondary',
-              '&:hover': {
-                backgroundColor: 'grey.200',
-                color: 'text.primary',
-              },
-              transition: 'all 0.2s ease-in-out',
-              '&:disabled': {
-                color: 'text.disabled',
-              },
-            }}
           >
             {action.icon}
-          </IconButton>
-        </Tooltip>
-      ))}
-    </Box>
+          </button>
+        );
+
+        if (action.disabled) {
+          return button;
+        }
+
+        return (
+          <Tooltip key={index} title={action.tooltip}>
+            {button}
+          </Tooltip>
+        );
+      })}
+    </div>
   );
 };

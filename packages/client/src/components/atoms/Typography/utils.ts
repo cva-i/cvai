@@ -1,73 +1,127 @@
 import { useMemo } from 'react';
-import { useTheme } from '@mui/material/styles';
-import type { TypographyProps } from '@mui/material';
+import type { TypographyVariant } from './types';
 
 interface UseMeasureTextWidthProps {
   text: string;
-  variant: TypographyProps['variant'];
+  variant: TypographyVariant;
 }
+
+/**
+ * Typography variant to CSS font properties mapping.
+ * These values match the Tailwind classes defined in Typography.tsx.
+ */
+interface TypographyStyles {
+  fontSize: number;
+  fontWeight: string | number;
+  fontFamily: string;
+  letterSpacing: string;
+}
+
+const typographyVariantStyles: Record<TypographyVariant, TypographyStyles> = {
+  h1: {
+    fontSize: 30, // text-3xl = 1.875rem = 30px
+    fontWeight: 600, // font-semibold
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    letterSpacing: 'normal',
+  },
+  h2: {
+    fontSize: 24, // text-2xl = 1.5rem = 24px
+    fontWeight: 600,
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    letterSpacing: 'normal',
+  },
+  h3: {
+    fontSize: 20, // text-xl = 1.25rem = 20px
+    fontWeight: 600,
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    letterSpacing: 'normal',
+  },
+  h4: {
+    fontSize: 16, // text-base = 1rem = 16px
+    fontWeight: 600,
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    letterSpacing: 'normal',
+  },
+  h5: {
+    fontSize: 14, // text-sm = 0.875rem = 14px
+    fontWeight: 600,
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    letterSpacing: 'normal',
+  },
+  h6: {
+    fontSize: 12, // text-xs = 0.75rem = 12px
+    fontWeight: 600,
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    letterSpacing: 'normal',
+  },
+  body1: {
+    fontSize: 14, // text-sm
+    fontWeight: 400,
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    letterSpacing: 'normal',
+  },
+  body2: {
+    fontSize: 12, // text-xs
+    fontWeight: 400,
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    letterSpacing: 'normal',
+  },
+  subtitle1: {
+    fontSize: 14, // text-sm
+    fontWeight: 400,
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    letterSpacing: 'normal',
+  },
+  subtitle2: {
+    fontSize: 12, // text-xs
+    fontWeight: 400,
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    letterSpacing: 'normal',
+  },
+  caption: {
+    fontSize: 12, // text-xs
+    fontWeight: 400,
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    letterSpacing: 'normal',
+  },
+  overline: {
+    fontSize: 12, // text-xs
+    fontWeight: 400,
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    letterSpacing: '0.1em', // tracking-wider
+  },
+};
 
 export function useMeasureTextWidth({
   text,
   variant,
 }: UseMeasureTextWidthProps): number {
-  const theme = useTheme();
-
-  // Extract the typography variant styles from the MUI theme.
   const { fontSize, fontWeight, fontFamily, letterSpacing } = useMemo(() => {
-    const variantStyles =
-      // @ts-ignore
-      (theme.typography[variant] as {
-        fontSize?: string | number;
-        fontWeight?: number | string;
-        fontFamily?: string;
-        letterSpacing?: string | number;
-      }) || {};
-
-    // Convert all to proper units
-    // By default, MUI uses `rem` units. We need them in px for measuring.
-    // We'll assume a base font-size of 16px for `rem` unless theme explicitly differs.
-    const baseFontSize = 16;
-    const toPx = (val: string | number | undefined): number => {
-      if (typeof val === 'number') return val;
-      if (typeof val === 'string') {
-        if (val.endsWith('rem')) {
-          const num = parseFloat(val);
-          return num * baseFontSize;
-        }
-        if (val.endsWith('px')) {
-          return parseFloat(val);
-        }
-        return parseFloat(val);
-      }
-      return 16; // fallback
+    const variantStyles = typographyVariantStyles[variant] || {
+      fontSize: 14,
+      fontWeight: 400,
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      letterSpacing: 'normal',
     };
 
-    return {
-      fontSize: toPx(variantStyles.fontSize) || 16,
-      fontWeight: variantStyles.fontWeight ?? 'normal',
-      fontFamily: variantStyles.fontFamily ?? 'Arial, sans-serif',
-      letterSpacing: variantStyles.letterSpacing
-        ? `${toPx(variantStyles.letterSpacing)}px`
-        : 'normal',
-    };
-  }, [theme, variant]);
+    return variantStyles;
+  }, [variant]);
 
   // Use a single shared canvas for performance if desired, or create a new one each time.
   return useMemo(() => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    if (!ctx) return 0;
+    if (!ctx) {
+      return 0;
+    }
 
-    // Set the font on the canvas context to match the MUI typography variant exactly.
-    // The canvas expects something like "italic small-caps bold 16px 'Helvetica Neue'"
-    // We only have normal variants here, so it would look like "normal normal 400 16px Arial"
+    // Set the font on the canvas context to match the typography variant exactly.
     ctx.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
     if (letterSpacing !== 'normal') {
       // measureText doesn't directly support letterSpacing, so we sum up the widths of
       // each character and add letterSpacing between them.
       let totalWidth = 0;
-      const spacing = parseFloat(letterSpacing);
+      const spacing = parseFloat(letterSpacing) * fontSize; // Convert em to px
       for (let i = 0; i < text.length; i++) {
         const charWidth = ctx.measureText(text[i]).width;
         totalWidth += charWidth + (i < text.length - 1 ? spacing : 0);

@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
-import { Box } from '@mui/material';
-import UndoIcon from '@mui/icons-material/Undo';
-import RedoIcon from '@mui/icons-material/Redo';
+import { Undo, Redo } from 'lucide-react';
 import {
   refetchGetVersioningActionsMetadataQuery,
   useGetVersioningActionsMetadataQuery,
@@ -43,13 +41,13 @@ const VersionControlButtonsInner = ({ cvId }: { cvId: string }) => {
   if (isPreviewing) return null;
 
   return (
-    <Box sx={{ display: 'flex', gap: 1 }}>
+    <div className="flex gap-1">
       <IconButton
         title="Undo"
         onClick={() => undoVersion({ variables: { cvId } })}
         disabled={!canUndo || undoLoading}
       >
-        <UndoIcon />
+        <Undo />
       </IconButton>
 
       <IconButton
@@ -57,11 +55,11 @@ const VersionControlButtonsInner = ({ cvId }: { cvId: string }) => {
         onClick={() => redoVersion({ variables: { cvId } })}
         disabled={!canRedo || redoLoading}
       >
-        <RedoIcon />
+        <Redo />
       </IconButton>
 
       <VersionHistoryButton />
-    </Box>
+    </div>
   );
 };
 

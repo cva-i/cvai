@@ -1,6 +1,12 @@
 import { useCallback, useState } from 'react';
-import type { SelectChangeEvent } from '@mui/material';
-import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@ui/components/ui/select';
+import { Label } from '@ui/components/ui/label';
 
 type SelectListItem = {
   id: string;
@@ -23,32 +29,31 @@ export const SelectList = <T extends SelectListItem>({
   const [value, setValue] = useState<string>(defaultState ?? '');
 
   const onChange = useCallback(
-    ({ target: { value } }: SelectChangeEvent) => {
-      if (!value) {
+    (newValue: string) => {
+      if (!newValue) {
         return;
       }
-      setValue(value);
-      onSelect?.(value);
+      setValue(newValue);
+      onSelect?.(newValue);
     },
     [onSelect]
   );
 
   return (
-    <FormControl>
-      <InputLabel>{label}</InputLabel>
-      <Select<string>
-        onChange={onChange}
-        label={label}
-        variant={'outlined'}
-        autoFocus
-        value={value}
-      >
-        {items.map(({ id, label }) => (
-          <MenuItem value={id} key={id}>
-            {label}
-          </MenuItem>
-        ))}
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor={`select-${label}`}>{label}</Label>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger id={`select-${label}`} className="w-full">
+          <SelectValue placeholder={label} />
+        </SelectTrigger>
+        <SelectContent>
+          {items.map(({ id, label: itemLabel }) => (
+            <SelectItem value={id} key={id}>
+              {itemLabel}
+            </SelectItem>
+          ))}
+        </SelectContent>
       </Select>
-    </FormControl>
+    </div>
   );
 };

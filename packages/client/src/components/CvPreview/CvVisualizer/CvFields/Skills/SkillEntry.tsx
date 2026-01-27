@@ -1,6 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
-import { EditableTypography } from '../../../../atoms';
+import { Box, EditableTypography } from '../../../../atoms';
 import type { CvEntryItemProps } from '../../types';
 import { CommaSeparatedList } from '../../../../CommaSeparatedList';
 import { usePreviewMode } from '../../../../../contexts';
@@ -30,7 +29,7 @@ export const SkillEntry = ({
   }
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box className="w-full">
       <EditableTypography
         id={categoryFieldId || `skill-category-${skill._id}`}
         value={skill.category}
@@ -48,7 +47,7 @@ export const SkillEntry = ({
         onSave={handleUpdateSkills}
         variant="body1"
         emptyText="(empty)"
-        sx={{ width: '100%' }}
+        className="w-full"
       />
     </Box>
   );

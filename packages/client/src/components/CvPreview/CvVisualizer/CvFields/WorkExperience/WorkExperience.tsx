@@ -37,6 +37,7 @@ export const WorkExperience = ({ cvId }: CvEntryComponentProps) => {
       loading={loading}
       entries={entries}
       noEntriesText="No work experience entries."
+      gap={2}
       renderEntry={(entry, index) => (
         <WithEntryControls
           removeEntry={() => removeEntry(entry._id)}

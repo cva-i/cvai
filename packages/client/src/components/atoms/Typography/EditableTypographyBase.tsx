@@ -1,21 +1,22 @@
-import type { BoxProps, TextFieldProps, TypographyProps } from '@mui/material';
-import { Box, TextField, Typography } from '@mui/material';
-import { TypographyWithMarkdown } from './TypographyWithMarkdown';
-import type { Maybe } from '../../../generated/graphql';
 import { useRef, useEffect, useCallback } from 'react';
+import { TypographyWithMarkdown } from './TypographyWithMarkdown';
+import { Typography, type TypographyProps } from './Typography';
+import type { Maybe } from '../../../generated/graphql';
 import { useEntryEdit } from '../../../contexts';
+import { cn } from '@ui/lib/utils';
+import { Input } from '@ui/components/ui/input';
+import { Textarea } from '@ui/components/ui/textarea';
+import type { TypographyVariant, TextFieldProps } from './types';
 
-type EditableTypographyBaseProps = Pick<
-  BoxProps,
-  'onMouseUp' | 'onMouseDown' | 'onContextMenu' | 'sx'
-> & {
+type EditableTypographyBaseProps = {
   id: string;
   isEditing: boolean;
   setTempValue: React.Dispatch<React.SetStateAction<string>>;
   handleSave: (valueToSave?: string) => void;
   handleCancel: () => void;
+  startEditing?: () => void;
   multiline?: boolean;
-  variant?: TypographyProps['variant'];
+  variant?: TypographyVariant;
   typographyProps?: TypographyProps;
   textFieldProps?: TextFieldProps;
   tempValue?: Maybe<string>;
@@ -23,6 +24,10 @@ type EditableTypographyBaseProps = Pick<
   valueRender?: (v?: Maybe<string>) => string;
   ref?: React.Ref<HTMLDivElement>;
   useContentEditable?: boolean;
+  onMouseUp?: React.MouseEventHandler<HTMLDivElement>;
+  onMouseDown?: React.MouseEventHandler<HTMLDivElement>;
+  onContextMenu?: React.MouseEventHandler<HTMLDivElement>;
+  className?: string;
 };
 
 export const EditableTypographyBase = ({
@@ -32,6 +37,7 @@ export const EditableTypographyBase = ({
   setTempValue,
   handleSave,
   handleCancel,
+  startEditing,
   multiline = false,
   variant = 'body1',
   typographyProps,
@@ -41,14 +47,26 @@ export const EditableTypographyBase = ({
   onMouseDown,
   onContextMenu,
   valueRender,
-  sx,
+  className,
   ref,
   useContentEditable = false,
 }: EditableTypographyBaseProps) => {
-  const commonStyles = {
-    typography: variant,
-    width: '100%',
+  const variantToSize: Record<string, string> = {
+    h1: 'text-3xl font-semibold',
+    h2: 'text-2xl font-semibold',
+    h3: 'text-xl font-semibold',
+    h4: 'text-base font-semibold',
+    h5: 'text-sm font-semibold',
+    h6: 'text-xs font-semibold',
+    body1: 'text-sm',
+    body2: 'text-xs',
+    subtitle1: 'text-sm',
+    subtitle2: 'text-xs',
+    caption: 'text-xs',
+    overline: 'text-xs uppercase tracking-wider',
   };
+
+  const commonClasses = cn(variantToSize[variant], 'w-full');
 
   const contentEditableRef = useRef<HTMLDivElement>(null);
   const saveTimeoutRef = useRef<number | undefined>(undefined);
@@ -150,16 +168,39 @@ export const EditableTypographyBase = ({
     [multiline, value, valueRender, handleSave, handleCancel, deactivate]
   );
 
+  const inputProps = {
+    autoFocus: true,
+    value: tempValue ?? '',
+    onChange: (
+      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => setTempValue(e.target.value),
+    onKeyDown: (
+      e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+      if (e.key === 'Enter' && (!multiline || e.metaKey || e.ctrlKey)) {
+        // Save on Enter for single-line fields, or Cmd/Ctrl+Enter for multiline
+        e.preventDefault();
+        handleSave();
+      } else if (e.key === 'Escape') {
+        handleCancel();
+      }
+    },
+    className: cn(
+      commonClasses,
+      'bg-transparent border-0 border-b border-border rounded-none focus-visible:ring-0 px-0',
+      textFieldProps?.className
+    ),
+    disabled: textFieldProps?.disabled,
+  };
+
   return (
-    <Box
+    <div
       id={id}
       onMouseUp={onMouseUp}
       onMouseDown={onMouseDown}
       onContextMenu={onContextMenu}
       ref={ref}
-      sx={{
-        ...sx,
-      }}
+      className={className}
     >
       {isEditing && useContentEditable ? (
         <Typography
@@ -171,65 +212,34 @@ export const EditableTypographyBase = ({
           onBlur={handleContentEditableBlur}
           onKeyDown={handleContentEditableKeyDown}
           ref={contentEditableRef}
-          sx={{
-            ...(typographyProps?.sx ?? {}),
-            ...commonStyles,
-            outline: 'none',
-            cursor: 'text',
-            minHeight: '1em',
-          }}
+          className={cn(
+            typographyProps?.className,
+            commonClasses,
+            'outline-none cursor-text min-h-[1em]'
+          )}
         >
           {valueRender?.(value) ?? value}
         </Typography>
       ) : isEditing ? (
-        <TextField
-          autoFocus
-          {...textFieldProps}
-          value={tempValue ?? ''}
-          onChange={(e) => setTempValue(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && (!multiline || e.metaKey || e.ctrlKey)) {
-              // Save on Enter for single-line fields, or Cmd/Ctrl+Enter for multiline
-              e.preventDefault();
-              handleSave();
-            } else if (e.key === 'Escape') {
-              handleCancel();
-            }
-          }}
-          fullWidth
-          multiline={multiline}
-          variant="standard"
-          size="small"
-          sx={{
-            ...commonStyles,
-            ...(textFieldProps?.sx ?? {}),
-          }}
-          InputProps={{
-            sx: {
-              ...commonStyles,
-              borderRadius: 0,
-              margin: 0,
-              ...(textFieldProps?.InputProps?.sx ?? {}),
-            },
-          }}
-        />
+        multiline ? (
+          <Textarea {...inputProps} />
+        ) : (
+          <Input {...inputProps} />
+        )
       ) : (
         <TypographyWithMarkdown
           variant={variant}
-          sx={{
-            ...(typographyProps?.sx ?? {}),
-            ...commonStyles,
-            ...(!value
-              ? {
-                  color: 'black',
-                  opacity: '0.3',
-                }
-              : {}),
-          }}
+          className={cn(
+            typographyProps?.className,
+            commonClasses,
+            !value && 'text-black/30',
+            startEditing && 'cursor-pointer hover:bg-black/5 rounded px-1 -mx-1'
+          )}
+          onClick={startEditing}
         >
           {valueRender?.(value) ?? value}
         </TypographyWithMarkdown>
       )}
-    </Box>
+    </div>
   );
 };

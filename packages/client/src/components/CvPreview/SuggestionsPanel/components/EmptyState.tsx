@@ -1,37 +1,16 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { Lightbulb as SuggestionIcon } from '@mui/icons-material';
+import { Lightbulb } from 'lucide-react';
 
 export const EmptyState: React.FC = () => {
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        py: 6,
-        textAlign: 'center',
-      }}
-    >
-      <SuggestionIcon
-        sx={{
-          fontSize: 64,
-          color: 'text.disabled',
-          mb: 3,
-          opacity: 0.6,
-        }}
-      />
-      <Typography
-        variant="h6"
-        color="text.secondary"
-        sx={{ mb: 1, fontWeight: 500 }}
-      >
+    <div className="flex flex-col items-center justify-center py-12 text-center">
+      <Lightbulb className="w-16 h-16 text-gray-300 mb-6 opacity-60" />
+      <h6 className="text-base font-medium text-gray-500 mb-1">
         No suggestions available
-      </Typography>
-      <Typography variant="body2" color="text.disabled" sx={{ maxWidth: 200 }}>
+      </h6>
+      <p className="text-sm text-gray-400 max-w-[200px]">
         Click the refresh button to load demo suggestions
-      </Typography>
-    </Box>
+      </p>
+    </div>
   );
 };

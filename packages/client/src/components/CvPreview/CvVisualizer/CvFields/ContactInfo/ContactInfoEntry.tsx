@@ -27,9 +27,7 @@ export const ContactInfoEntry = ({
         }
         variant="body1"
         isEditing={isEditing}
-        sx={{
-          textAlign: 'center',
-        }}
+        className="text-center"
       />
 
       {/* TODO: make it actually a link */}
@@ -45,9 +43,7 @@ export const ContactInfoEntry = ({
         }
         variant="body2"
         isEditing={isEditing}
-        sx={{
-          color: 'primary.main',
-        }}
+        className="text-primary whitespace-nowrap"
       />
     </ColumnLayout>
   );

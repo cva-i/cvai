@@ -1,8 +1,10 @@
-import { Chip, Divider, Typography } from '@mui/material';
+import { cn } from '@ui/lib/utils';
+import { Badge } from '../ui/badge';
+import { Separator } from '../ui/separator';
+import { Typography } from '../atoms/Typography/Typography';
 import { FieldChangeDisplay } from './FieldChangeDisplay';
 import type { ItemChange } from './types';
-import { getActionColor } from './utils';
-import { Box } from '../atoms';
+import { getActionBadgeClassName } from './utils';
 
 type ItemChangeDisplayProps = {
   item: ItemChange;
@@ -11,24 +13,24 @@ type ItemChangeDisplayProps = {
 
 export const ItemChangeDisplay = ({ item, isLast }: ItemChangeDisplayProps) => {
   return (
-    <Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+    <div>
+      <div className="flex items-center gap-2 mb-1">
+        <Typography variant="subtitle1" className="font-bold">
           {item.name}
         </Typography>
-        <Chip
-          size="small"
-          label={item.action}
-          color={getActionColor(item.action)}
-          sx={{ textTransform: 'capitalize' }}
-        />
-      </Box>
+        <Badge
+          variant="outline"
+          className={cn('capitalize', getActionBadgeClassName(item.action))}
+        >
+          {item.action}
+        </Badge>
+      </div>
 
       {item.fields.map((field, idx) => (
         <FieldChangeDisplay key={`${field.label}-${idx}`} field={field} />
       ))}
 
-      {!isLast && <Divider sx={{ my: 1 }} />}
-    </Box>
+      {!isLast && <Separator className="my-2" />}
+    </div>
   );
 };

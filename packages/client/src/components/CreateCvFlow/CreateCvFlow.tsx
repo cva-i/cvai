@@ -1,4 +1,4 @@
-import { Dialog } from '@mui/material';
+import { Dialog, DialogContent } from '@ui/components/ui/dialog';
 import { CvGenerationStep, DescriptionStep, TemplateStep } from './steps';
 import { CvStepper } from './CvStepper';
 import { useCvCreationFlow, useDialog } from '../../contexts';
@@ -36,13 +36,15 @@ export const CvCreationDialog = () => {
   }, [clearForm, close]);
 
   return (
-    <Dialog open={isOpen} onClose={handleClose} fullWidth maxWidth="md">
-      <CvStepper
-        steps={steps}
-        onCancel={close}
-        onComplete={close}
-        initialStep={initialStep}
-      />
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+      <DialogContent className="max-w-3xl p-0 overflow-hidden">
+        <CvStepper
+          steps={steps}
+          onCancel={close}
+          onComplete={close}
+          initialStep={initialStep}
+        />
+      </DialogContent>
     </Dialog>
   );
 };

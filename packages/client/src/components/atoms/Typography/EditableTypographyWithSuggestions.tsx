@@ -5,6 +5,7 @@ import { useSuggestionHighlight } from '../../../hooks/use-suggestion-highlight'
 import { useEditableTypographyBase } from '../../../hooks';
 import type { EditableTypographyProps } from './types';
 import type { SuggestionBlock } from '../../../contexts';
+import { cn } from '@ui/lib/utils';
 
 interface EditableTypographyWithSuggestionsProps
   extends EditableTypographyProps {
@@ -24,12 +25,13 @@ export const EditableTypographyWithSuggestions = ({
   component,
   textFieldProps,
   valueRender,
-  sx,
+  className,
   suggestionBlocks,
   activeSuggestionId,
   hoveredBlockId,
   setActiveSuggestionId,
-  ...typographyProps
+  variant,
+  color,
 }: EditableTypographyWithSuggestionsProps) => {
   const textRef = useRef<HTMLDivElement>(null);
 
@@ -68,20 +70,9 @@ export const EditableTypographyWithSuggestions = ({
     [setActiveSuggestionId]
   );
 
-  // Extract textAlign from sx if it exists
-  const textAlignFromSx =
-    sx && typeof sx === 'object' && 'textAlign' in sx
-      ? sx.textAlign
-      : undefined;
-
-  const combinedTypographyProps = {
-    ...typographyProps,
-    sx: {
-      width: '100%',
-      ...(textAlignFromSx ? { textAlign: textAlignFromSx } : {}),
-      ...((typographyProps as any).sx ?? {}),
-    },
-  };
+  // Extract textAlign from className
+  const textAlignMatch = className?.match(/text-(left|center|right|justify)/);
+  const textAlign = textAlignMatch ? textAlignMatch[0] : undefined;
 
   // If we have suggestions and we're not editing, use HighlightedText
   if (hasBlockSuggestions && !defaultIsEditing) {
@@ -94,8 +85,9 @@ export const EditableTypographyWithSuggestions = ({
         activeSuggestionId={activeSuggestionId}
         onSuggestionClick={handleSuggestionClick}
         isHovered={isHighlighted}
-        {...combinedTypographyProps}
-        sx={{ ...combinedTypographyProps.sx, ...sx }}
+        variant={variant}
+        color={color}
+        className={cn('w-full', textAlign, className)}
       />
     );
   }
@@ -103,13 +95,11 @@ export const EditableTypographyWithSuggestions = ({
   return (
     <EditableTypographyBase
       ref={textRef}
-      sx={{ alignContent: 'center', ...sx }}
+      className={cn('content-center', className)}
       typographyProps={{
-        ...combinedTypographyProps,
-        sx: {
-          width: 'fit-content',
-          ...(combinedTypographyProps.sx ?? {}),
-        },
+        variant,
+        color,
+        className: cn('w-full', textAlign),
       }}
       id={id}
       isEditing={!!defaultIsEditing}
@@ -119,7 +109,7 @@ export const EditableTypographyWithSuggestions = ({
       handleSave={baseHandleSave}
       handleCancel={handleCancel}
       multiline={multiline}
-      variant={typographyProps.variant}
+      variant={variant}
       textFieldProps={{ ...textFieldProps }}
       valueRender={valueRender}
       useContentEditable={false}

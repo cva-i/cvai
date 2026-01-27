@@ -1,4 +1,4 @@
-import { Box, CircularProgress } from '@mui/material';
+import { Loader2 } from 'lucide-react';
 import type { ReactElement } from 'react';
 
 export interface BaseGqlComponentProps {
@@ -8,7 +8,7 @@ export interface BaseGqlComponentProps {
 }
 
 export const LoaderElement = () => (
-  <Box p={1}>
-    <CircularProgress />
-  </Box>
+  <div className="p-1">
+    <Loader2 className="h-6 w-6 animate-spin text-primary" />
+  </div>
 );

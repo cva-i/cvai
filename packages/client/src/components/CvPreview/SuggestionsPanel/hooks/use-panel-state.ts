@@ -1,16 +1,8 @@
 import { useState, useCallback, useMemo } from 'react';
 import { match } from 'ts-pattern';
+import type { SuggestionBlock } from '../../../../contexts';
 
 export type FilterType = 'open' | 'resolved';
-
-interface SuggestionBlock {
-  blockId: string;
-  suggestions: Array<{
-    _id: string;
-    status: string;
-    [key: string]: any;
-  }>;
-}
 
 /**
  * Filters suggestion blocks based on active filter

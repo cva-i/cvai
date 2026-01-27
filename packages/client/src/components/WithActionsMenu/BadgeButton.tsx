@@ -1,23 +1,32 @@
-import { IconButton, styled } from '@mui/material';
+import React from 'react';
+import { cn } from '@ui/lib/utils';
 
-export const BadgeButton = styled(IconButton)<{ isOpen: boolean }>(
-  ({ theme, isOpen }) => ({
-    position: 'fixed',
-    top: '50%',
-    left: 0,
-    borderRadius: '20px',
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.common.white,
-    zIndex: theme.zIndex.drawer + 1,
-    '&:hover': {
-      backgroundColor: theme.palette.primary.dark,
-    },
+interface BadgeButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  isOpen: boolean;
+}
 
-    transition: theme.transitions.create(['background-color', 'transform'], {
-      duration: theme.transitions.duration.short,
-    }),
-    transform: isOpen
-      ? 'translate(-50%, -50%) rotate(180deg)'
-      : 'translate(-50%, -50%) rotate(0deg)',
-  })
+export const BadgeButton = React.forwardRef<HTMLButtonElement, BadgeButtonProps>(
+  ({ isOpen, className, children, ...props }, ref) => {
+    return (
+      <button
+        ref={ref}
+        className={cn(
+          'fixed top-1/2 left-0 z-[1201] rounded-[20px] bg-primary text-white',
+          'hover:bg-primary-dark',
+          'transition-all duration-200',
+          'inline-flex items-center justify-center h-10 w-10',
+          'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
+          isOpen
+            ? '-translate-x-1/2 -translate-y-1/2 rotate-180'
+            : '-translate-x-1/2 -translate-y-1/2 rotate-0',
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </button>
+    );
+  }
 );
+
+BadgeButton.displayName = 'BadgeButton';

@@ -13,8 +13,7 @@ export const CvGenerationStep = () => {
       flexDirection="column"
       alignItems="center"
       gap={3}
-      py={4}
-      minHeight={200}
+      className="py-16 min-h-[200px]"
     >
       {match(cvGenerationResult)
         .with({ status: 'loading' }, () => <CvGenerationLoading />)

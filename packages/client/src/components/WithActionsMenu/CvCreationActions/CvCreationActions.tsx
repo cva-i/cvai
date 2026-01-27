@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Button, styled } from '@mui/material';
+import { Button } from '@ui/components/ui/button';
 import { ImportPdfDialog } from '../../ImportCvDialog';
 import { useDialog } from '../../../contexts';
 
@@ -9,18 +9,19 @@ export const CvCreationActions = () => {
 
   return (
     <>
-      <RowContainer justifyContent="space-evenly" gap={4} padding={2}>
-        <FullWidthButton
-          variant="contained"
+      <div className="flex flex-row justify-evenly gap-4 p-2">
+        <Button
+          variant="default"
+          className="flex-1"
           onClick={() => setImportDialogOpen(true)}
         >
           Import PDF
-        </FullWidthButton>
+        </Button>
 
-        <FullWidthButton variant="contained" onClick={() => openDialog()}>
+        <Button variant="default" className="flex-1" onClick={() => openDialog()}>
           Create with LLM
-        </FullWidthButton>
-      </RowContainer>
+        </Button>
+      </div>
 
       <ImportPdfDialog
         open={importDialogOpen}
@@ -29,12 +30,3 @@ export const CvCreationActions = () => {
     </>
   );
 };
-
-const RowContainer = styled(Box)`
-  display: flex;
-  flex-direction: row;
-`;
-
-const FullWidthButton = styled(Button)`
-  flex: 1;
-`;

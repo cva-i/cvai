@@ -1,30 +1,19 @@
 import React from 'react';
-import { Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import { DiffView } from '../../DiffView';
-
-const PreviewLabel = styled(Typography)({
-  fontSize: '12px',
-  fontWeight: 600,
-  color: '#6b7280',
-  marginTop: '12px',
-  marginBottom: '6px',
-  textTransform: 'uppercase',
-  letterSpacing: '0.5px',
-});
+import { previewLabelClasses } from '../../SuggestionCard/styled';
 
 type SuggestedChangeProps = {
   currentText: string | null;
   suggestedText: string;
-}
+};
 
-export const SuggestedChange = ({
+export const SuggestedChange: React.FC<SuggestedChangeProps> = ({
   currentText,
   suggestedText,
-}: SuggestedChangeProps) => {
+}) => {
   return (
     <>
-      <PreviewLabel>Suggested Change</PreviewLabel>
+      <span className={previewLabelClasses}>Suggested Change</span>
       <DiffView
         oldText={currentText ?? 'Current text (not found)'}
         newText={suggestedText}

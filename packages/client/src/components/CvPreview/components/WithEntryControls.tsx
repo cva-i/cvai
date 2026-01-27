@@ -1,22 +1,24 @@
 import React from 'react';
-import type { BoxProps } from '@mui/material';
-import { Box, IconButton } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { Trash2, Plus, ArrowUp, ArrowDown } from 'lucide-react';
+import { cn } from '@ui/lib/utils';
+import { IconButton } from '../../atoms/IconButton';
 import { WithEditableSection } from './WithEditableSection';
 
-type WithRemoveEntryButtonProps = React.PropsWithChildren<{
-  removeEntry: () => {};
-  // eslint-disable-next-line
-  onAddEntry?: (entryData?: any) => void;
+interface EntryData {
+  positionIndex: number;
+  [key: string]: unknown;
+}
+
+interface WithEntryControlsProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  removeEntry: () => void;
+  onAddEntry?: (entryData?: Partial<EntryData>) => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
-  // eslint-disable-next-line
-  currentEntry?: { positionIndex: number; [key: string]: any };
-}> &
-  BoxProps;
+  currentEntry?: EntryData;
+  flexDirection?: 'row' | 'column';
+  height?: string | number;
+}
 
 export const WithEntryControls = ({
   children,
@@ -27,60 +29,59 @@ export const WithEntryControls = ({
   currentEntry,
   flexDirection = 'row',
   height,
+  className,
   ...props
-}: WithRemoveEntryButtonProps) => {
+}: WithEntryControlsProps) => {
   return (
     <WithEditableSection
       flexDirection={flexDirection}
       height={height}
+      className={className}
       renderActions={(isActive) =>
         isActive ? (
-          <Box
-            position="absolute"
-            top={-40}
-            left="50%"
-            sx={{
-              transform: 'translateX(-50%)',
-              display: 'flex',
-              gap: 1,
-              backgroundColor: 'background.paper',
-              borderRadius: 1,
-              boxShadow: 2,
-              padding: 0.5,
-            }}
+          <div
+            className={cn(
+              'absolute -top-10 left-1/2 -translate-x-1/2',
+              'flex gap-1',
+              'bg-background rounded shadow-md p-1'
+            )}
           >
             <IconButton
-              size="small"
+              size="sm"
+              title="Delete entry"
               onClick={(e) => {
                 e.stopPropagation();
                 removeEntry();
               }}
-              color="error"
+              variant="destructive"
             >
-              <DeleteIcon fontSize="small" />
+              <Trash2 className="h-4 w-4" />
             </IconButton>
             <IconButton
-              size="small"
+              size="sm"
+              title="Move up"
               onClick={(e) => {
                 e.stopPropagation();
                 onMoveUp?.();
               }}
               disabled={!onMoveUp}
             >
-              <ArrowUpwardIcon fontSize="small" />
+              <ArrowUp className="h-4 w-4" />
             </IconButton>
             <IconButton
-              size="small"
+              size="sm"
+              title="Move down"
               onClick={(e) => {
                 e.stopPropagation();
                 onMoveDown?.();
               }}
               disabled={!onMoveDown}
             >
-              <ArrowDownwardIcon fontSize="small" />
+              <ArrowDown className="h-4 w-4" />
             </IconButton>
             <IconButton
-              size="small"
+              size="sm"
+              title="Add entry"
               onClick={(e) => {
                 e.stopPropagation();
                 if (currentEntry) {
@@ -92,11 +93,11 @@ export const WithEntryControls = ({
                 }
               }}
               disabled={!onAddEntry}
-              color="primary"
+              className="text-primary hover:text-primary"
             >
-              <AddIcon fontSize="small" />
+              <Plus className="h-4 w-4" />
             </IconButton>
-          </Box>
+          </div>
         ) : null
       }
       {...props}

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Box, styled } from '@mui/material';
+import { useState } from 'react';
+import { cn } from '@ui/lib/utils';
 import { FloatingSidebar } from './Sidebar';
 import { CurrentCvPreview } from './CvPreview';
 import { usePreviewMode } from '../contexts';
@@ -12,36 +12,27 @@ export const IndexPage = () => {
   const { isPreviewing } = usePreviewMode();
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
 
+  const mainContentMarginLeft = isSidebarExpanded
+    ? EXPANDED_SIDEBAR_WIDTH + 48
+    : COLLAPSED_SIDEBAR_WIDTH + 48;
+
   return (
-    <AppContainer>
+    <div className="flex w-screen h-screen overflow-hidden app-background">
       <FloatingSidebar
         isExpanded={isSidebarExpanded}
         onToggle={setIsSidebarExpanded}
       />
-      <MainContent
-        isSidebarExpanded={isSidebarExpanded}
-        sx={isPreviewing ? { margin: '0 auto', padding: 0 } : {}}
+      <div
+        className={cn(
+          'flex-1 overflow-auto transition-[margin] duration-300 ease-in-out',
+          isPreviewing && 'mx-auto p-0'
+        )}
+        style={{
+          marginLeft: isPreviewing ? 'auto' : mainContentMarginLeft,
+        }}
       >
         <CurrentCvPreview />
-      </MainContent>
-    </AppContainer>
+      </div>
+    </div>
   );
 };
-
-const AppContainer = styled(Box)({
-  display: 'flex',
-  width: '100vw',
-  height: '100vh',
-  overflow: 'hidden',
-});
-
-const MainContent = styled(Box)<{ isSidebarExpanded: boolean }>(
-  ({ isSidebarExpanded }) => ({
-    flex: 1,
-    marginLeft: isSidebarExpanded
-      ? EXPANDED_SIDEBAR_WIDTH + 48
-      : COLLAPSED_SIDEBAR_WIDTH + 48,
-    transition: 'margin 0.3s ease',
-    overflow: 'auto',
-  })
-);

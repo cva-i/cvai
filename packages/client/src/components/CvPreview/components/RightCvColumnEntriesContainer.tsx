@@ -1,8 +1,22 @@
-import { Box, styled } from '@mui/material';
+import React from 'react';
+import { cn } from '@ui/lib/utils';
 
-export const RightCvColumnEntriesContainer = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  text-align: right;
-  align-items: end;
-`;
+interface RightCvColumnEntriesContainerProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+}
+
+export const RightCvColumnEntriesContainer = ({
+  children,
+  className,
+  ...props
+}: RightCvColumnEntriesContainerProps) => {
+  return (
+    <div
+      className={cn('flex flex-col text-right items-end', className)}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};

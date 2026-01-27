@@ -1,11 +1,16 @@
-import type { GetSuggestionsForCvQuery } from '../../generated/graphql';
-
-// Extract the Comment type from the generated GraphQL query
-type CommentBlockType = GetSuggestionsForCvQuery['getSuggestionsForCv'][number];
-type CommentType = CommentBlockType['comments'][number];
-
-// Use the backend-generated Comment type directly
-export type Suggestion = CommentType;
+// Suggestion type matching what SuggestionsProvider creates
+export interface Suggestion {
+  _id: string;
+  cvId: string;
+  cvVersionId: string;
+  blockId: string;
+  text: string;
+  suggestedText?: string;
+  status: 'open' | 'resolved' | 'rejected';
+  authorName: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
 export interface SuggestionBlock {
   blockId: string; // Field ID from metadata

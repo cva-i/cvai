@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Box, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+import { X } from 'lucide-react';
 import { usePreviewMode } from '../../contexts';
+import { IconButton } from '../atoms';
 
 export function ClosePreviewButton() {
   const { isPreviewing, togglePreviewMode } = usePreviewMode();
@@ -49,31 +49,14 @@ export function ClosePreviewButton() {
   }
 
   return (
-    <Box
-      sx={{
-        position: 'fixed',
-        top: 24,
-        right: 24,
-        zIndex: 10000,
-        '@media print': {
-          display: 'none',
-        },
-      }}
-    >
+    <div className="fixed top-6 right-6 z-[10000] print:hidden">
       <IconButton
         onClick={togglePreviewMode}
         title="Exit preview mode (ESC)"
-        sx={{
-          backgroundColor: 'background.paper',
-          boxShadow: 3,
-          '&:hover': {
-            backgroundColor: 'background.paper',
-            boxShadow: 6,
-          },
-        }}
+        className="bg-background-paper shadow-lg hover:bg-background-paper hover:shadow-xl"
       >
-        <CloseIcon />
+        <X />
       </IconButton>
-    </Box>
+    </div>
   );
 }

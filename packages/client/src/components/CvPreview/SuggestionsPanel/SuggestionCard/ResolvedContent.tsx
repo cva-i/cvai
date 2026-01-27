@@ -1,7 +1,7 @@
-import React, { memo } from 'react';
+import { memo } from 'react';
 import { match, P } from 'ts-pattern';
 import type { Suggestion } from '../../../../contexts';
-import { PreviewLabel, PreviewText } from './styled';
+import { previewLabelClasses, previewTextClasses } from './styled';
 
 interface ResolvedContentProps {
   suggestion: Suggestion;
@@ -11,11 +11,11 @@ export const ResolvedContent = memo<ResolvedContentProps>(({ suggestion }) => {
   return match(suggestion)
     .with({ status: 'resolved', suggestedText: P.nullish }, () => (
       <>
-        <PreviewLabel>Preview (Resolved)</PreviewLabel>
-        <PreviewText>
+        <span className={previewLabelClasses}>Preview (Resolved)</span>
+        <p className={previewTextClasses}>
           This suggestion has been marked as resolved. The text change is being
           previewed.
-        </PreviewText>
+        </p>
       </>
     ))
     .otherwise(() => null);

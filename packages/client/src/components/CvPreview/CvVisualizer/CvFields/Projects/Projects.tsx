@@ -37,6 +37,7 @@ export const Projects = ({ cvId }: CvEntryComponentProps) => {
       loading={loading}
       entries={entries}
       noEntriesText="No project entries."
+      gap={2}
       renderEntry={(project, index) => (
         <WithEntryControls
           removeEntry={() => removeEntry(project._id)}

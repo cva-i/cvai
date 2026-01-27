@@ -1,25 +1,4 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
-
-const AuthorSection = styled(Box)({
-  display: 'flex',
-  alignItems: 'baseline',
-  gap: '8px',
-  marginBottom: '4px',
-});
-
-const AuthorName = styled(Typography)({
-  fontSize: '14px',
-  fontWeight: 600,
-  color: '#111827',
-});
-
-const Timestamp = styled(Typography)({
-  fontSize: '13px',
-  color: '#9ca3af',
-  fontWeight: 400,
-});
 
 interface CardMetadataProps {
   authorName?: string | null;
@@ -30,7 +9,9 @@ interface CardMetadataProps {
  * Formats timestamp as relative time
  */
 function formatTimestamp(date?: Date): string {
-  if (!date) return 'Just now';
+  if (!date) {
+    return 'Just now';
+  }
 
   const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
   const minutesAgo = Math.floor((date.getTime() - Date.now()) / (1000 * 60));
@@ -43,9 +24,13 @@ export const CardMetadata: React.FC<CardMetadataProps> = ({
   createdAt,
 }) => {
   return (
-    <AuthorSection>
-      <AuthorName>{authorName ?? 'AI Assistant'}</AuthorName>
-      <Timestamp>· {formatTimestamp(createdAt)}</Timestamp>
-    </AuthorSection>
+    <div className="flex items-baseline gap-2 mb-1">
+      <span className="text-sm font-semibold text-gray-900">
+        {authorName ?? 'AI Assistant'}
+      </span>
+      <span className="text-[13px] text-gray-400 font-normal">
+        · {formatTimestamp(createdAt)}
+      </span>
+    </div>
   );
 };

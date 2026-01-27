@@ -1,9 +1,7 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
 import { HeaderActions } from './HeaderActions';
 import { FilterButtons } from './FilterButtons';
-
-type FilterType = 'open' | 'resolved';
+import type { FilterType } from '../../types';
 
 interface PanelHeaderProps {
   isExpanded: boolean;
@@ -25,28 +23,10 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
   onFilterChange,
 }) => {
   return (
-    <Box
-      sx={{
-        p: 2,
-        borderBottom: '1px solid',
-        borderColor: 'grey.200',
-        backgroundColor: 'white',
-      }}
-    >
+    <div className="p-4 border-b border-gray-200 bg-white">
       {/* Title and Actions */}
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="space-between"
-        mb={1}
-      >
-        <Typography
-          variant="h6"
-          fontWeight={600}
-          sx={{ fontSize: '1rem', color: 'text.primary' }}
-        >
-          Comments
-        </Typography>
+      <div className="flex items-center justify-between mb-2">
+        <h6 className="text-base font-semibold text-gray-900">Comments</h6>
 
         <HeaderActions
           isExpanded={isExpanded}
@@ -55,13 +35,13 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({
           onGenerate={onGenerate}
           onClearAll={onClearAll}
         />
-      </Box>
+      </div>
 
       {/* Filter Buttons */}
       <FilterButtons
         activeFilter={activeFilter}
         onFilterChange={onFilterChange}
       />
-    </Box>
+    </div>
   );
 };

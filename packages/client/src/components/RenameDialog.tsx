@@ -1,12 +1,14 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-} from '@mui/material';
 import { useActionState, useCallback } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@ui/components/ui/dialog';
+import { Button } from '@ui/components/ui/button';
+import { Input } from '@ui/components/ui/input';
+import { Label } from '@ui/components/ui/label';
 
 type RenameDialogProps = {
   open: boolean;
@@ -30,7 +32,7 @@ export const RenameDialog = ({
   // React 19: useCallback needed to prevent stale closures in useActionState
   const handleRenameAction = useCallback(
     async (
-      prevState: RenameState,
+      _prevState: RenameState,
       formData: FormData
     ): Promise<RenameState> => {
       const newName = formData.get('name') as string;
@@ -54,34 +56,51 @@ export const RenameDialog = ({
     name: initialName,
   });
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <form action={submitAction}>
-        <DialogTitle>Rename CV</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            name="name"
-            label="CV Name"
-            type="text"
-            fullWidth
-            defaultValue={initialName}
-            error={!!state.error}
-            helperText={state.error}
-            disabled={isPending}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={onClose} color="primary" disabled={isPending}>
-            Cancel
-          </Button>
-          <Button type="submit" color="primary" disabled={isPending}>
-            {isPending ? 'Renaming...' : 'Rename'}
-          </Button>
-        </DialogActions>
-      </form>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <form action={submitAction}>
+          <DialogHeader>
+            <DialogTitle>Rename CV</DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="name">CV Name</Label>
+              <Input
+                autoFocus
+                id="name"
+                name="name"
+                type="text"
+                defaultValue={initialName}
+                disabled={isPending}
+                className={state.error ? 'border-destructive' : ''}
+              />
+              {state.error && (
+                <p className="text-sm text-destructive">{state.error}</p>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onClose}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? 'Renaming...' : 'Rename'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 };

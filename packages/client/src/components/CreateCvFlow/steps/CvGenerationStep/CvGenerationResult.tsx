@@ -1,6 +1,5 @@
 import { Box, TypographyWithMarkdown } from '../../../atoms';
-import { styled } from '@mui/material';
-import { textAppear } from './animations';
+import { cn } from '@ui/lib/utils';
 
 export const CvGenerationResult = ({
   status,
@@ -10,39 +9,26 @@ export const CvGenerationResult = ({
   message: string;
 }) => {
   return (
-    <CvGenerationResultContainer>
-      <Box display={'flex'} flexDirection={'column'} alignItems={'center'}>
-        <Box
-          display={'flex'}
-          flexDirection={'column'}
-          alignContent={'flex-start'}
-        >
-          <GenerationResultMessage status={status}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      gap={2}
+      className="origin-top animate-in fade-in zoom-in-95 duration-300"
+    >
+      <Box display="flex" flexDirection="column" alignItems="center">
+        <Box display="flex" flexDirection="column" className="content-start">
+          <TypographyWithMarkdown
+            className={cn(
+              'max-w-[500px] px-2 animate-in fade-in zoom-in-95 duration-300',
+              status === 'error' ? 'text-destructive' : 'text-foreground'
+            )}
+          >
             {message}
-          </GenerationResultMessage>
+          </TypographyWithMarkdown>
         </Box>
       </Box>
-    </CvGenerationResultContainer>
+    </Box>
   );
 };
-
-export const CvGenerationResultContainer = styled(Box)(() => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 2,
-  animation: `${textAppear} 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)`,
-  transformOrigin: 'top center',
-}));
-
-export const GenerationResultMessage = styled(TypographyWithMarkdown)<{
-  status: 'error' | 'success';
-}>(({ theme, status }) => ({
-  maxWidth: 500,
-  px: 2,
-  color:
-    status === 'error' ? theme.palette.error.main : theme.palette.text.primary,
-  transform: 'scale(1)',
-  animation: `${textAppear} 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)`,
-}));

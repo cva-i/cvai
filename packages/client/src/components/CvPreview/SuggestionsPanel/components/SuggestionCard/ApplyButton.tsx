@@ -1,28 +1,6 @@
 import React from 'react';
-import { Box } from '@mui/material';
-import { Check as CheckIcon } from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
-
-const StyledButton = styled(Box)(() => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '6px',
-  cursor: 'pointer',
-  fontSize: '14px',
-  fontWeight: 600,
-  color: 'white',
-  backgroundColor: '#8b5cf6',
-  transition: 'background-color 0.2s ease-in-out',
-  padding: '8px 16px',
-  borderRadius: 8,
-  marginTop: '8px',
-  '&:hover': { backgroundColor: '#7c3aed' },
-  '&:disabled': {
-    backgroundColor: '#d1d5db',
-    cursor: 'not-allowed',
-  },
-}));
+import { Check } from 'lucide-react';
+import { cn } from '@ui/lib/utils';
 
 interface ApplyButtonProps {
   loading: boolean;
@@ -34,9 +12,22 @@ export const ApplyButton: React.FC<ApplyButtonProps> = ({
   onClick,
 }) => {
   return (
-    <StyledButton onClick={onClick}>
-      <CheckIcon />
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={loading}
+      className={cn(
+        'flex items-center justify-center gap-1.5',
+        'cursor-pointer text-sm font-semibold text-white',
+        'bg-violet-500 hover:bg-violet-600',
+        'transition-colors duration-200',
+        'px-4 py-2 rounded-lg mt-2',
+        'disabled:bg-gray-300 disabled:cursor-not-allowed',
+        '[&_svg]:w-[18px] [&_svg]:h-[18px]'
+      )}
+    >
+      <Check />
       <span>{loading ? 'Applying...' : 'Apply Change'}</span>
-    </StyledButton>
+    </button>
   );
 };

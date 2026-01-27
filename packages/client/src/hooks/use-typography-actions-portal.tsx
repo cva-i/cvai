@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Root } from 'react-dom/client';
 import { createRoot } from 'react-dom/client';
-import { Box, IconButton } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
+import { Pencil } from 'lucide-react';
+import { IconButton } from '../components/atoms/IconButton';
 
 interface UseTypographyActionsPortalOptions {
   onEdit: () => void;
@@ -42,38 +42,34 @@ export const useTypographyActionsPortal = (
   const [isPortalVisible, setIsPortalVisible] = useState(false);
 
   const renderPortal = () => {
-    if (!portalRootInstanceRef.current || !visibleRef.current) return;
+    if (!portalRootInstanceRef.current || !visibleRef.current) {
+      return;
+    }
     setIsPortalVisible(true);
 
     const portalContent = (
-      <Box
+      <div
         onMouseDown={(e) => {
           // Prevent this click from closing the popup immediately
           e.stopPropagation();
         }}
-        sx={{
-          position: 'absolute',
+        className="absolute flex flex-col bg-background p-1 rounded shadow-md z-[9999]"
+        style={{
           top: positionRef.current.y,
           left: positionRef.current.x,
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: 'background.paper',
-          padding: '4px',
-          borderRadius: '4px',
-          boxShadow: 1,
-          zIndex: 9999,
         }}
       >
         <IconButton
-          size="small"
+          title="Edit"
+          size="sm"
           onClick={() => {
             onEdit();
             triggerPortal(false);
           }}
         >
-          <EditIcon fontSize="small" />
+          <Pencil className="h-4 w-4" />
         </IconButton>
-      </Box>
+      </div>
     );
 
     portalRootInstanceRef.current.render(portalContent);
@@ -84,13 +80,16 @@ export const useTypographyActionsPortal = (
     coords?: { x: number; y: number }
   ) => {
     visibleRef.current = shouldShow;
-    if (coords) positionRef.current = coords;
+    if (coords) {
+      positionRef.current = coords;
+    }
 
     if (!shouldShow) {
       // Clear the portal content
       setTimeout(() => {
-        if (portalRootInstanceRef.current)
+        if (portalRootInstanceRef.current) {
           portalRootInstanceRef.current.render(null);
+        }
         setIsPortalVisible(false);
       }, 0);
     } else {

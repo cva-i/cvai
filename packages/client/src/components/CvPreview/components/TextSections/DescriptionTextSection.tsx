@@ -26,11 +26,9 @@ export const DescriptionTextSection = ({
       valueRender={(v) => v ?? 'Description (empty)'}
       onSave={onSave}
       multiline
-      sx={{
-        width: '100%',
-      }}
+      className="w-full"
       textFieldProps={{
-        sx: { width: '100%' },
+        className: 'w-full',
       }}
       isEditing={isEditing}
     />

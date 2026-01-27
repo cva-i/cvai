@@ -1,16 +1,14 @@
-import React from 'react';
-import { Box } from '@mui/material';
+import type { FC, RefObject } from 'react';
+import { cn } from '@ui/lib/utils';
 import type { GetCvQuery } from '../../../../generated/graphql';
+import type { SuggestionBlock as SuggestionBlockType } from '../../../../contexts/use-suggestions/types';
 import { SuggestionBlock } from './SuggestionBlock';
 
 interface SuggestionsListProps {
-  suggestionBlocks: Array<{
-    blockId: string;
-    suggestions: any[];
-  }>;
+  suggestionBlocks: SuggestionBlockType[];
   cvData: GetCvQuery | undefined;
   activeSuggestionId: string | null;
-  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
+  scrollContainerRef: RefObject<HTMLDivElement | null>;
   registerSuggestionRef: (
     suggestionId: string,
     element: HTMLDivElement | null
@@ -19,19 +17,7 @@ interface SuggestionsListProps {
   onReject: (suggestionId: string) => void;
 }
 
-const scrollbarStyles = {
-  '&::-webkit-scrollbar': { width: '6px' },
-  '&::-webkit-scrollbar-track': { background: 'transparent' },
-  '&::-webkit-scrollbar-thumb': {
-    background: 'rgba(0, 0, 0, 0.2)',
-    borderRadius: '3px',
-  },
-  '&::-webkit-scrollbar-thumb:hover': {
-    background: 'rgba(0, 0, 0, 0.3)',
-  },
-};
-
-export const SuggestionsList: React.FC<SuggestionsListProps> = ({
+export const SuggestionsList: FC<SuggestionsListProps> = ({
   suggestionBlocks,
   cvData,
   activeSuggestionId,
@@ -41,20 +27,15 @@ export const SuggestionsList: React.FC<SuggestionsListProps> = ({
   onReject,
 }) => {
   return (
-    <Box
+    <div
       ref={scrollContainerRef}
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 0.5,
-        margin: '0 -1rem',
-        overflow: 'auto',
-        padding: '0 1rem',
-        flex: '1 1 auto',
-        minHeight: 0,
-        overscrollBehavior: 'contain',
-        ...scrollbarStyles,
-      }}
+      className={cn(
+        'flex flex-col gap-0.5',
+        '-mx-4 overflow-auto px-4',
+        'flex-1 min-h-0',
+        'overscroll-contain',
+        'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-black/20 hover:scrollbar-thumb-black/30'
+      )}
     >
       {suggestionBlocks.map((block) => (
         <SuggestionBlock
@@ -68,6 +49,6 @@ export const SuggestionsList: React.FC<SuggestionsListProps> = ({
           registerRef={registerSuggestionRef}
         />
       ))}
-    </Box>
+    </div>
   );
 };

@@ -1,19 +1,8 @@
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Box, Typography, styled } from '@mui/material';
-import { UploadFile } from '@mui/icons-material';
-
-const DropzoneContainer = styled(Box)<{ isDragActive: boolean }>(
-  ({ theme, isDragActive }) => ({
-    border: `2px dashed ${theme.palette.divider}`,
-    borderRadius: theme.shape.borderRadius,
-    padding: theme.spacing(4),
-    textAlign: 'center',
-    cursor: 'pointer',
-    backgroundColor: isDragActive ? theme.palette.action.hover : 'transparent',
-    transition: 'background-color 0.2s ease',
-  })
-);
+import { Upload } from 'lucide-react';
+import { cn } from '@ui/lib/utils';
+import { Typography } from './atoms/Typography';
 
 interface FileUploaderProps {
   onFileUploaded: (file: File) => void;
@@ -44,15 +33,21 @@ export const FileUploader = ({
   });
 
   return (
-    <DropzoneContainer {...getRootProps()} isDragActive={isDragActive}>
+    <div
+      {...getRootProps()}
+      className={cn(
+        'border-2 border-dashed border-border rounded-md p-8 text-center cursor-pointer transition-colors duration-200',
+        isDragActive && 'bg-muted'
+      )}
+    >
       <input {...getInputProps()} />
-      <UploadFile fontSize="large" color="action" />
-      <Typography variant="body1" mt={2}>
+      <Upload className="w-8 h-8 mx-auto text-muted-foreground" />
+      <Typography variant="body1" className="mt-4">
         {file ? file.name : 'Drag & drop file here, or click to select'}
       </Typography>
-      <Typography variant="caption" color="textSecondary">
+      <Typography variant="caption" color="secondary">
         Supported formats: PDF
       </Typography>
-    </DropzoneContainer>
+    </div>
   );
 };

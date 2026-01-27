@@ -1,8 +1,8 @@
-import Preview from '@mui/icons-material/Preview';
+import { Eye } from 'lucide-react';
 import { usePreviewMode } from '../../contexts';
 import { IconButton } from '../atoms';
 
-export const PreviewModeButton = ({}) => {
+export const PreviewModeButton = () => {
   const { togglePreviewMode, isPreviewing } = usePreviewMode();
 
   if (isPreviewing) {
@@ -10,7 +10,7 @@ export const PreviewModeButton = ({}) => {
   }
   return (
     <IconButton onClick={togglePreviewMode} title={'Preview'}>
-      <Preview />
+      <Eye className="h-5 w-5" />
     </IconButton>
   );
 };

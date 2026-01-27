@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { Box, styled } from '@mui/material';
+import { useCallback, useEffect, useRef } from 'react';
+import { cn } from '@ui/lib/utils';
 import { usePreviewMode } from '../../contexts';
 import { QuickActionsPanel } from './QuickActionsPanel';
 import { ExpandedSidebar } from './ExpandedSidebar';
@@ -43,34 +43,19 @@ export const FloatingSidebar = ({
   }
 
   return (
-    <SidebarContainer isExpanded={isExpanded}>
+    <div
+      className={cn(
+        'fixed left-4 top-4 z-[1200] flex flex-col rounded-2xl bg-white p-4 shadow-lg transition-all duration-300 ease-in-out',
+        isExpanded
+          ? 'h-[80vh] max-h-[1200px] w-[350px] items-start justify-start gap-4'
+          : 'h-[356px] w-[82px] items-center justify-between gap-14'
+      )}
+    >
       {isExpanded ? (
         <ExpandedSidebar onCollapse={toggleSidebar} />
       ) : (
         <QuickActionsPanel onExpand={toggleSidebar} />
       )}
-    </SidebarContainer>
+    </div>
   );
 };
-
-const SidebarContainer = styled(Box)<{ isExpanded: boolean }>(
-  ({ isExpanded }) => ({
-    position: 'fixed',
-    left: 16,
-    top: 16,
-    width: isExpanded ? EXPANDED_SIDEBAR_WIDTH : COLLAPSED_SIDEBAR_WIDTH,
-    height: isExpanded ? '80vh' : '356px',
-    maxHeight: '1200px',
-    backgroundColor: '#FFFFFF',
-    boxShadow: '-2px 2px 2px 2px rgba(0, 0, 0, 0.25)',
-    borderRadius: '16px',
-    zIndex: 1200,
-    transition: 'width 0.3s ease, height 0.3s ease',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: isExpanded ? 'flex-start' : 'space-between',
-    alignItems: isExpanded ? 'flex-start' : 'center',
-    padding: '16px',
-    gap: isExpanded ? '16px' : '56px',
-  })
-);

@@ -1,4 +1,5 @@
-import { Box, Typography, Avatar, styled } from '@mui/material';
+import { Avatar, AvatarFallback } from '@ui/components/ui/avatar';
+import { Typography } from '../atoms/Typography/Typography';
 import { getUserDisplayName } from '../../utils/getUserDisplayName';
 
 type SidebarHeaderProps = {
@@ -14,49 +15,24 @@ export const SidebarHeader = ({ user }: SidebarHeaderProps) => {
   const initial = displayName.charAt(0).toUpperCase();
 
   return (
-    <HeaderContainer>
-      <UserInfo>
-        <StyledAvatar>{initial}</StyledAvatar>
-        <UserDetails>
-          <Typography variant="subtitle1" noWrap>
+    <div className="mt-4 flex w-full shrink-0 items-center justify-between border-t border-border pt-4">
+      {/* User Info */}
+      <div className="flex flex-1 items-center gap-3 overflow-hidden">
+        <Avatar className="h-10 w-10 shrink-0 bg-primary">
+          <AvatarFallback className="bg-primary text-primary-foreground">
+            {initial}
+          </AvatarFallback>
+        </Avatar>
+        {/* User Details */}
+        <div className="flex flex-col flex-1 overflow-hidden">
+          <Typography variant="subtitle1" className="truncate block">
             {displayName}
           </Typography>
-          <Typography variant="caption" color="text.secondary" noWrap>
+          <Typography variant="caption" color="secondary" className="truncate block">
             {user.email}
           </Typography>
-        </UserDetails>
-      </UserInfo>
-    </HeaderContainer>
+        </div>
+      </div>
+    </div>
   );
 };
-
-const HeaderContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  paddingTop: theme.spacing(2),
-  marginTop: theme.spacing(2),
-  borderTop: `1px solid ${theme.palette.divider}`,
-  flexShrink: 0,
-  width: '100%',
-}));
-
-const UserInfo = styled(Box)({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 12,
-  overflow: 'hidden',
-  flex: 1,
-});
-
-const UserDetails = styled(Box)({
-  overflow: 'hidden',
-  flex: 1,
-});
-
-const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  width: 40,
-  height: 40,
-  backgroundColor: theme.palette.primary.main,
-  flexShrink: 0,
-}));

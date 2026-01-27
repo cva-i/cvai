@@ -1,22 +1,14 @@
-import React, { useEffect } from 'react';
-import { Box, styled, Typography } from '@mui/material';
+import { useEffect } from 'react';
 import { useCurrentCv, usePreviewMode } from '../../contexts';
 import { CvVisualizer } from './CvVisualizer';
-import { ActionButtonsContainer, CenteredBox, RowLayout } from '../atoms';
+import { ActionButtonsContainer, CenteredBox } from '../atoms';
+import { Typography } from '../atoms/Typography/Typography';
 import { useCheckCvLazyQuery } from '../../generated/graphql';
 import { PreviewModeButton } from '../PreviewButtonSection';
 import { VersionControlButtons } from '../PreviewButtonSection/VersionControlButtons';
 import { ClosePreviewButton } from '../PreviewButtonSection/ClosePreviewButton';
 import { usePreviewEffects } from '../../hooks';
 import { SuggestionsPanel } from './SuggestionsPanel';
-
-const RightSideContainer = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  height: 'calc(100vh - 32px)',
-  gap: 8,
-  justifyContent: 'space-between',
-});
 
 export const CurrentCvPreview = () => {
   const { currentCvId } = useCurrentCv();
@@ -66,25 +58,25 @@ export const CurrentCvPreview = () => {
   }
   const cvId = data.getCv._id;
   return (
-    <Box
-      sx={{
-        padding: 2,
-      }}
-    >
-      <RowLayout sx={{ alignItems: 'flex-start', overflow: 'visible' }}>
+    <div className="min-h-screen">
+      <div className="flex justify-center py-8 px-4">
         <CvVisualizer cvId={cvId} />
-        {!isPreviewing && (
-          <RightSideContainer>
-            <SuggestionsPanel cvId={cvId} />
-            <ActionButtonsContainer>
-              <VersionControlButtons />
-              <PreviewModeButton />
-            </ActionButtonsContainer>
-          </RightSideContainer>
-        )}
-      </RowLayout>
+      </div>
+
+      {/* Floating Suggestions Panel */}
+      {!isPreviewing && <SuggestionsPanel cvId={cvId} />}
+
+      {/* Floating Action Buttons */}
+      {!isPreviewing && (
+        <div className="fixed right-4 bottom-4 z-[1100] bg-white rounded-xl p-2 shadow-lg">
+          <ActionButtonsContainer>
+            <VersionControlButtons />
+            <PreviewModeButton />
+          </ActionButtonsContainer>
+        </div>
+      )}
 
       <ClosePreviewButton />
-    </Box>
+    </div>
   );
 };

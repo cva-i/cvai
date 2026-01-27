@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import {
-  Button,
   Dialog,
-  DialogActions,
   DialogContent,
+  DialogHeader,
   DialogTitle,
-} from '@mui/material';
+  DialogFooter,
+} from '@ui/components/ui/dialog';
+import { Button } from '@ui/components/ui/button';
 import { FileUploader } from '../FileUploader';
 import { toast } from 'react-toastify';
 import {
@@ -50,25 +51,33 @@ export const ImportPdfDialog = ({ open, onClose }: ImportPdfDialogProps) => {
     onClose();
   };
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Import PDF CV</DialogTitle>
-      <DialogContent>
-        <FileUploader
-          onFileUploaded={handleFileUploaded}
-          acceptedFileTypes="application/pdf"
-        />
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Import PDF CV</DialogTitle>
+        </DialogHeader>
+        <div className="py-4">
+          <FileUploader
+            onFileUploaded={handleFileUploaded}
+            acceptedFileTypes="application/pdf"
+          />
+        </div>
+        <DialogFooter>
+          <Button variant="ghost" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button onClick={handleConvert} disabled={!file || loading}>
+            {loading ? 'Converting...' : 'Convert'}
+          </Button>
+        </DialogFooter>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button
-          variant="contained"
-          onClick={handleConvert}
-          disabled={!file || loading}
-        >
-          {loading ? 'Converting...' : 'Convert'}
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };

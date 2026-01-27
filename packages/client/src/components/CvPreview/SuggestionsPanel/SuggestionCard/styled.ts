@@ -1,44 +1,29 @@
-import { Box, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { cva } from 'class-variance-authority';
 
-export const CardContainer = styled(Box)<{ isActive?: boolean }>(
-  ({ isActive }) => ({
-    border: isActive ? '2px solid #8b5cf6' : '2px solid #f3f4f6',
-    borderRadius: '8px',
-    backgroundColor: '#ffffff',
-    padding: '16px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '12px',
-    transition: 'all 0.2s ease-out',
-    '&:hover': isActive ? {} : { borderColor: '#8b5cf630', transition: 'none' },
-  })
+export const cardContainerVariants = cva(
+  [
+    'border-2 rounded-lg bg-white p-4',
+    'flex flex-col gap-3',
+    'transition-all duration-200 ease-out',
+  ],
+  {
+    variants: {
+      isActive: {
+        true: 'border-violet-500',
+        false: 'border-gray-100 hover:border-violet-500/20',
+      },
+    },
+    defaultVariants: {
+      isActive: false,
+    },
+  }
 );
 
-export const CommentText = styled(Typography)({
-  fontSize: '14px',
-  lineHeight: '1.6',
-  color: '#374151',
-  marginBottom: '8px',
-});
+export const commentTextClasses =
+  'text-sm leading-relaxed text-gray-700 mb-2';
 
-export const PreviewLabel = styled(Typography)({
-  fontSize: '12px',
-  fontWeight: 600,
-  color: '#6b7280',
-  marginTop: '12px',
-  marginBottom: '6px',
-  textTransform: 'uppercase',
-  letterSpacing: '0.5px',
-});
+export const previewLabelClasses =
+  'text-xs font-semibold text-gray-500 mt-3 mb-1.5 uppercase tracking-wider';
 
-export const PreviewText = styled(Typography)({
-  fontSize: '14px',
-  lineHeight: '1.6',
-  color: '#111827',
-  backgroundColor: '#f9fafb',
-  padding: '8px 12px',
-  borderRadius: '6px',
-  border: '1px solid #e5e7eb',
-  fontStyle: 'italic',
-});
+export const previewTextClasses =
+  'text-sm leading-relaxed text-gray-900 bg-gray-50 px-3 py-2 rounded-md border border-gray-200 italic';

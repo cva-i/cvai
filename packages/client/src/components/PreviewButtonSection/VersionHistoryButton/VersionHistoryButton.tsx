@@ -1,7 +1,7 @@
 import { useCurrentCv } from '../../../contexts';
 import { useMemo, useState } from 'react';
 import { IconButton } from '../../atoms';
-import HistoryIcon from '@mui/icons-material/History';
+import { History } from 'lucide-react';
 import { VersionHistoryPopover } from './VersionHistoryPopover';
 
 export const VersionHistoryButton = ({}) => {
@@ -27,7 +27,7 @@ export const VersionHistoryButton = ({}) => {
         aria-expanded={open ? 'true' : undefined}
         disabled={!currentCvId}
       >
-        <HistoryIcon />
+        <History />
       </IconButton>
       {currentCvId && (
         <VersionHistoryPopover

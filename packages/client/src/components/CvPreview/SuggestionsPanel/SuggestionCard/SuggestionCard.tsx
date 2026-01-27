@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
+import { cn } from '@ui/lib/utils';
 import type { Suggestion } from '../../../../contexts';
 import { useSuggestions } from '../../../../contexts';
 import type { GetCvQuery } from '../../../../generated/graphql';
@@ -8,7 +9,7 @@ import { CardHeader } from '../components/SuggestionCard/CardHeader';
 import { CardMetadata } from '../components/SuggestionCard/CardMetadata';
 import { ResolvedContent } from './ResolvedContent';
 import { SuggestedChangeContent } from './SuggestedChangeContent';
-import { CardContainer, CommentText } from './styled';
+import { cardContainerVariants, commentTextClasses } from './styled';
 
 export type SuggestionCardProps = {
   suggestion: Suggestion;
@@ -75,9 +76,9 @@ const SuggestionCardComponent = ({
   }, [registerRef, suggestion._id]);
 
   return (
-    <CardContainer
+    <div
       ref={cardRef}
-      isActive={isActive}
+      className={cn(cardContainerVariants({ isActive }))}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleCardClick}
@@ -93,7 +94,7 @@ const SuggestionCardComponent = ({
       />
 
       {/* Comment Text */}
-      <CommentText>{suggestion.text}</CommentText>
+      <p className={commentTextClasses}>{suggestion.text}</p>
 
       {/* Suggested Change */}
       <SuggestedChangeContent
@@ -105,7 +106,7 @@ const SuggestionCardComponent = ({
 
       {/* Resolved Content */}
       <ResolvedContent suggestion={suggestion} />
-    </CardContainer>
+    </div>
   );
 };
 

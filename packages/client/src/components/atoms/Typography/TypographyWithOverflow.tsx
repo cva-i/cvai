@@ -1,29 +1,33 @@
-import { styled } from '@mui/material/styles';
-import type { TypographyProps } from '@mui/material';
-import { Tooltip, Typography } from '@mui/material';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { cn } from '@ui/lib/utils';
+import { Tooltip } from '../Tooltip';
+import { Typography, type TypographyProps } from './Typography';
 
-const StyledTypography = styled(Typography)`
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
+interface TypographyWithOverflowProps extends TypographyProps {
+  disableTooltip?: boolean;
+}
 
 export const TypographyWithOverflow = ({
   children,
   disableTooltip,
+  className,
   ...props
-}: TypographyProps & { disableTooltip?: boolean }) => {
+}: TypographyWithOverflowProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isOverflow, setIsOverflow] = useState(false);
 
   const component = useMemo(
     () => (
-      <StyledTypography {...props} ref={ref} key="styledTypographyKey">
+      <Typography
+        {...props}
+        ref={ref}
+        className={cn('whitespace-nowrap overflow-hidden text-ellipsis', className)}
+        key="styledTypographyKey"
+      >
         {children}
-      </StyledTypography>
+      </Typography>
     ),
-    [props, children]
+    [props, children, className]
   );
 
   useEffect(() => {

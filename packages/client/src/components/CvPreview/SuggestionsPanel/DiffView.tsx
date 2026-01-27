@@ -1,57 +1,66 @@
-import { Box } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { cn } from '@ui/lib/utils';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-const DiffContainer = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '4px',
-  borderRadius: '6px',
-  overflow: 'hidden',
-  border: '1px solid #e5e7eb',
+const diffRowVariants = cva(
+  'flex items-start gap-2 px-3 py-2 text-sm leading-relaxed',
+  {
+    variants: {
+      variant: {
+        old: 'bg-red-50',
+        new: 'bg-green-50',
+      },
+    },
+  }
+);
+
+const diffMarkerVariants = cva('text-sm font-semibold min-w-4 font-mono', {
+  variants: {
+    variant: {
+      old: 'text-red-700',
+      new: 'text-green-700',
+    },
+  },
 });
 
-const DiffRow = styled(Box)<{ variant: 'old' | 'new' }>(({ variant }) => ({
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: '8px',
-  padding: '8px 12px',
-  backgroundColor: variant === 'old' ? '#fee' : '#efe',
-  fontSize: '14px',
-  lineHeight: '1.6',
-}));
+const diffTextVariants = cva('text-sm leading-relaxed flex-1 break-words', {
+  variants: {
+    variant: {
+      old: 'text-red-900',
+      new: 'text-green-900',
+    },
+  },
+});
 
-const DiffMarker = styled(Box)<{ variant: 'old' | 'new' }>(({ variant }) => ({
-  fontSize: '14px',
-  fontWeight: 600,
-  color: variant === 'old' ? '#c00' : '#0a0',
-  minWidth: '16px',
-  fontFamily: 'monospace',
-}));
+interface DiffRowProps extends VariantProps<typeof diffRowVariants> {
+  marker: string;
+  text: string;
+}
 
-const DiffText = styled(Box)<{ variant: 'old' | 'new' }>(({ variant }) => ({
-  fontSize: '14px',
-  lineHeight: '1.6',
-  color: variant === 'old' ? '#600' : '#060',
-  flex: 1,
-  wordBreak: 'break-word',
-}));
+function DiffRow({ variant, marker, text }: DiffRowProps) {
+  return (
+    <div className={diffRowVariants({ variant })}>
+      <span className={diffMarkerVariants({ variant })}>{marker}</span>
+      <span className={diffTextVariants({ variant })}>{text}</span>
+    </div>
+  );
+}
 
 interface DiffViewProps {
   oldText: string;
   newText: string;
+  className?: string;
 }
 
-export function DiffView({ oldText, newText }: DiffViewProps) {
+export function DiffView({ oldText, newText, className }: DiffViewProps) {
   return (
-    <DiffContainer>
-      <DiffRow variant="old">
-        <DiffMarker variant="old">-</DiffMarker>
-        <DiffText variant="old">{oldText}</DiffText>
-      </DiffRow>
-      <DiffRow variant="new">
-        <DiffMarker variant="new">+</DiffMarker>
-        <DiffText variant="new">{newText}</DiffText>
-      </DiffRow>
-    </DiffContainer>
+    <div
+      className={cn(
+        'flex flex-col gap-1 rounded-md overflow-hidden border border-gray-200',
+        className
+      )}
+    >
+      <DiffRow variant="old" marker="-" text={oldText} />
+      <DiffRow variant="new" marker="+" text={newText} />
+    </div>
   );
 }

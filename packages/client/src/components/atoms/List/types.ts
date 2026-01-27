@@ -1,11 +1,10 @@
 import type { ReactNode } from 'react';
-import type { SxProps, Theme } from '@mui/material';
 
 export interface BaseListItemProps {
   _id: string;
   selected?: boolean;
   onClick?: (id: string) => void;
-  sx?: SxProps<Theme>;
+  className?: string;
 }
 
 export interface BaseListProps<T extends { _id: string }> {
@@ -14,8 +13,8 @@ export interface BaseListProps<T extends { _id: string }> {
   loading?: boolean;
   error?: Error | null;
   emptyMessage?: string;
-  containerSx?: SxProps<Theme>;
-  listSx?: SxProps<Theme>;
+  containerClassName?: string;
+  listClassName?: string;
   pagination?: {
     page: number;
     totalPages: number;

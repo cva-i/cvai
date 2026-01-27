@@ -4,7 +4,8 @@ import { EditableTypographyBase } from './EditableTypographyBase';
 import { EditableTypographyWithSuggestions } from './EditableTypographyWithSuggestions';
 import type { EditableTypographyProps } from './types';
 import { useEntryEdit } from '../../../contexts';
-import { useSuggestions } from '../../../contexts/use-suggestions/SuggestionsProvider';
+import { useSuggestions } from '../../../contexts';
+import { cn } from '@ui/lib/utils';
 
 export const EditableTypography = ({
   id,
@@ -16,7 +17,7 @@ export const EditableTypography = ({
   component,
   textFieldProps,
   valueRender,
-  sx,
+  className,
   ...typographyProps
 }: EditableTypographyProps) => {
   const textRef = useRef<HTMLDivElement>(null);
@@ -48,7 +49,7 @@ export const EditableTypography = ({
 
   // Check if this block has suggestions
   const blockSuggestions = suggestionBlocks.find(
-    (block: any) => block.blockId === id
+    (block) => block.blockId === id
   );
   const hasSuggestions =
     blockSuggestions && blockSuggestions.suggestions.length > 0;
@@ -60,7 +61,7 @@ export const EditableTypography = ({
         id={id}
         value={displayValue}
         onSave={async (newValue: string) => {
-          await handleSave(newValue);
+          handleSave(newValue);
         }}
         onAiEdit={onAiEdit}
         multiline={multiline}
@@ -68,12 +69,13 @@ export const EditableTypography = ({
         component={component}
         textFieldProps={{ ...textFieldProps, disabled: isPending }}
         valueRender={valueRender}
-        sx={sx}
+        className={className}
         suggestionBlocks={suggestionBlocks}
         activeSuggestionId={activeSuggestionId}
         hoveredBlockId={hoveredBlockId}
         setActiveSuggestionId={setActiveSuggestionId}
-        {...typographyProps}
+        variant={typographyProps.variant}
+        color={typographyProps.color}
       />
     );
   }
@@ -82,13 +84,11 @@ export const EditableTypography = ({
   return (
     <EditableTypographyBase
       ref={textRef}
-      sx={{ alignContent: 'center', ...sx }}
+      className={cn('content-center', className)}
       typographyProps={{
-        ...typographyProps,
-        sx: {
-          width: 'fit-content',
-          ...((typographyProps as any).sx || {}),
-        },
+        variant: typographyProps.variant,
+        color: typographyProps.color,
+        className: 'w-fit',
       }}
       id={id}
       isEditing={shouldBeEditing}
@@ -97,6 +97,7 @@ export const EditableTypography = ({
       setTempValue={setTempValue}
       handleSave={handleSave}
       handleCancel={handleCancel}
+      startEditing={startEditing}
       multiline={multiline}
       variant={typographyProps.variant}
       textFieldProps={{ ...textFieldProps, disabled: isPending }}

@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { usePreviewMode } from '../../../../../contexts';
-import { Box } from '@mui/material';
 import { EditableTypography } from '../../../../atoms';
 import type { Maybe } from 'graphql/jsutils/Maybe';
 
@@ -40,7 +39,7 @@ export const LocationAndDate: React.FC<LocationAndDateProps> = ({
   );
 
   return (
-    <Box display="flex" flexDirection="column" textAlign="right">
+    <div className="flex flex-col text-right flex-shrink-0 whitespace-nowrap">
       {shouldShowDuration && (
         <EditableTypography
           id={durationFieldId || `we-duration-${id}`}
@@ -74,6 +73,6 @@ export const LocationAndDate: React.FC<LocationAndDateProps> = ({
           isEditing={isEditing}
         />
       )}
-    </Box>
+    </div>
   );
 };

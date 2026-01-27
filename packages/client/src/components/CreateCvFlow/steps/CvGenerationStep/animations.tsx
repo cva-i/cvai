@@ -1,18 +1,16 @@
-import { keyframes } from '@mui/material';
+/**
+ * Animation class names for CV generation step.
+ * These classes reference keyframes defined in index.css
+ */
 
-export const textAppear = keyframes`
-  0% { 
-    opacity: 0; 
-    transform: translateY(10px) scale(0.8);
-  }
-  100% { 
-    opacity: 1; 
-    transform: translateY(0) scale(1);
-  }
-`;
+/**
+ * Text appear animation - fades in with a slight scale and translate effect
+ * Use: className={textAppearClass}
+ */
+export const textAppearClass = 'animate-text-appear';
 
-export const pulse = keyframes`
-  0% { opacity: 0.6; transform: scale(0.98); }
-  50% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0.6; transform: scale(0.98); }
-`;
+/**
+ * Pulse animation - gentle opacity and scale pulsing effect
+ * Use: className={pulseClass}
+ */
+export const pulseClass = 'animate-cv-pulse';

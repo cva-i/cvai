@@ -1,7 +1,7 @@
-import { Paper, Typography } from '@mui/material';
+import { ColumnLayout } from '../atoms';
+import { Typography } from '../atoms/Typography/Typography';
 import { ItemChangeDisplay } from './ItemChangeDisplay';
 import type { SectionChange } from './types';
-import { ColumnLayout } from '../atoms';
 
 type SectionChangeDisplayProps = {
   section: SectionChange;
@@ -10,12 +10,12 @@ type SectionChangeDisplayProps = {
 export const SectionChangeDisplay = ({
   section,
 }: SectionChangeDisplayProps) => (
-  <Paper elevation={2} sx={{ p: 2 }}>
-    <Typography variant="h6" gutterBottom>
+  <div className="bg-white shadow-md rounded-lg p-4">
+    <Typography variant="h6" className="mb-2">
       {section.section}
     </Typography>
 
-    <ColumnLayout gap={2}>
+    <ColumnLayout className="gap-8">
       {section.items.map((item, idx) => (
         <ItemChangeDisplay
           key={`${item.name}-${idx}`}
@@ -24,5 +24,5 @@ export const SectionChangeDisplay = ({
         />
       ))}
     </ColumnLayout>
-  </Paper>
+  </div>
 );

@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import React from 'react';
-import { grey } from '@mui/material/colors';
-import { Typography } from '@mui/material';
+import { Typography } from '../../atoms/Typography/Typography';
 import type { EditableTypographyProps } from '../../atoms/Typography/types';
 import { CommaSeparatedList } from '../../CommaSeparatedList';
 import { usePreviewMode } from '../../../contexts';
@@ -32,10 +31,7 @@ export const SkillsForItemizedEntryEditor = ({
     <Typography
       variant="body2"
       component="span"
-      sx={{
-        color: grey[600],
-        fontWeight: 'bold',
-      }}
+      className="text-muted-foreground font-bold"
     >
       Skills:
     </Typography>
@@ -55,8 +51,8 @@ export const SkillsForItemizedEntryEditor = ({
       items={entries}
       onSave={handleSave}
       labelPrefix={finalLabelPrefix}
-      sx={{ color: grey[600] }}
-      textSx={{ color: grey[600] }}
+      className="text-muted-foreground"
+      textClassName="text-muted-foreground"
       variant="body2"
       emptyText="(empty)"
     />

@@ -1,8 +1,8 @@
 export const localhostEnvCorsUrls = [
-  'http://localhost:3000',
-  'http://127.0.0.1:3000',
+  'http://localhost:3003',
+  'http://127.0.0.1:3003',
   // localhost Gql playground
-  'http://localhost:4000',
+  'http://localhost:4002',
 ];
 
 export const productionEnvCorsUrls = [

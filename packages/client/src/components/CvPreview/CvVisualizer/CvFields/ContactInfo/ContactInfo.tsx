@@ -1,4 +1,3 @@
-import React from 'react';
 import { ContactInfoEntry } from './ContactInfoEntry';
 import type { CvEntryComponentProps } from '../../types';
 import type { ContactInfo as ContactInfoGraphqlType } from '../../../../../generated/graphql';
@@ -59,10 +58,7 @@ export const ContactInfo = ({ cvId }: CvEntryComponentProps) => {
         </WithEntryControls>
       )}
       onAdd={() => handleAddEntry()}
-      sx={{
-        display: 'flex',
-        justifyContent: 'space-around',
-      }}
+      className="flex justify-around"
     />
   );
 };

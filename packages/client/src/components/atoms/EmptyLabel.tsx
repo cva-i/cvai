@@ -1,29 +1,35 @@
-import { Typography } from '@mui/material';
-import type { TypographyProps } from '@mui/material';
+import { cn } from '@ui/lib/utils';
+import { cva, type VariantProps } from 'class-variance-authority';
 
-type EmptyLabelProps = {
-  variant?: TypographyProps['variant'];
-  sx?: TypographyProps['sx'];
+const emptyLabelVariants = cva('italic text-muted-foreground', {
+  variants: {
+    size: {
+      default: 'text-sm',
+      sm: 'text-xs',
+      lg: 'text-base',
+    },
+  },
+  defaultVariants: {
+    size: 'sm',
+  },
+});
+
+type EmptyLabelProps = VariantProps<typeof emptyLabelVariants> & {
+  className?: string;
   onClick?: () => void;
 };
 
-export const EmptyLabel = ({
-  variant = 'body2',
-  sx,
-  onClick,
-}: EmptyLabelProps) => {
+export const EmptyLabel = ({ size, className, onClick }: EmptyLabelProps) => {
   return (
-    <Typography
-      variant={variant}
-      color="text.secondary"
-      sx={{
-        fontStyle: 'italic',
-        cursor: onClick ? 'pointer' : 'default',
-        ...sx,
-      }}
+    <span
+      className={cn(
+        emptyLabelVariants({ size }),
+        onClick && 'cursor-pointer',
+        className
+      )}
       onClick={onClick}
     >
       (empty)
-    </Typography>
+    </span>
   );
 };

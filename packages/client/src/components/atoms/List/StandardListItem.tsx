@@ -1,45 +1,49 @@
-import React from 'react';
-import { ListItemText, ListItemButton } from '@mui/material';
 import type { StandardListItemProps } from './types';
+import { cn } from '@ui/lib/utils';
 
 export function StandardListItem<T>({
   _id,
-  // item,
   primary,
   secondary,
   actions,
   selected,
   onClick,
   highlight,
-  sx,
+  className,
 }: StandardListItemProps<T>) {
   const handleClick = () => {
     if (onClick) onClick(_id);
   };
 
   return (
-    <ListItemButton
+    <div
       onClick={handleClick}
-      selected={selected}
-      sx={{
-        backgroundColor: highlight ? 'rgba(25, 118, 210, 0.08)' : 'transparent',
-        display: 'flex',
-        flexDirection: 'row',
-        borderRadius: 1,
-        padding: 1,
-        paddingX: 2,
-        cursor: onClick ? 'pointer' : 'default',
-        '&:hover': onClick
-          ? {
-              backgroundColor: 'rgba(25, 118, 210, 0.05)',
-            }
-          : undefined,
-        ...sx,
+      role="button"
+      tabIndex={onClick ? 0 : undefined}
+      className={cn(
+        'flex flex-row rounded p-2 px-4',
+        highlight && 'bg-blue-500/8',
+        selected && 'bg-primary-light text-primary-foreground',
+        onClick && 'cursor-pointer hover:bg-blue-500/5',
+        !onClick && 'cursor-default',
+        className
+      )}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          handleClick();
+        }
       }}
     >
-      <ListItemText primary={primary} secondary={secondary} />
+      <div className="flex flex-col flex-1 min-w-0">
+        <span className="text-sm truncate">{primary}</span>
+        {secondary && (
+          <span className="text-xs text-muted-foreground truncate">
+            {secondary}
+          </span>
+        )}
+      </div>
 
-      {actions}
-    </ListItemButton>
+      {actions && <div className="flex-shrink-0 ml-2">{actions}</div>}
+    </div>
   );
 }

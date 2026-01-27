@@ -1,25 +1,22 @@
 import type { ReactNode } from 'react';
 import React from 'react';
-import type { BoxProps } from '@mui/material';
-import { Backdrop, Box } from '@mui/material';
+import { cn } from '@ui/lib/utils';
 import { EntryEditContext } from '../../../contexts';
 import { useEditableSection } from '../../../hooks';
 
-type WithEditableSectionProps = React.PropsWithChildren<{
+interface WithEditableSectionProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
   renderActions?: (isActive: boolean) => ReactNode;
-  flexDirection?: BoxProps['flexDirection'];
-  height?: BoxProps['height'];
-}> &
-  Omit<
-    BoxProps,
-    'onClick' | 'onMouseEnter' | 'onMouseLeave' | 'flexDirection' | 'height'
-  >;
+  flexDirection?: 'row' | 'column';
+  height?: string | number;
+}
 
 export function WithEditableSection({
   children,
   renderActions,
   flexDirection = 'row',
   height,
+  className,
   ...props
 }: WithEditableSectionProps) {
   const {
@@ -30,38 +27,40 @@ export function WithEditableSection({
     handleClick,
     deactivate,
     contextValue,
-    containerStyles,
+    getContainerClassName,
   } = useEditableSection();
 
   if (isPreviewing) {
-    return <Box>{children}</Box>;
+    return <div>{children}</div>;
   }
+
+  const flexDirectionClass = flexDirection === 'column' ? 'flex-col' : 'flex-row';
 
   return (
     <EntryEditContext.Provider value={contextValue}>
-      <Backdrop
-        open={isActive}
-        sx={{
-          backgroundColor: 'rgba(0, 0, 0, 0.3)',
-          zIndex: (theme) => theme.zIndex.modal,
-        }}
-        onClick={deactivate}
-      />
-      <Box
-        display="flex"
-        justifyContent="start"
-        flexDirection={flexDirection}
-        height={height}
-        alignItems="flex-start"
+      {/* Backdrop */}
+      {isActive && (
+        <div
+          className="fixed inset-0 bg-black/30 z-[1300]"
+          onClick={deactivate}
+        />
+      )}
+      <div
+        className={cn(
+          'flex justify-start items-start',
+          flexDirectionClass,
+          getContainerClassName(),
+          className
+        )}
+        style={{ height: typeof height === 'number' ? `${height}px` : height }}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={handleClick}
-        sx={containerStyles}
         {...props}
       >
         {renderActions?.(isActive)}
         {children}
-      </Box>
+      </div>
     </EntryEditContext.Provider>
   );
 }

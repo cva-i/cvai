@@ -1,7 +1,6 @@
-import { Box, Typography } from '@mui/material';
 import { useGetCvsQuery } from '../../../generated/graphql';
 import { useMemo } from 'react';
-import { SelectList } from '../../atoms';
+import { SelectList, Typography } from '../../atoms';
 import { useCvCreationFlow } from '../../../contexts';
 
 // TODO: add loading and error states. maybe
@@ -17,7 +16,7 @@ export const TemplateStep = () => {
   );
 
   return (
-    <Box display="flex" flexDirection="column" gap={3}>
+    <div className="flex flex-col gap-6">
       <SelectList
         label={'CV Template'}
         items={resumeList}
@@ -25,9 +24,9 @@ export const TemplateStep = () => {
         defaultState={templateId}
       />
 
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="body2" color="secondary">
         Creating from scratch is currently unavailable
       </Typography>
-    </Box>
+    </div>
   );
 };

@@ -10,7 +10,8 @@ import { tryCatch } from '../utils';
 
 type UseEditableTypographyBaseProps = {
   value?: Maybe<string>;
-  onSave: (newValue: string) => Promise<void>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSave: (newValue: string) => Promise<any>;
 };
 
 type UseEditableTypographyBaseReturn = {

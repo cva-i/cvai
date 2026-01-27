@@ -1,5 +1,6 @@
-import { Box, Typography } from '@mui/material';
+import { useMemo } from 'react';
 import { ColumnLayout } from '../atoms';
+import { Typography } from '../atoms/Typography/Typography';
 import { SectionChangeDisplay } from './SectionChangeDisplay';
 import {
   compareAboutMe,
@@ -12,7 +13,6 @@ import {
   compareWorkExperience,
 } from './comparators';
 import type { VersionComparisonContentProps } from './types';
-import { useMemo } from 'react';
 
 export const VersionComparisonContent = ({
   left,
@@ -33,16 +33,16 @@ export const VersionComparisonContent = ({
 
   if (changes.length === 0) {
     return (
-      <Box sx={{ p: 4, textAlign: 'center' }}>
+      <div className="p-4 text-center">
         <Typography variant="h6">
           No differences found between these versions
         </Typography>
-      </Box>
+      </div>
     );
   }
 
   return (
-    <ColumnLayout gap={3} sx={{ width: '100%' }}>
+    <ColumnLayout className="gap-12 w-full">
       {changes.map((section, idx) => (
         <SectionChangeDisplay
           key={`${section.section}-${idx}`}

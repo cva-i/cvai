@@ -1,16 +1,14 @@
 import React from 'react';
-import { Box, Collapse } from '@mui/material';
+import { cn } from '@ui/lib/utils';
 import { match } from 'ts-pattern';
 import type { GetCvQuery } from '../../../../generated/graphql';
+import type { SuggestionBlock } from '../../../../contexts';
 import { EmptyState } from './EmptyState';
 import { SuggestionsList } from './SuggestionsList';
 
 interface PanelContentProps {
   isExpanded: boolean;
-  suggestionBlocks: Array<{
-    blockId: string;
-    suggestions: any[];
-  }>;
+  suggestionBlocks: SuggestionBlock[];
   cvData: GetCvQuery | undefined;
   activeSuggestionId: string | null;
   scrollContainerRef: React.RefObject<HTMLDivElement | null>;
@@ -32,37 +30,30 @@ export const PanelContent: React.FC<PanelContentProps> = ({
   onAccept,
   onReject,
 }) => {
+  if (!isExpanded) {
+    return null;
+  }
+
   return (
-    <Collapse
-      in={isExpanded}
-      timeout={300}
-      sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}
+    <div
+      className={cn(
+        'flex-1 overflow-hidden p-4 bg-white min-h-0 flex flex-col',
+        'animate-in fade-in-0 slide-in-from-top-2 duration-300'
+      )}
     >
-      <Box
-        sx={{
-          flex: 1,
-          overflow: 'hidden',
-          p: 2,
-          backgroundColor: 'white',
-          minHeight: 0,
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        {match(suggestionBlocks.length)
-          .with(0, () => <EmptyState />)
-          .otherwise(() => (
-            <SuggestionsList
-              suggestionBlocks={suggestionBlocks}
-              cvData={cvData}
-              activeSuggestionId={activeSuggestionId}
-              scrollContainerRef={scrollContainerRef}
-              registerSuggestionRef={registerSuggestionRef}
-              onAccept={onAccept}
-              onReject={onReject}
-            />
-          ))}
-      </Box>
-    </Collapse>
+      {match(suggestionBlocks.length)
+        .with(0, () => <EmptyState />)
+        .otherwise(() => (
+          <SuggestionsList
+            suggestionBlocks={suggestionBlocks}
+            cvData={cvData}
+            activeSuggestionId={activeSuggestionId}
+            scrollContainerRef={scrollContainerRef}
+            registerSuggestionRef={registerSuggestionRef}
+            onAccept={onAccept}
+            onReject={onReject}
+          />
+        ))}
+    </div>
   );
 };

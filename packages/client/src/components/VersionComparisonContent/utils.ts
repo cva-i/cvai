@@ -45,15 +45,32 @@ export const compareArrays = (
   return createFieldChange(label, oldValue, newValue);
 };
 
-export const getActionColor = (action: ItemAction | ChangeAction) => {
-  const colorMap = {
-    added: 'success',
-    removed: 'error',
-    changed: 'warning',
-    modified: 'warning',
-  } as const;
+type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
 
-  return colorMap[action] || 'default';
+export const getActionBadgeVariant = (
+  action: ItemAction | ChangeAction
+): BadgeVariant => {
+  const variantMap: Record<ItemAction | ChangeAction, BadgeVariant> = {
+    added: 'default',
+    removed: 'destructive',
+    changed: 'secondary',
+    modified: 'secondary',
+  };
+
+  return variantMap[action] ?? 'outline';
+};
+
+export const getActionBadgeClassName = (
+  action: ItemAction | ChangeAction
+): string => {
+  const classMap: Record<ItemAction | ChangeAction, string> = {
+    added: 'bg-green-100 text-green-800 border-green-200',
+    removed: 'bg-red-100 text-red-800 border-red-200',
+    changed: 'bg-amber-100 text-amber-800 border-amber-200',
+    modified: 'bg-amber-100 text-amber-800 border-amber-200',
+  };
+
+  return classMap[action] ?? '';
 };
 
 // Generic function to compare array entries by _id

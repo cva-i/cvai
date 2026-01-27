@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { TextField } from '@mui/material';
+import { Input } from '@ui/components/ui/input';
 import { usePreviewMode } from '../../contexts';
+import { cn } from '@ui/lib/utils';
 
 interface GenericInputFieldProps {
   onEnterKey: (inputValue: string) => void;
@@ -17,7 +18,6 @@ export const TextInputField = ({
 
   const { isPreviewing } = usePreviewMode();
 
-  // React 19: useCallback not needed for simple event handlers
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && value.trim()) {
       onEnterKey(value.trim());
@@ -29,15 +29,13 @@ export const TextInputField = ({
     return null;
   }
   return (
-    <TextField
+    <Input
       value={value}
       onChange={(e) => setValue(e.target.value)}
       onKeyDown={handleKeyPress}
-      fullWidth
-      variant="standard"
-      size="small"
-      sx={{ typography: 'body2', width }}
       placeholder={placeholder}
+      className={cn('text-xs h-8 border-0 border-b border-border rounded-none')}
+      style={{ width: typeof width === 'number' ? `${width}px` : width }}
     />
   );
 };
