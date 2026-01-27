@@ -10,6 +10,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CvModule } from './services/cv/cv.module';
 import { LlmIntegrationModule } from './services/llm-integration/llm-integration.module';
 import { SuggestionsModule } from './services/suggestions/suggestions.module';
+import { ChatModule } from './services/chat/chat.module';
 import { SentryModule } from '@sentry/nestjs/setup';
 
 @Module({
@@ -34,6 +35,7 @@ import { SentryModule } from '@sentry/nestjs/setup';
     CvModule,
     LlmIntegrationModule,
     SuggestionsModule,
+    ChatModule,
   ],
   providers: [],
 })

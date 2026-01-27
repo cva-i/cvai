@@ -1,4 +1,6 @@
 export * from './about-me.schema';
+export * from './chat-conversation.schema';
+export * from './chat-message.schema';
 export * from './contact-info.schema';
 export * from './education.schema';
 export * from './cv.schema';
